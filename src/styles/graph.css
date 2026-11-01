@@ -1,0 +1,157 @@
+.pg {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 900px) {
+  .pg {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pg-canvas {
+  height: 34rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .pg-canvas {
+    height: 26rem;
+  }
+}
+
+.pg-canvas .react-flow {
+  --xy-background-color: var(--surface);
+  --xy-background-pattern-color: var(--line);
+  --xy-edge-stroke: var(--muted);
+  --xy-edge-label-background-color: var(--surface);
+  --xy-edge-label-color: var(--muted);
+  --xy-controls-button-background-color: var(--bg);
+  --xy-controls-button-color: var(--fg);
+  --xy-controls-button-border-color: var(--line);
+  --xy-attribution-background-color: transparent;
+}
+
+.pg-layer {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.pg-node {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--layer, var(--accent));
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.react-flow__node:focus-visible .pg-node,
+.pg-node:hover {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.pg-selected {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.pg-devices { --layer: #8a8f98; }
+.pg-access { --layer: #3b9a8a; }
+.pg-agents { --layer: #7a5cd6; }
+.pg-rules { --layer: #c08a1e; }
+.pg-services { --layer: #2f7dd3; }
+.pg-records { --layer: #c0567a; }
+
+.pg-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pg-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pg-dot-running { background: #2e9d5b; }
+.pg-dot-active { background: var(--muted); }
+.pg-dot-code-only { background: transparent; border: 1.5px dashed var(--muted); }
+
+.pg-edge .react-flow__edge-path { stroke-width: 1.4; }
+.pg-edge-tailnet .react-flow__edge-path { stroke: #3b9a8a; }
+.pg-edge-lan .react-flow__edge-path { stroke: #c07a1e; stroke-dasharray: 5 4; }
+.pg-edge-verify .react-flow__edge-path { stroke: #7a5cd6; }
+.pg-edge-write .react-flow__edge-path { stroke: #c0567a; }
+
+.pg-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  background: var(--surface);
+  align-self: start;
+}
+
+.pg-card h3 {
+  margin: 0.2rem 0 0.6rem;
+}
+
+.pg-card-layer {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pg-card dl {
+  margin: 0 0 0.8rem;
+}
+
+.pg-card dt {
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.pg-card dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+}
+
+.pg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  padding: 0;
+  list-style: none;
+}
+
+.pg-legend span {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+}

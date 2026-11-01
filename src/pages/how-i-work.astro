@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import PlatformGraph from '../components/PlatformGraph.tsx';
+import graph from '../data/graph.json';
+import '../styles/graph.css';
+
+const layers = graph.layers.map((l) => ({
+  ...l,
+  nodes: graph.nodes.filter((n) => n.layer === l.id),
+}));
+---
+
+<Base
+  title="How I work — Vitalii Ryzhenko"
+  description="My agent platform: devices, private access, agents with an independent verifier, written rules, services and records."
+  wide
+>
+  <h1>How I work</h1>
+  <p>
+    I run my own projects the way I would want a team's agents to run: on written rules, with an independent check
+    before and after every change, and with a record of what happened. Below is the platform as it is today —
+    one home server, a private network, coding agents and the services they look after.
+  </p>
+
+  <PlatformGraph client:visible />
+
+  <ul class="pg-legend" aria-label="Legend">
+    <li><span class="pg-dot pg-dot-running"></span>running</li>
+    <li><span class="pg-dot pg-dot-code-only"></span>code only, not deployed</li>
+    <li><span class="pg-dot pg-dot-active"></span>in use</li>
+    <li>Teal — inside the private tailnet · dashed orange — the one LAN exception</li>
+  </ul>
+
+  <h2>The loop behind every change</h2>
+  <ol class="loop">
+    <li><strong>Rules.</strong> Conventions, ten security policies, permissions and procedures live in a git wiki. Agents read them before acting.</li>
+    <li><strong>Executor.</strong> <code>/make &lt;intent&gt;</code> finds the matching procedure, fills its inputs and writes a plan. It asks a human where the permissions say so.</li>
+    <li><strong>Independent verifier.</strong> A separate agent with a fresh context and read-only tools returns GO/STOP on the plan and PASS/FAIL from deterministic checks after the change.</li>
+    <li><strong>Log.</strong> The session is written to a log; if reality differed from the procedure, the executor proposes a wiki diff for review.</li>
+  </ol>
+
+  <noscript>
+    <h2>Platform, as text</h2>
+  </noscript>
+  <details class="as-text">
+    <summary>The same graph as a list</summary>
+    {
+      layers.map((l) => (
+        <section>
+          <h3>{l.label}</h3>
+          <ul>
+            {l.nodes.map((n) => (
+              <li>
+                <strong>{n.label}</strong> — {n.card.what} <em>Decision:</em> {n.card.decision}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </details>
+
+  <p class="muted source">
+    Generated from the service registry (wiki commit <code>{graph.source.commit}</code>) through a public allowlist:
+    only status and whether a service is inside the private network are taken from the registry; hostnames, addresses
+    and ports never reach this page.
+  </p>
+</Base>
+
+<style>
+  .loop li {
+    margin-bottom: 0.5rem;
+  }
+  .as-text {
+    margin: 1.5rem 0;
+  }
+  .as-text summary {
+    cursor: pointer;
+    color: var(--accent);
+  }
+  .source {
+    font-size: 0.85rem;
+  }
+</style>

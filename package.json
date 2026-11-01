@@ -6,17 +6,21 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "forbidden": "bash scripts/forbidden.sh"
+    "forbidden": "bash scripts/forbidden.sh",
+    "graph": "node scripts/build-graph.ts"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "@types/node": "22.20.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "elkjs": "0.12.1",
     "typescript": "6.0.3"
   },
   "dependencies": {
     "@astrojs/mdx": "8.1.2",
     "@astrojs/react": "7.1.2",
+    "@xyflow/react": "12.12.0",
     "astro": "7.4.4",
     "react": "19.3.1",
     "react-dom": "19.3.1"

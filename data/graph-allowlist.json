@@ -1,0 +1,263 @@
+{
+  "$comment": "Public allowlist for the platform graph. Only what is listed here can reach the site. Registry rows not mapped under `services` are dropped. Never put hostnames, IPs, ports, paths or tailnet names here.",
+  "layers": [
+    { "id": "devices", "label": "Devices" },
+    { "id": "access", "label": "Access" },
+    { "id": "agents", "label": "Agents" },
+    { "id": "rules", "label": "Rules" },
+    { "id": "services", "label": "Services" },
+    { "id": "records", "label": "Records & delivery" }
+  ],
+  "nodes": [
+    {
+      "id": "laptop",
+      "layer": "devices",
+      "label": "Laptop",
+      "card": {
+        "what": "Thin client. All code, agents and services run on the home server; the laptop only connects.",
+        "why": "One machine holds state, secrets and long-running agents; clients stay disposable.",
+        "decision": "Development moved fully to the server; the laptop is a terminal and a browser."
+      }
+    },
+    {
+      "id": "streamdeck",
+      "layer": "devices",
+      "label": "Stream Deck+",
+      "card": {
+        "what": "8 keys on the laptop: one per project plus the main agent and a session list.",
+        "why": "One press reattaches to the right agent session instead of remembering where work stopped.",
+        "decision": "Each key opens SSH into the server and attaches to a per-project tmux session (created if missing)."
+      }
+    },
+    {
+      "id": "tablet",
+      "layer": "devices",
+      "label": "Tablet kiosk",
+      "card": {
+        "what": "An old tablet (iOS 12) on the wall showing the status board: projects, running agents, who needs a human.",
+        "why": "Agents that wait for permission are visible without opening a terminal.",
+        "decision": "ES5-only front end for Safari 12; polls the board every 10 s. The device cannot run Tailscale, so it is the one LAN exception."
+      }
+    },
+    {
+      "id": "tailnet",
+      "layer": "access",
+      "label": "Private tailnet",
+      "card": {
+        "what": "Tailscale network: every device and service talks over it, with HTTPS certificates inside the tailnet.",
+        "why": "Nothing on the server is reachable from the internet.",
+        "decision": "Policy S2: no Funnel, no router port-forwarding. Services get their own tailnet node via a sidecar container."
+      }
+    },
+    {
+      "id": "lan",
+      "layer": "access",
+      "label": "LAN, one device",
+      "card": {
+        "what": "A single firewall rule lets exactly one device (the tablet) reach the status board over the home LAN.",
+        "why": "The tablet cannot join the tailnet.",
+        "decision": "An automated exposure check flagged the board listening on all interfaces → documented exception with date and owner → firewall narrowed from the whole subnet to one device."
+      }
+    },
+    {
+      "id": "tmux",
+      "layer": "agents",
+      "label": "tmux sessions",
+      "card": {
+        "what": "One long-lived tmux session per project, each running Claude Code in that project's folder.",
+        "why": "Agents survive disconnects; any client can reattach.",
+        "decision": "Sessions are named per project so the board and the Stream Deck find the same session."
+      }
+    },
+    {
+      "id": "make",
+      "layer": "agents",
+      "label": "/make executor",
+      "card": {
+        "what": "Claude Code skill: intent → matching procedure → plan → verifier → execute → verifier → log.",
+        "why": "Infrastructure changes follow a written procedure instead of improvisation.",
+        "decision": "No procedure for an intent → do it step by step with the owner, then draft a new procedure. Step 0 is a wiki freshness check.",
+        "link": "work/platform"
+      }
+    },
+    {
+      "id": "verifier",
+      "layer": "agents",
+      "label": "Independent verifier",
+      "card": {
+        "what": "A separate subagent with a fresh context and read-only tools. Before: GO/STOP on the plan. After: PASS/FAIL from checks.",
+        "why": "The executor should not grade its own work. A check that could not run counts as FAIL.",
+        "decision": "A STOP overrides the executor. It never prints or expands secrets — a rule added after an API key surfaced in its output during a migration (the key was rotated).",
+        "link": "work/platform"
+      }
+    },
+    {
+      "id": "hooks",
+      "layer": "agents",
+      "label": "Claude Code hooks",
+      "card": {
+        "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
+        "why": "The board knows which agent is working, waiting for permission or idle.",
+        "decision": "Only metadata is logged: event, short session id, project, tool name. Never prompt text or file contents."
+      }
+    },
+    {
+      "id": "conventions",
+      "layer": "rules",
+      "label": "Conventions & policies",
+      "card": {
+        "what": "agent-wiki: service registry, permissions (agent alone / asks / human only), security policies S1–S10, secrets rules.",
+        "why": "Agents and the owner read the same rules; every change is a reviewed diff.",
+        "decision": "Exceptions are recorded with date, reason and owner, and mirrored in a machine-readable file the checks honour.",
+        "link": "work/platform"
+      }
+    },
+    {
+      "id": "procedures",
+      "layer": "rules",
+      "label": "Procedures",
+      "card": {
+        "what": "Step-by-step procedures with inputs, preconditions, steps marked ASK, checks, rollback and done criteria.",
+        "why": "Repeatable changes; the verifier checks against preconditions, not against intent.",
+        "decision": "Reality differs from the procedure → the executor proposes a wiki diff; the owner approves; the next run uses it.",
+        "link": "work/platform"
+      }
+    },
+    {
+      "id": "checks",
+      "layer": "rules",
+      "label": "Deterministic checks",
+      "card": {
+        "what": "6 shell checks: container health, HTTPS inside the tailnet, compose policy, live exposure, secrets in git, image CVEs.",
+        "why": "\"Done\" is a check that passes, not a sentence.",
+        "decision": "Exit 0 = PASS, 1 = FAIL, 2 = WARN. A check that let a problem through gets a new check, not a new paragraph.",
+        "link": "work/platform"
+      }
+    },
+    {
+      "id": "notion",
+      "layer": "records",
+      "label": "Notion: projects & session log",
+      "card": {
+        "what": "Projects and a session log. Every working session leaves a short entry; an evening job collects the day.",
+        "why": "Sessions do not see each other; the log is the bridge.",
+        "decision": "What & why lives in Notion, how & by which rules lives in git. One fact in one place."
+      }
+    },
+    {
+      "id": "github",
+      "layer": "records",
+      "label": "GitHub PRs",
+      "card": {
+        "what": "Agents commit on branches and open pull requests.",
+        "why": "Every change is reviewable and reversible.",
+        "decision": "Merging is human-only, as are sudo, secret values and admin consoles."
+      }
+    },
+    {
+      "id": "runlog",
+      "layer": "records",
+      "label": "jev run log",
+      "card": {
+        "what": "One JSON line per routed request: decision, route, latency, config hash. Built from an allow-list of fields.",
+        "why": "Metrics and evals without storing anyone's text.",
+        "decision": "A canary test plants a marker in every free-text field and fails if it reaches the log (ADR-005).",
+        "link": "work/jev"
+      }
+    }
+  ],
+  "services": {
+    "Interview Gym": {
+      "id": "gym",
+      "label": "Interview Gym",
+      "card": {
+        "what": "Interview trainer: Python in the browser (Pyodide), behavioral and system-design practice, a 14-day plan.",
+        "why": "Built for my own interview preparation.",
+        "decision": "Own tailnet node through a Tailscale sidecar, tailnet-only; moved there with the service-own-address procedure (verifier GO → PASS).",
+        "link": "work/interview-gym"
+      }
+    },
+    "jev-web (console)": {
+      "id": "jev-web",
+      "label": "jev console (PWA)",
+      "card": {
+        "what": "Next.js PWA chat console for jev in a hardened container (read-only, all capabilities dropped).",
+        "why": "Use the router from phone and laptop without exposing the API.",
+        "decision": "Served only inside the tailnet; API keys stay server-side; history stays on the device (ADR-013).",
+        "link": "work/jev"
+      }
+    },
+    "jev-api": {
+      "id": "jev-api",
+      "label": "jev API",
+      "card": {
+        "what": "OpenAI-compatible server for the jev router: rules → local classifier → policy → local or cloud executor.",
+        "why": "Any OpenAI-shaped client can use privacy-aware routing.",
+        "decision": "Refuses to bind anything but loopback; sensitive requests never leave the machine (ADR-005, ADR-011).",
+        "link": "work/jev"
+      }
+    },
+    "uptime-board (iPad dashboard)": {
+      "id": "uptime",
+      "label": "Status board",
+      "card": {
+        "what": "FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
+        "why": "See at a glance which agent is working and which one waits for me.",
+        "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
+      }
+    },
+    "livecode-kit (Postgres)": {
+      "id": "livecode",
+      "label": "livecode-kit DB",
+      "card": {
+        "what": "Postgres for a production-shaped Express 5 + Prisma service used to practise live coding with agents.",
+        "why": "Practice on something with real constraints, not a toy.",
+        "decision": "Local only, bound to loopback; container hardening by default.",
+        "link": "work/livecode-kit"
+      }
+    },
+    "babyloop": {
+      "id": "babyloop",
+      "label": "babyloop",
+      "card": {
+        "what": "Mobile app (Expo) for a family sleep routine with a Python calculation core.",
+        "why": "Real users at home; a design system and accessibility from day one.",
+        "decision": "Code only, not deployed yet; a node name is reserved for it.",
+        "link": "work/babyloop"
+      }
+    },
+    "ollama": {
+      "id": "ollama",
+      "label": "Ollama (CPU)",
+      "card": {
+        "what": "Local model runtime on a CPU-only box; one 7B model kept loaded and warmed up at start.",
+        "why": "Classify and answer sensitive requests without the cloud.",
+        "decision": "qwen2.5:7b stayed after a preregistered comparison: the 9B candidate timed out on 13 of 48 calls (ADR-009).",
+        "link": "work/jev"
+      }
+    }
+  },
+  "edges": [
+    { "source": "streamdeck", "target": "laptop", "kind": "local", "label": "USB" },
+    { "source": "laptop", "target": "tailnet", "kind": "tailnet" },
+    { "source": "tablet", "target": "lan", "kind": "lan" },
+    { "source": "tailnet", "target": "tmux", "kind": "ssh", "label": "SSH" },
+    { "source": "tmux", "target": "make", "kind": "run" },
+    { "source": "tmux", "target": "hooks", "kind": "event" },
+    { "source": "make", "target": "verifier", "kind": "verify", "label": "before / after" },
+    { "source": "make", "target": "procedures", "kind": "read" },
+    { "source": "verifier", "target": "conventions", "kind": "read" },
+    { "source": "verifier", "target": "checks", "kind": "run" },
+    { "source": "checks", "target": "gym", "kind": "verify" },
+    { "source": "checks", "target": "jev-web", "kind": "verify" },
+    { "source": "checks", "target": "livecode", "kind": "verify" },
+    { "source": "hooks", "target": "uptime", "kind": "event" },
+    { "source": "lan", "target": "uptime", "kind": "lan" },
+    { "source": "jev-web", "target": "jev-api", "kind": "local", "label": "loopback" },
+    { "source": "jev-api", "target": "ollama", "kind": "local" },
+    { "source": "jev-api", "target": "runlog", "kind": "write" },
+    { "source": "uptime", "target": "notion", "kind": "write" },
+    { "source": "make", "target": "notion", "kind": "write", "label": "session log" },
+    { "source": "make", "target": "github", "kind": "write", "label": "PR" }
+  ]
+}
