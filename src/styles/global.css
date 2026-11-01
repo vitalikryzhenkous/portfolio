@@ -98,3 +98,53 @@ code {
 .theme-toggle:focus-visible {
   border-color: var(--accent);
 }
+
+/* --- print: clean, light, no chrome --------------------------------------------------------- */
+@media print {
+  :root,
+  :root[data-theme='dark'] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --fg: #000000;
+    --muted: #333333;
+    --line: #bbbbbb;
+    --accent: #1a3f9e;
+  }
+  @page {
+    margin: 14mm 14mm 16mm;
+  }
+  body {
+    font-size: 10.5pt;
+  }
+  .site-header,
+  .no-print,
+  .theme-toggle,
+  .pg-player,
+  .react-flow__controls {
+    display: none !important;
+  }
+  main,
+  main.wide {
+    max-width: none;
+    padding: 0;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+  li,
+  figure,
+  table,
+  .card {
+    break-inside: avoid;
+  }
+  details > :not(summary) {
+    display: block;
+  }
+}

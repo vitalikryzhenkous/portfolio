@@ -1,17 +1,258 @@
 ---
 import Base from '../layouts/Base.astro';
+import profile from '../data/profile.json';
+import cv from '../data/cv.json';
+import snap from '../../data/snapshots/2026-11-01.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const live = snap.jev.live;
+const creatio = cv.experience[0]!;
+const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
+const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
+
+const work = [
+  {
+    title: 'jev — privacy-first LLM router',
+    text: 'Sensitive requests stay on a CPU-only home server, the rest go to the cheapest Claude model that can do the job. Every model and policy change is decided by a preregistered eval.',
+    href: `${base}/work/jev/`,
+    tag: 'Case study',
+  },
+  {
+    title: 'Agent platform with an independent verifier',
+    text: 'Coding agents change real infrastructure only under written rules; a second agent with a fresh context checks every plan and result.',
+    href: `${base}/how-i-work/`,
+    tag: 'Interactive graph',
+  },
+  {
+    title: 'connectiq-watchface-kit',
+    text: 'Open source: a Claude Code skill, an MCP server with 5 tools and a 10-task benchmark for building Garmin watch faces. A face built with it is live in the Connect IQ Store.',
+    href: 'https://github.com/vitalikryzhenkous/connectiq-watchface-kit',
+    tag: 'Open source ↗',
+  },
+  {
+    title: 'donecheck',
+    text: 'An independent checker that verifies whether a coding agent did what it was asked. In progress — built in the open.',
+    href: null,
+    tag: 'In progress',
+  },
+];
 ---
 
 <Base
   title="Vitalii Ryzhenko — Applied AI Engineer"
-  description="Applied AI / Forward Deployed Engineer. Portfolio under construction."
+  description="Applied AI / Forward Deployed Engineer. I ship LLM features to production and prove them with evals."
 >
-  <h1>Vitalii Ryzhenko</h1>
-  <p>Applied AI Engineer · Forward Deployed Engineer (GenAI) · Poznań</p>
-  <p class="muted">Portfolio under construction — case studies coming soon.</p>
+  <section class="hero">
+    <p class="roles">{profile.roles.join(' · ')}</p>
+    <h1>I ship LLM features to production — and prove them with evals.</h1>
+    <p class="lead">
+      9+ years of full-stack engineering (TypeScript, Angular/React, .NET/Node). At Creatio I build MCP tools, structured
+      output features and agent evals; on my own hardware I run a privacy-first LLM router and an agent platform with an
+      independent verifier. Before engineering I sold B2B, so I am at home in front of customers.
+    </p>
+    <p class="meta">{profile.location}</p>
+    <div class="cta">
+      <a class="btn btn-primary" href={profile.links.booking} rel="noopener">Book a 30-min call</a>
+      <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download>Download CV (PDF)</a>
+      <a class="btn" href={`${base}/cv/`}>CV page &amp; print</a>
+    </div>
+  </section>
+
+  <ul class="facts" aria-label="Key numbers">
+    <li>
+      <span class="fv">14</span>
+      <span class="fl">merged PRs with MCP tools to the public clio / clio-knowledge repos</span>
+    </li>
+    <li>
+      <span class="fv">~175</span>
+      <span class="fl">L4 customer escalations handled, median ~1 week to close</span>
+    </li>
+    <li>
+      <span class="fv">{Math.round(live.local_share.pct * 100)}%</span>
+      <span class="fl">of jev's routed requests answered on local hardware ({live.local_share.k}/{live.local_share.n})</span>
+    </li>
+  </ul>
+  <p class="src">First two numbers: CV (Creatio). Third: jev run log, snapshot {snap.taken_utc.slice(0, 10)}.</p>
+
+  <h2>Applied AI at work</h2>
+  <p class="sub">{creatio.company} · {creatio.role} · {creatio.period}</p>
+  <ul class="bullets">
+    {ai.slice(0, 5).map((t) => <li>{t}</li>)}
+  </ul>
+  <p class="sub">
+    Public repositories:
+    <a href="https://github.com/Advance-Technologies-Foundation/clio" rel="noopener">clio</a> ·
+    <a href="https://github.com/Advance-Technologies-Foundation/clio-knowledge" rel="noopener">clio-knowledge</a>
+  </p>
+
+  <h2>In front of customers</h2>
+  <ul class="bullets">
+    {l4.map((t) => <li>{t}</li>)}
+    <li>Before engineering: B2B sales, from cold calls to multi-million contracts — scoping, cost and value are familiar ground.</li>
+  </ul>
+
+  <h2>Selected work</h2>
+  <ul class="cards">
+    {
+      work.map((w) => (
+        <li class="card">
+          <span class="tag">{w.tag}</span>
+          <h3>{w.href ? <a href={w.href}>{w.title}</a> : w.title}</h3>
+          <p>{w.text}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Certifications</h2>
+  <ul class="certs">
+    {
+      profile.certifications.map((c) => (
+        <li>
+          {'url' in c && c.url ? (
+            <a href={c.url} rel="noopener">
+              {c.name}
+            </a>
+          ) : (
+            c.name
+          )}
+          <span class="muted">
+            {' '}
+            · {c.issuer}
+            {'date' in c && c.date ? ` · ${c.date}` : ''}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Learning next</h2>
+  <ul class="bullets">
+    {profile.learning.map((l) => <li>{l.what}{l.by ? <span class="muted"> — by {l.by}</span> : null}</li>)}
+  </ul>
+
+  <h2>Contact</h2>
   <p>
-    <a href="https://www.linkedin.com/in/vitalii-ryzhenko-366858116">LinkedIn</a>{' · '}<a
-      href="https://github.com/vitalikryzhenkous">GitHub</a
-    >
+    <a href={profile.links.booking} rel="noopener">Book a call (Google Meet)</a> ·
+    <a href={`mailto:${profile.email}`}>{profile.email}</a> ·
+    <a href={profile.links.linkedin} rel="noopener">LinkedIn</a> ·
+    <a href={profile.links.github} rel="noopener">GitHub</a>
   </p>
 </Base>
+
+<style>
+  .roles {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    line-height: 1.15;
+    margin: 0.4rem 0 0.8rem;
+  }
+  .lead {
+    font-size: 1.1rem;
+  }
+  .meta {
+    color: var(--muted);
+    margin: 0.3rem 0 1rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .btn:hover,
+  .btn:focus-visible {
+    border-color: var(--accent);
+  }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.8rem;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0.3rem;
+  }
+  .facts li {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.8rem;
+    background: var(--surface);
+  }
+  .fv {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .fl {
+    display: block;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+  .src,
+  .sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  h2 {
+    margin-top: 2.6rem;
+  }
+  .bullets li {
+    margin-bottom: 0.45rem;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.8rem;
+    list-style: none;
+    padding: 0;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1rem;
+    background: var(--surface);
+  }
+  .card h3 {
+    margin: 0.3rem 0;
+    font-size: 1.05rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .certs {
+    padding-left: 1.2rem;
+  }
+  .certs li {
+    margin-bottom: 0.25rem;
+  }
+</style>

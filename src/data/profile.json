@@ -1,0 +1,32 @@
+{
+  "$comment": "Public profile. Work facts are copied from the CV (only what the CV says about employers). Learning plan items approved by the owner on 2026-11-01.",
+  "name": "Vitalii Ryzhenko",
+  "roles": ["Applied AI Engineer", "Forward Deployed Engineer (GenAI)"],
+  "location": "Poznań, Poland · B2B",
+  "email": "vitaliiryzhenkous@gmail.com",
+  "links": {
+    "linkedin": "https://www.linkedin.com/in/vitalii-ryzhenko-366858116",
+    "github": "https://github.com/vitalikryzhenkous",
+    "booking": "https://calendar.app.google/bRgiRnHnjNJM2mUw5"
+  },
+  "cv": [
+    { "id": "applied-ai", "label": "Applied AI / FDE", "file": "cv/vitalii-ryzhenko-cv-applied-ai-fde.pdf" },
+    { "id": "full-stack", "label": "Full-Stack", "file": "cv/vitalii-ryzhenko-cv-full-stack.pdf" }
+  ],
+  "certifications": [
+    { "issuer": "DeepLearning.AI", "name": "Spec-Driven Development with Coding Agents", "url": "https://www.deeplearning.ai/accomplishments/718be117-5166-444c-a3c7-93454f3d85e1" },
+    { "issuer": "Anthropic Academy", "name": "Claude Platform 101", "date": "2026-06-26" },
+    { "issuer": "Anthropic Academy", "name": "Introduction to Model Context Protocol", "date": "2026-06-12" },
+    { "issuer": "Anthropic Academy", "name": "AI Fluency: Framework and Foundations", "date": "2026-06-03" },
+    { "issuer": "Anthropic Academy", "name": "Claude Code 101", "date": "2026-06-03" },
+    { "issuer": "Anthropic Academy", "name": "Introduction to subagents", "date": "2026-05-15" },
+    { "issuer": "Anthropic Academy", "name": "Introduction to agent skills", "date": "2026-05-15" },
+    { "issuer": "Anthropic Academy", "name": "Claude Code in Action", "date": "2026-05-15" },
+    { "issuer": "Anthropic Academy", "name": "Claude 101", "date": "2026-05-13" }
+  ],
+  "learning": [
+    { "what": "Claude Certified Architect – Foundations", "by": "2027-01-31" },
+    { "what": "A public Applied AI project with RAG and evals: deployed, README with metrics", "by": "2027-01-31" },
+    { "what": "Fine-tune a 0.5–1.5B classifier for jev with LoRA and compare it with the 7B on frozen holdouts", "by": null }
+  ]
+}

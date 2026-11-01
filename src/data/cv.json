@@ -1,0 +1,89 @@
+{
+  "$comment": "HTML version of the Applied AI / FDE CV — text copied from the PDF (2026-11-01). Change the PDF and this file together.",
+  "headline": "Applied AI / Forward Deployed Engineer | Full-Stack TypeScript · .NET · Python | LLM Features, MCP, Agent Evals",
+  "summary": "Applied AI engineer with 9+ years of full-stack experience across enterprise, healthcare and e-commerce platforms (TypeScript, Angular/React, .NET/Node). I ship LLM features and AI-agent tooling to production — MCP tools, structured outputs, context engineering and agent evals — and work directly with customers, taking vague problems to production fixes. Before engineering I worked in B2B sales, so discussing scope, cost and value with customers comes naturally.",
+  "experience": [
+    {
+      "company": "Creatio",
+      "role": "Senior Full-Stack Engineer",
+      "period": "09.2023 – Present",
+      "context": "B2B · Large Angular/TypeScript low-code platform (Nx monorepo, ~20 repositories, C#/.NET)",
+      "groups": [
+        {
+          "name": "AI & agent tooling",
+          "items": [
+            "Built MCP tools for an open-source agent integration with the platform, incl. a deterministic nested-filter builder with schema validation that rejects invalid configurations before save; 14 merged PRs to the public clio and clio-knowledge repositories.",
+            "Replaced the agent's overloaded always-on instructions with a thin router and on-demand guidance via tool descriptions and versioned bundles — cut persistent context ~75% and fit it under the client's truncation limit.",
+            "Extended the agent eval suite with end-to-end scenarios that verify the produced result in a real browser (Playwright), with tool whitelists and negative cases.",
+            "Delivered LLM-driven generation of analytics widgets in chat (5 widget types): JSON-Schema structured output, response-to-config converters, prompt engineering.",
+            "Hardened LLM response handling in the product AI chat with deterministic post-processing and explicit errors — eliminated one defect class (backported to a supported release) and diagnosed another for the owning team.",
+            "Embedded web-client mode running the AI assistant inside an Outlook add-in: built its routing and standalone library (own CI, tests), prototyped cookie-less authentication, co-built fault-tolerant session-token refresh. Add-ins for two host apps run on this mode.",
+            "Built an agent-skill orchestrator with ~15 contract tests and a personal agentic workflow (pre-commit root-cause hooks, parallel agent sessions, reusable review/refactoring skills)."
+          ]
+        },
+        {
+          "name": "Customer escalations (L4)",
+          "items": [
+            "Handled ~175 L4 client escalations (2024–2026): reproduced on clean environments, traced to root cause, delivered a fix, workaround or justified closure; median time to close ~1 week.",
+            "Untangled multi-layer defects (e.g. two bugs in designer and widget masking each other; a four-step metadata failure chain that froze home pages) and backported fixes to supported release lines.",
+            "~40% closed without product changes: separated product defects from configuration, environment and cross-team issues, with evidence for the owning team or clear guidance for the customer."
+          ]
+        },
+        {
+          "name": "Front-end performance & architecture",
+          "items": [
+            "Led a team refactor splitting the monolithic analytics-widget library into a shared core and 6–7 lazy-loaded modules, removing chart code from the initial bundle (~0.5 MB, ~5% of always-loaded chunks).",
+            "Moved a heavy code editor out of the initial bundle into a lazy-loaded library with its own CI, Storybook and tests.",
+            "Parallelized web-client startup and added page-load telemetry; added a feature-flagged module-loading cache; backported background-tab load acceleration to two release lines.",
+            "Migrated ~190 UI-library components to a new reuse strategy in ~2 weeks; removed redundant change-detection work and duplicate HTTP calls."
+          ]
+        },
+        {
+          "name": "Product features",
+          "items": [
+            "Built analytics widgets and settings (metrics, calculated metrics, pivot tables); reduced database load from analytics queries; added pivot-table support and CLI delivery to the dashboard migrator.",
+            "Owned technical research for WhatsApp Business template management via Twilio (two UI prototypes, architecture decision record); implemented the template lifecycle in a decoupled module with ~50 unit tests.",
+            "Implemented WCAG accessibility (screen-reader announcements, focus management, keyboard indicators) and localization into dozens of languages.",
+            "Published the developer SDK npm package with automated dependency-integrity checks; remediated dependency and container-image vulnerabilities."
+          ]
+        },
+        {
+          "name": "Quality",
+          "items": [
+            "Raised share of commits with tests from 27% to 53% and added ~1K test cases; wrote Playwright E2E specs and ~13 test-framework SDK modules; reviewed ~185 pull requests in 2026."
+          ]
+        }
+      ]
+    },
+    {
+      "company": "DataArt",
+      "role": "Senior Software Engineer",
+      "period": "2019 – 2023",
+      "groups": [
+        {
+          "name": "",
+          "items": [
+            "Built scalable healthcare and e-commerce applications with Angular and AWS.",
+            "Coordinated multi-team delivery for medical IoT integrations and online consultation systems."
+          ]
+        }
+      ]
+    },
+    {
+      "company": "Ciklum",
+      "role": "Middle JavaScript Developer",
+      "period": "2017 – 2019",
+      "groups": [
+        {
+          "name": "",
+          "items": [
+            "Migrated legacy automotive systems to Angular with an Nrwl/Nx monorepo; developed healthcare product-management tools with React and Redux."
+          ]
+        }
+      ]
+    }
+  ],
+  "earlier": "Frontend Developer, 2016–2017 (Lanet Network, BuddhaSoft; Angular 2+, HTML/CSS)",
+  "education": "Master's Degree, Management of Organizations and Administration — Volodymyr Dahl East Ukrainian National University · Professional Software Engineering Retraining (2017)",
+  "languages": "English (B2) · Polish (conversational)"
+}
