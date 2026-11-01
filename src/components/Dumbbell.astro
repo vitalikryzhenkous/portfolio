@@ -134,10 +134,14 @@ const id = `db-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
     background: var(--surface);
   }
   @media (prefers-color-scheme: dark) {
-    .viz-root {
+    :global(:root:not([data-theme='light'])) .viz-root {
       --from: #5598e7;
       --to: #9ec5f4;
     }
+  }
+  :global(:root[data-theme='dark']) .viz-root {
+    --from: #5598e7;
+    --to: #9ec5f4;
   }
   figcaption {
     display: flex;

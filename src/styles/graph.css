@@ -1,18 +1,10 @@
 .pg {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 20rem;
-  gap: 1rem;
   margin: 1.5rem 0;
 }
 
-@media (max-width: 900px) {
-  .pg {
-    grid-template-columns: 1fr;
-  }
-}
-
 .pg-canvas {
-  height: 34rem;
+  position: relative;
+  height: 38rem;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
@@ -21,7 +13,11 @@
 
 @media (max-width: 900px) {
   .pg-canvas {
-    height: 26rem;
+    height: auto;
+    overflow: visible;
+  }
+  .pg-canvas .react-flow {
+    height: 28rem;
   }
 }
 
@@ -106,11 +102,56 @@
 .pg-edge-write .react-flow__edge-path { stroke: #c0567a; }
 
 .pg-card {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 5;
+  width: min(22rem, calc(100% - 1.5rem));
+  max-height: calc(100% - 1.5rem);
+  overflow: auto;
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 1rem 1.1rem;
+  background: var(--bg);
+  box-shadow: 0 8px 28px -12px rgb(0 0 0 / 0.35);
+}
+
+@media (max-width: 900px) {
+  .pg-card {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin-top: 0.75rem;
+    box-shadow: none;
+  }
+}
+
+.pg-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pg-close:hover,
+.pg-close:focus-visible {
+  color: var(--fg);
   background: var(--surface);
-  align-self: start;
+}
+
+.pg-hint {
+  align-self: center;
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--muted);
 }
 
 .pg-card h3 {

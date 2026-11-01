@@ -1,0 +1,79 @@
+---
+/** Stack of one project (or the professional block), from src/data/stack.json. */
+import stack from '../data/stack.json';
+
+interface Props {
+  project?: string; // project id; omit for the professional (CV) block
+  heading?: boolean;
+}
+
+const { project, heading = true } = Astro.props;
+const entry = project ? stack.projects.find((p) => p.id === project) : null;
+if (project && !entry) throw new Error(`StackBlock: unknown project "${project}"`);
+const groups = entry ? entry.groups : stack.professional.groups;
+---
+
+<section class="stack">
+  {heading && <h2>Stack</h2>}
+  <dl>
+    {
+      groups.map((g) => (
+        <div class="grp">
+          <dt>{g.name}</dt>
+          <dd>
+            <ul>
+              {g.items.map((i) => (
+                <li set:html={i.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style>
+  .stack dl {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0.8rem 0 0;
+  }
+  .grp {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.8rem;
+    align-items: baseline;
+  }
+  @media (max-width: 560px) {
+    .grp {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+  dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    font-size: 0.85rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+</style>

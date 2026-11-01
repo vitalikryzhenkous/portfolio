@@ -21,6 +21,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <!-- hidden until launch: remove noindex + robots.txt Disallow when the site is ready -->
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+    <script is:inline>
+      // Apply a saved theme before first paint (no flash). Storage can be blocked: then follow the OS.
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <header class="site-header">
@@ -28,10 +35,36 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <a href={`${base}/`} class="brand">Vitalii Ryzhenko</a>
         <a href={`${base}/work/jev/`}>jev</a>
         <a href={`${base}/how-i-work/`}>How I work</a>
+        <a href={`${base}/stack/`}>Stack</a>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle light or dark theme">◐ Theme</button>
       </nav>
     </header>
     <main class:list={[{ wide }]}>
       <slot />
     </main>
+    <script>
+      const btn = document.getElementById('theme-toggle');
+      const root = document.documentElement;
+      const current = (): 'light' | 'dark' =>
+        root.dataset.theme === 'light' || root.dataset.theme === 'dark'
+          ? root.dataset.theme
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+      const label = () => {
+        const next = current() === 'dark' ? 'light' : 'dark';
+        btn?.setAttribute('aria-label', `Switch to ${next} theme`);
+        if (btn) btn.textContent = next === 'light' ? '☀ Light' : '☾ Dark';
+      };
+      label();
+      btn?.addEventListener('click', () => {
+        const next = current() === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+        label();
+      });
+    </script>
   </body>
 </html>

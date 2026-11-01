@@ -239,6 +239,7 @@ export default function PlatformGraph() {
               ■ Stop
             </button>
           ) : null}
+          <span className="pg-hint">Tip: click any node for what · why · decision</span>
         </div>
         <p className="pg-caption" aria-live="polite">
           {caption ? (
@@ -259,6 +260,8 @@ export default function PlatformGraph() {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onSelectionChange={onSelectionChange}
+            onNodeClick={(_, n) => setActive(graph.nodes.find((g) => g.id === n.id) ?? null)}
+            onPaneClick={() => setActive(null)}
             fitView
             fitViewOptions={{ padding: 0.06 }}
             minZoom={0.2}
@@ -269,6 +272,28 @@ export default function PlatformGraph() {
             <Background gap={24} size={1} />
             <Controls showInteractive={false} />
           </ReactFlow>
+          {active ? (
+            <aside className="pg-card" aria-live="polite" aria-label={`${active.label} details`}>
+              <button type="button" className="pg-close" aria-label="Close details" onClick={() => setActive(null)}>
+                ×
+              </button>
+              <p className="pg-card-layer">
+                {graph.layers.find((l) => l.id === active.layer)?.label} · {STATUS_LABEL[active.status]}
+              </p>
+              <h3>{active.label}</h3>
+              <dl>
+                <dt>What</dt>
+                <dd>{active.card.what}</dd>
+                <dt>Why</dt>
+                <dd>{active.card.why}</dd>
+                <dt>Decision</dt>
+                <dd>{active.card.decision}</dd>
+              </dl>
+              {'link' in active.card && active.card.link && LIVE_CASES.has(active.card.link) ? (
+                <a href={`${BASE}/${active.card.link}/`}>Case study →</a>
+              ) : null}
+            </aside>
+          ) : null}
         </div>
       </div>
       <aside className="pg-card" aria-live="polite">
