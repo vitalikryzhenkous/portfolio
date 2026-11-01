@@ -261,3 +261,21 @@
     transition: box-shadow 0.25s ease;
   }
 }
+
+/* --- project frames (one project drawn around its parts) ---------------------------------- */
+.pg-frame {
+  width: 100%;
+  height: 100%;
+  border: 1.5px dashed var(--muted);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  cursor: pointer;
+}
+
+.pg-frame-label {
+  display: block;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--fg);
+}

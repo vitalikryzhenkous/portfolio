@@ -1,12 +1,30 @@
 {
   "$comment": "Public allowlist for the platform graph. Only what is listed here can reach the site. Registry rows not mapped under `services` are dropped. Never put hostnames, IPs, ports, paths or tailnet names here.",
   "layers": [
-    { "id": "devices", "label": "Devices" },
-    { "id": "access", "label": "Access" },
-    { "id": "agents", "label": "Agents" },
-    { "id": "rules", "label": "Rules" },
-    { "id": "services", "label": "Services" },
-    { "id": "records", "label": "Records & delivery" }
+    {
+      "id": "devices",
+      "label": "Devices"
+    },
+    {
+      "id": "access",
+      "label": "Access"
+    },
+    {
+      "id": "agents",
+      "label": "Agents"
+    },
+    {
+      "id": "rules",
+      "label": "Rules"
+    },
+    {
+      "id": "services",
+      "label": "Services"
+    },
+    {
+      "id": "records",
+      "label": "Records & delivery"
+    }
   ],
   "nodes": [
     {
@@ -166,6 +184,24 @@
       }
     }
   ],
+  "groups": [
+    {
+      "id": "jev",
+      "layer": "services",
+      "label": "jev — LLM router",
+      "members": [
+        "jev-web",
+        "jev-api",
+        "ollama"
+      ],
+      "card": {
+        "what": "One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
+        "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
+        "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes go through preregistered evals.",
+        "link": "work/jev"
+      }
+    }
+  ],
   "services": {
     "Interview Gym": {
       "id": "gym",
@@ -238,26 +274,116 @@
     }
   },
   "edges": [
-    { "source": "streamdeck", "target": "laptop", "kind": "local", "label": "USB" },
-    { "source": "laptop", "target": "tailnet", "kind": "tailnet" },
-    { "source": "tablet", "target": "lan", "kind": "lan" },
-    { "source": "tailnet", "target": "tmux", "kind": "ssh", "label": "SSH" },
-    { "source": "tmux", "target": "make", "kind": "run" },
-    { "source": "tmux", "target": "hooks", "kind": "event" },
-    { "source": "make", "target": "verifier", "kind": "verify", "label": "before / after" },
-    { "source": "make", "target": "procedures", "kind": "read" },
-    { "source": "verifier", "target": "conventions", "kind": "read" },
-    { "source": "verifier", "target": "checks", "kind": "run" },
-    { "source": "checks", "target": "gym", "kind": "verify" },
-    { "source": "checks", "target": "jev-web", "kind": "verify" },
-    { "source": "checks", "target": "livecode", "kind": "verify" },
-    { "source": "hooks", "target": "uptime", "kind": "event" },
-    { "source": "lan", "target": "uptime", "kind": "lan" },
-    { "source": "jev-web", "target": "jev-api", "kind": "local", "label": "loopback" },
-    { "source": "jev-api", "target": "ollama", "kind": "local" },
-    { "source": "jev-api", "target": "runlog", "kind": "write" },
-    { "source": "uptime", "target": "notion", "kind": "write" },
-    { "source": "make", "target": "notion", "kind": "write", "label": "session log" },
-    { "source": "make", "target": "github", "kind": "write", "label": "PR" }
+    {
+      "source": "streamdeck",
+      "target": "laptop",
+      "kind": "local",
+      "label": "USB"
+    },
+    {
+      "source": "laptop",
+      "target": "tailnet",
+      "kind": "tailnet"
+    },
+    {
+      "source": "tablet",
+      "target": "lan",
+      "kind": "lan"
+    },
+    {
+      "source": "tailnet",
+      "target": "tmux",
+      "kind": "ssh",
+      "label": "SSH"
+    },
+    {
+      "source": "tmux",
+      "target": "make",
+      "kind": "run"
+    },
+    {
+      "source": "tmux",
+      "target": "hooks",
+      "kind": "event"
+    },
+    {
+      "source": "make",
+      "target": "verifier",
+      "kind": "verify",
+      "label": "before / after"
+    },
+    {
+      "source": "make",
+      "target": "procedures",
+      "kind": "read"
+    },
+    {
+      "source": "verifier",
+      "target": "conventions",
+      "kind": "read"
+    },
+    {
+      "source": "verifier",
+      "target": "checks",
+      "kind": "run"
+    },
+    {
+      "source": "checks",
+      "target": "gym",
+      "kind": "verify"
+    },
+    {
+      "source": "checks",
+      "target": "jev-web",
+      "kind": "verify"
+    },
+    {
+      "source": "checks",
+      "target": "livecode",
+      "kind": "verify"
+    },
+    {
+      "source": "hooks",
+      "target": "uptime",
+      "kind": "event"
+    },
+    {
+      "source": "lan",
+      "target": "uptime",
+      "kind": "lan"
+    },
+    {
+      "source": "jev-web",
+      "target": "jev-api",
+      "kind": "local",
+      "label": "loopback"
+    },
+    {
+      "source": "jev-api",
+      "target": "ollama",
+      "kind": "local"
+    },
+    {
+      "source": "jev-api",
+      "target": "runlog",
+      "kind": "write"
+    },
+    {
+      "source": "uptime",
+      "target": "notion",
+      "kind": "write"
+    },
+    {
+      "source": "make",
+      "target": "notion",
+      "kind": "write",
+      "label": "session log"
+    },
+    {
+      "source": "make",
+      "target": "github",
+      "kind": "write",
+      "label": "PR"
+    }
   ]
 }

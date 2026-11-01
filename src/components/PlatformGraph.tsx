@@ -17,10 +17,11 @@ import '@xyflow/react/dist/style.css';
 import graph from '../data/graph.json';
 
 type Card = { what: string; why: string; decision: string; link?: string };
-type GraphNode = (typeof graph.nodes)[number];
+type Active = { label: string; where: string; card: Card };
 type Scenario = (typeof graph.scenarios)[number];
 type PlatformData = { label: string; status: string; layer: string; card: Card; lit: boolean };
 type LayerData = { label: string };
+type FrameData = { label: string };
 type Pulse = { run: number; reverse: boolean };
 type FlowEdgeData = { pulse: Pulse | null };
 
@@ -52,6 +53,14 @@ function PlatformNode({ data, selected }: NodeProps<Node<PlatformData>>) {
       <span className={`pg-dot pg-dot-${data.status}`} aria-hidden="true" />
       <span className="pg-label">{data.label}</span>
       <Handle type="source" position={Position.Right} className="pg-handle" />
+    </div>
+  );
+}
+
+function FrameNode({ data, selected }: NodeProps<Node<FrameData>>) {
+  return (
+    <div className={`pg-frame${selected ? ' pg-selected' : ''}`}>
+      <span className="pg-frame-label">{data.label}</span>
     </div>
   );
 }
@@ -100,11 +109,22 @@ function FlowEdge(props: EdgeProps<Edge<FlowEdgeData>>) {
   );
 }
 
-const nodeTypes = { platform: PlatformNode, layer: LayerNode };
+const nodeTypes = { platform: PlatformNode, layer: LayerNode, frame: FrameNode };
+
+const layerLabel = (id: string) => graph.layers.find((l) => l.id === id)?.label ?? id;
+function activeFor(id: string): Active | null {
+  const n = graph.nodes.find((x) => x.id === id);
+  if (n) {
+    const part = n.group ? ` · part of ${graph.groups.find((g) => g.id === n.group)?.label ?? n.group}` : '';
+    return { label: n.label, where: `${layerLabel(n.layer)} · ${STATUS_LABEL[n.status] ?? n.status}${part}`, card: n.card };
+  }
+  const g = graph.groups.find((x) => x.id === id);
+  return g ? { label: g.label, where: `${layerLabel('services')} · project`, card: g.card } : null;
+}
 const edgeTypes = { flow: FlowEdge };
 
 export default function PlatformGraph() {
-  const [active, setActive] = useState<GraphNode | null>(null);
+  const [active, setActive] = useState<Active | null>(null);
   const [scenario, setScenario] = useState<Scenario | null>(null);
   const [step, setStep] = useState(-1);
   const [run, setRun] = useState(0);
@@ -191,7 +211,17 @@ export default function PlatformGraph() {
       draggable: false,
       ariaLabel: `${n.label}, ${STATUS_LABEL[n.status] ?? n.status}. Press Enter for details.`,
     }));
-    return [...headers, ...items];
+    const frames: Node<FrameData>[] = graph.groups.map((g) => ({
+      id: g.id,
+      type: 'frame',
+      position: { x: g.x, y: g.y },
+      data: { label: g.label },
+      draggable: false,
+      zIndex: -1,
+      style: { width: g.width, height: g.height },
+      ariaLabel: `${g.label}, project with ${g.members.length} parts. Press Enter for details.`,
+    }));
+    return [...headers, ...frames, ...items];
   }, [litNodes]);
 
   const edges = useMemo<Edge<FlowEdgeData>[]>(
@@ -213,7 +243,7 @@ export default function PlatformGraph() {
 
   const onSelectionChange = useCallback(({ nodes: sel }: OnSelectionChangeParams) => {
     const id = sel[0]?.id;
-    setActive(id ? (graph.nodes.find((n) => n.id === id) ?? null) : null);
+    setActive(id ? activeFor(id) : null);
   }, []);
 
   const playing = scenario !== null && step >= 0 && step < scenario.steps.length;
@@ -258,7 +288,7 @@ export default function PlatformGraph() {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onSelectionChange={onSelectionChange}
-            onNodeClick={(_, n) => setActive(graph.nodes.find((g) => g.id === n.id) ?? null)}
+            onNodeClick={(_, n) => setActive(activeFor(n.id))}
             onPaneClick={() => setActive(null)}
             fitView
             fitViewOptions={{ padding: 0.06 }}
@@ -275,9 +305,7 @@ export default function PlatformGraph() {
               <button type="button" className="pg-close" aria-label="Close details" onClick={() => setActive(null)}>
                 ×
               </button>
-              <p className="pg-card-layer">
-                {graph.layers.find((l) => l.id === active.layer)?.label} · {STATUS_LABEL[active.status]}
-              </p>
+              <p className="pg-card-layer">{active.where}</p>
               <h3>{active.label}</h3>
               <dl>
                 <dt>What</dt>

@@ -47,7 +47,8 @@
       },
       "status": "active",
       "x": 0,
-      "y": 222
+      "y": 231,
+      "group": null
     },
     {
       "id": "streamdeck",
@@ -60,7 +61,8 @@
       },
       "status": "active",
       "x": 0,
-      "y": 148
+      "y": 157,
+      "group": null
     },
     {
       "id": "tablet",
@@ -73,7 +75,8 @@
       },
       "status": "active",
       "x": 0,
-      "y": 296
+      "y": 305,
+      "group": null
     },
     {
       "id": "tailnet",
@@ -86,7 +89,8 @@
       },
       "status": "active",
       "x": 280,
-      "y": 185
+      "y": 194,
+      "group": null
     },
     {
       "id": "lan",
@@ -99,7 +103,8 @@
       },
       "status": "active",
       "x": 280,
-      "y": 259
+      "y": 268,
+      "group": null
     },
     {
       "id": "tmux",
@@ -112,7 +117,8 @@
       },
       "status": "active",
       "x": 560,
-      "y": 259
+      "y": 268,
+      "group": null
     },
     {
       "id": "make",
@@ -126,7 +132,8 @@
       },
       "status": "active",
       "x": 560,
-      "y": 185
+      "y": 194,
+      "group": null
     },
     {
       "id": "verifier",
@@ -140,7 +147,8 @@
       },
       "status": "active",
       "x": 560,
-      "y": 111
+      "y": 120,
+      "group": null
     },
     {
       "id": "hooks",
@@ -153,7 +161,8 @@
       },
       "status": "active",
       "x": 560,
-      "y": 333
+      "y": 342,
+      "group": null
     },
     {
       "id": "conventions",
@@ -167,7 +176,8 @@
       },
       "status": "active",
       "x": 840,
-      "y": 296
+      "y": 305,
+      "group": null
     },
     {
       "id": "procedures",
@@ -181,7 +191,8 @@
       },
       "status": "active",
       "x": 840,
-      "y": 148
+      "y": 157,
+      "group": null
     },
     {
       "id": "checks",
@@ -195,7 +206,8 @@
       },
       "status": "active",
       "x": 840,
-      "y": 222
+      "y": 231,
+      "group": null
     },
     {
       "id": "notion",
@@ -208,7 +220,8 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 296
+      "y": 305,
+      "group": null
     },
     {
       "id": "github",
@@ -221,7 +234,8 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 222
+      "y": 231,
+      "group": null
     },
     {
       "id": "runlog",
@@ -235,7 +249,8 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 148
+      "y": 157,
+      "group": null
     },
     {
       "id": "gym",
@@ -249,7 +264,8 @@
         "link": "work/interview-gym"
       },
       "x": 1120,
-      "y": 296
+      "y": 240,
+      "group": null
     },
     {
       "id": "jev-web",
@@ -263,7 +279,8 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 74
+      "y": 30,
+      "group": "jev"
     },
     {
       "id": "jev-api",
@@ -277,7 +294,8 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 148
+      "y": 92,
+      "group": "jev"
     },
     {
       "id": "uptime",
@@ -290,7 +308,8 @@
         "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
       },
       "x": 1120,
-      "y": 444
+      "y": 388,
+      "group": null
     },
     {
       "id": "livecode",
@@ -304,7 +323,8 @@
         "link": "work/livecode-kit"
       },
       "x": 1120,
-      "y": 370
+      "y": 314,
+      "group": null
     },
     {
       "id": "babyloop",
@@ -318,7 +338,8 @@
         "link": "work/babyloop"
       },
       "x": 1120,
-      "y": 0
+      "y": 462,
+      "group": null
     },
     {
       "id": "ollama",
@@ -332,7 +353,29 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 222
+      "y": 154,
+      "group": "jev"
+    }
+  ],
+  "groups": [
+    {
+      "id": "jev",
+      "label": "jev — LLM router",
+      "card": {
+        "what": "One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
+        "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
+        "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes go through preregistered evals.",
+        "link": "work/jev"
+      },
+      "x": 1108,
+      "y": 0,
+      "width": 214,
+      "height": 214,
+      "members": [
+        "jev-web",
+        "jev-api",
+        "ollama"
+      ]
     }
   ],
   "edges": [

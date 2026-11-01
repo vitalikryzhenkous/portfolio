@@ -17,8 +17,10 @@ type Status = 'running' | 'code-only' | 'active';
 type AllowNode = { id: string; layer: string; label: string; card: Card };
 type AllowService = { id: string; label: string; card: Card };
 type Edge = { source: string; target: string; kind: string; label?: string };
+type AllowGroup = { id: string; layer: string; label: string; members: string[]; card: Card };
 type Allowlist = {
   layers: { id: string; label: string }[];
+  groups?: AllowGroup[];
   nodes: AllowNode[];
   services: Record<string, AllowService>;
   edges: Edge[];
@@ -83,6 +85,19 @@ const edges: Edge[] = [
   ...allow.edges,
   ...[...derived].filter(([, d]) => d.tailnet).map(([id]) => ({ source: 'tailnet', target: id, kind: 'tailnet' })),
 ];
+// Groups: one project drawn as a frame around its components (same layer only, no overlaps).
+const groups = allow.groups ?? [];
+const groupOf = new Map<string, AllowGroup>();
+for (const g of groups) {
+  for (const m of g.members) {
+    const n = nodes.find((x) => x.id === m);
+    if (!n || n.layer !== g.layer || groupOf.has(m)) {
+      console.error(`build-graph: group ${g.id}: member ${m} missing, in another layer, or in two groups`);
+      process.exit(1);
+    }
+    groupOf.set(m, g);
+  }
+}
 for (const e of edges) {
   if (!ids.has(e.source) || !ids.has(e.target)) {
     console.error(`build-graph: edge ${e.source} → ${e.target} references an unknown node`);
@@ -118,17 +133,63 @@ const laid = await elk.layout({
 // minimisation) but snap every layer to one column so the picture reads as 6 columns.
 const COL_GAP = 90;
 const ROW_GAP = 26;
+const degree = new Set(edges.flatMap((e) => [e.source, e.target]));
 const elkPos = new Map((laid.children ?? []).map((c) => [c.id, { x: c.x ?? 0, y: c.y ?? 0 }]));
 const columns = allow.layers.map((l) =>
   nodes
     .filter((n) => n.layer === l.id)
-    .sort((a, b) => elkPos.get(a.id)!.y - elkPos.get(b.id)!.y || elkPos.get(a.id)!.x - elkPos.get(b.id)!.x),
+    .sort(
+      (a, b) =>
+        Number(!degree.has(a.id)) - Number(!degree.has(b.id)) || // unconnected nodes (e.g. not deployed) go last
+        elkPos.get(a.id)!.y - elkPos.get(b.id)!.y ||
+        elkPos.get(a.id)!.x - elkPos.get(b.id)!.x,
+    ),
 );
-const tallest = Math.max(...columns.map((c) => c.length));
+// A column is a list of blocks: a single node, or a group frame holding its members.
+const GROUP_HEAD = 30; // frame title strip
+const GROUP_PAD = 12;
+const IN_GAP = 14;
+type Block = { ids: string[]; group?: AllowGroup; top: number; height: number };
+const blocksPerColumn = columns.map((col) => {
+  const blocks: Block[] = [];
+  const seen = new Set<string>();
+  for (const n of col) {
+    if (seen.has(n.id)) continue;
+    const g = groupOf.get(n.id);
+    const members = g ? col.filter((c) => groupOf.get(c.id) === g).map((c) => c.id) : [n.id];
+    members.forEach((m) => seen.add(m));
+    const height = g
+      ? GROUP_HEAD + members.length * NODE_H + (members.length - 1) * IN_GAP + GROUP_PAD
+      : NODE_H;
+    blocks.push({ ids: members, ...(g ? { group: g } : {}), top: 0, height });
+  }
+  return blocks;
+});
+const columnHeight = (bs: Block[]) => bs.reduce((h, b) => h + b.height, 0) + (bs.length - 1) * ROW_GAP;
+const tallest = Math.max(...blocksPerColumn.map(columnHeight));
 const pos = new Map<string, { x: number; y: number }>();
-columns.forEach((col, ci) => {
-  const offset = ((tallest - col.length) * (NODE_H + ROW_GAP)) / 2;
-  col.forEach((n, ri) => pos.set(n.id, { x: ci * (NODE_W + COL_GAP), y: Math.round(offset + ri * (NODE_H + ROW_GAP)) }));
+const frames: { id: string; label: string; card: Card; x: number; y: number; width: number; height: number; members: string[] }[] = [];
+blocksPerColumn.forEach((bs, ci) => {
+  const x = ci * (NODE_W + COL_GAP);
+  let y = (tallest - columnHeight(bs)) / 2;
+  for (const b of bs) {
+    if (b.group) {
+      frames.push({
+        id: b.group.id,
+        label: b.group.label,
+        card: b.group.card,
+        x: x - GROUP_PAD,
+        y: Math.round(y),
+        width: NODE_W + 2 * GROUP_PAD,
+        height: b.height,
+        members: b.ids,
+      });
+      b.ids.forEach((id, i) => pos.set(id, { x, y: Math.round(y + GROUP_HEAD + i * (NODE_H + IN_GAP)) }));
+    } else {
+      pos.set(b.ids[0]!, { x, y: Math.round(y) });
+    }
+    y += b.height + ROW_GAP;
+  }
 });
 
 // --- 4. scenarios: "a>b" / "<a>b" → edge id + direction, validated against the graph ---------------
@@ -171,7 +232,8 @@ const out = {
   source: { registry: 'agent-wiki/conventions/services.md', commit: wikiCommit, allowlist: 'data/graph-allowlist.json' },
   size: { nodeWidth: NODE_W, nodeHeight: NODE_H },
   layers: allow.layers,
-  nodes: nodes.map((n) => ({ ...n, ...pos.get(n.id)! })),
+  nodes: nodes.map((n) => ({ ...n, ...pos.get(n.id)!, group: groupOf.get(n.id)?.id ?? null })),
+  groups: frames,
   edges: edges.map((e, i) => ({ id: `e${i}`, ...e })),
   scenarios,
 };
