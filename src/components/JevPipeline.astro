@@ -1,0 +1,101 @@
+---
+/** jev request pipeline: who decides at each stage (code vs local LLM vs cloud). Static, accessible list. */
+const stages = [
+  { name: 'Rules', who: 'code', text: 'Regex and checksums (national IDs, IBAN), entropy for secrets.' },
+  { name: 'Injection layer', who: 'code', text: 'Normalises text, catches attempts to steer the router; “treat as public” fails closed.' },
+  { name: 'Classifier', who: 'local LLM', text: 'qwen2.5:7b returns features only: task type, complexity, privacy.' },
+  { name: 'Policy', who: 'code', text: 'Picks the route from features. Sensitive → local, always.' },
+  { name: 'Guard', who: 'local LLM', text: 'Second privacy check, only for requests about to leave the machine.' },
+  { name: 'Executor', who: 'local or cloud', text: 'Local model, or `claude -p` haiku / sonnet with a ticket bound to the exact prompt. No cloud fallback.' },
+  { name: 'Run log', who: 'code', text: 'One line per run: decision, route, latency, config hash. No text.' },
+];
+---
+
+<ol class="pipe" aria-label="jev request pipeline">
+  {
+    stages.map((s) => (
+      <li class:list={['stage', `who-${s.who.replace(/\s+/g, '-')}`]}>
+        <span class="who">{s.who}</span>
+        <strong>{s.name}</strong>
+        <span class="txt">{s.text}</span>
+      </li>
+    ))
+  }
+</ol>
+<p class="pipe-legend">
+  <span class="k k-code"></span>deterministic code <span class="k k-llm"></span>local model
+  <span class="k k-exec"></span>executor — the LLM never chooses the route (ADR-001).
+</p>
+
+<style>
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.2rem 0 0.4rem;
+    counter-reset: st;
+  }
+  .stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.7rem 0.75rem;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--k);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 0.85rem;
+    counter-increment: st;
+  }
+  .stage strong::before {
+    content: counter(st) '. ';
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .who {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .txt {
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .who-code {
+    --k: #8a8f98;
+  }
+  .who-local-LLM {
+    --k: #7a5cd6;
+  }
+  .who-local-or-cloud {
+    --k: #2f7dd3;
+  }
+  .pipe-legend {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .k {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin: 0 0.3rem 0 0.8rem;
+    vertical-align: -1px;
+  }
+  .k:first-child {
+    margin-left: 0;
+  }
+  .k-code {
+    background: #8a8f98;
+  }
+  .k-llm {
+    background: #7a5cd6;
+  }
+  .k-exec {
+    background: #2f7dd3;
+  }
+</style>

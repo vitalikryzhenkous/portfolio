@@ -1,0 +1,183 @@
+---
+layout: ../../layouts/Case.astro
+title: jev — a privacy-first LLM router on a CPU box
+kicker: Case study · Applied AI
+description: A local-first LLM router that keeps sensitive requests on a CPU-only home server and sends the rest to the cheapest cloud model that can handle them — with preregistered evals behind every decision.
+summary: jev sits between me and the models. Sensitive requests never leave my home server; the rest go to the cheapest Claude model that can handle them. Model, prompt and policy changes are decided by preregistered experiments, not by intuition.
+snapshot: 2026-11-01
+facts:
+  - { value: '86%', label: 'of routed requests answered locally (37/43, 95% CI 73–93%)' }
+  - { value: '≈91%', label: 'estimated cloud-limit saved vs. “public → Sonnet” (n=15, estimate)' }
+  - { value: '987', label: 'automated tests (pytest, collected)' }
+  - { value: '289', label: 'eval cases: a dev set plus 6 frozen test sets' }
+---
+import snap from '../../../data/snapshots/2026-11-01.json';
+import JevPipeline from '../../components/JevPipeline.astro';
+import Dumbbell from '../../components/Dumbbell.astro';
+
+export const live = snap.jev.live;
+export const pct = (x) => `${Math.round(x * 100)}%`;
+export const s = (ms) => `${(ms / 1000).toFixed(1)} s`;
+
+## The problem
+
+I use LLMs for everything, including text that should not leave my machine: national ID numbers, bank
+details, health, contacts. Sending everything to the best cloud model is easy but leaks data and burns the
+subscription limit. Sending everything to a local model is private but slow and often not good enough.
+
+**jev decides per request**: what kind of task it is, how hard, and whether it is private — and routes it
+to a local model or to the cheapest Claude model that can do it. The hard constraint: a sensitive request
+must never reach the cloud, even when the text itself tries to talk the router into it.
+
+## Architecture
+
+<JevPipeline />
+
+- **The LLM extracts features; code decides the route** (ADR-001). A model output can be wrong or
+  manipulated; a routing table in code can be tested, replayed and diffed.
+- **Cloud calls are tickets, not fallbacks** (ADR-003). A cloud call needs a ticket bound to the hash of the
+  exact final prompt; a failed local call never silently retries in the cloud. Cloud runs through
+  `claude -p` in safe mode with tools disabled, its own system prompt and a per-call budget fuse.
+- **Two entry points, one pipeline.** A CLI (`jev`) and an OpenAI-compatible HTTP API with two virtual
+  models, `jev-auto` and `jev-local` (ADR-011). The API checks the **whole transcript**, not only the last
+  message, and a conversation that was ever sensitive stays local.
+
+## Deployment on a CPU-only box
+
+- **Runtime:** Ollama on an Intel i5-9500T, no GPU, inside WSL. One 7B model stays resident; the API warms it
+  up at start so the first answer after a reboot does not pay the 10–36 s cold load.
+- **Measured on this CPU:** decode ≈ 6 tokens/s, prefill ≈ 30 tokens/s on an idle host. Every local run logs
+  load, prefill, generation and time-to-first-token separately.
+- **API:** a systemd service that **refuses to bind anything but loopback**; one Ollama slot, two cloud
+  slots, a short queue and 429 beyond it.
+- **Console:** a Next.js PWA in a hardened container (read-only, all capabilities dropped), reachable only
+  inside my private tailnet. API keys stay on the server; chat history stays on the device (ADR-013).
+
+## Privacy by construction
+
+The run log is how I measure everything — so it was designed first (ADR-005):
+
+- **Allow-list, not deny-list.** One JSON line per run, built field by field: decision, effective route,
+  latency, config hash. Task text, answers, errors and file names are not in the schema.
+- **A canary test** plants a marker in every free-text field and fails if it reaches the log.
+- **Prompt ids are keyed hashes**, not plain hashes — a short prompt's plain hash can be guessed.
+- Writing the log can never change a run's outcome, and every exit path logs exactly once.
+
+## How decisions are made
+
+Every change to the model, prompt or policy follows the same protocol:
+
+1. **Preregister** the question, the frozen test set (by hash), the metrics and the decision rule — committed
+   *before* any run. {snap.jev.preregistrations} preregistrations so far.
+2. **Run once**, no reruns. Each run carries the hashes of config, policy, injection layer and judge.
+3. **Apply the rule as written**; post-hoc observations are labelled post-hoc and cannot flip a decision.
+4. **Write the ADR** — including negative results.
+
+Negative results are kept, not hidden: an LLM judge for answer quality was built twice and rejected twice
+(agreement with my labels too low: κ 0.10 and 0.08, ADR-008/010); two later prompt revisions were rejected
+and the earlier prompt stayed (prompt changelog).
+
+### Decision by data, not by model size
+
+**1 · Smaller models (L11, ADR-009).** On the CPU box I tested qwen3.5 4B and 2B against qwen2.5:7b for the
+classifier. Neither passed the gates (injection, false “sensitive”), so 7B stayed. But the run exposed that
+**7B itself failed the injection gate: 4 of 6 attacks steered it** — and that “0 leaks out of 10” was a
+property of the layered system (rules, guard, policy), not of the classifier.
+
+**2 · A deterministic layer instead of a bigger model (L12b, ADR-012).** I added a code layer before the
+classifier that normalises text (Unicode tricks, homoglyphs, spaced letters) and fails closed when a message
+claims its data is “fake” or “public”. Result on unseen attacks: **18/18 detected**, cost-raising attacks
+1/12 → **0/12**, no false positives on the existing 202-case corpus, p95 latency **1.53 ms**.
+
+**3 · A newer 9B model for answers (L13c, ADR-009 A1).** The local executor got ID-number checks wrong, so
+the obvious move was a bigger model. The preregistered rule said: switch only if the 9B has ≤ 1/30 timeouts,
+p95 ≤ 150 s, wins more blind writing comparisons, and beats 7B on the checks.
+
+<Dumbbell
+  title="Wall time per call, p50 → p95"
+  caption="All 48 calls per model on the CPU box. The rule allowed p95 up to 150 s; the 180 s line is the hard timeout."
+  rows={[
+    { label: 'qwen2.5:7b', from: 17.8, to: 71.2, note: '0/48 timeouts' },
+    { label: 'qwen3.5:9b', from: 39.3, to: 180.1, note: '13/48 timeouts' },
+  ]}
+  max={190}
+  ticks={[0, 30, 60, 90, 120, 150, 180]}
+  unit=" s"
+  fromLabel="p50"
+  toLabel="p95"
+  refs={[{ value: 150, label: 'rule: p95 ≤ 150 s' }]}
+  source="preregistration L13c, ## Result (2026-10-31), one run per arm"
+/>
+
+<Dumbbell
+  title="Correct ID-number checks, without → with code-verified facts"
+  caption="18 synthetic checks (national ID, tax ID, IBAN). Facts = checksum verdicts computed in code and handed to the model."
+  rows={[
+    { label: 'qwen2.5:7b', from: 12, to: 18, note: 'accepted' },
+    { label: 'qwen3.5:9b', from: 4, to: 17, note: '11 unclear without facts, mostly timeouts' },
+  ]}
+  max={18}
+  ticks={[0, 3, 6, 9, 12, 15, 18]}
+  fromLabel="without facts"
+  toLabel="with facts"
+  source="preregistration L13c, ## Result (2026-10-31); cases generated synthetically, fixed seed"
+/>
+
+- Blind writing comparison (12 pairs, I voted without knowing which model wrote which): **9B 5, 7B 5,
+  both bad 2** — no quality edge for the bigger model.
+- **Decision:** 9B rejected on latency alone (13/48 timeouts, p95 180 s). Instead, a **facts layer**:
+  code computes the checksum verdicts and the model only explains them — 7B went from **12/18 to 18/18**.
+  The 9B model was removed from the host.
+
+<p class="note">What this is not: I did not train or fine-tune these models. The gains come from routing
+policy, prompt iterations, deterministic layers and evals around off-the-shelf models.</p>
+
+## Metrics
+
+From the run log, {live.window.first} → {live.window.last} (snapshot {snap.taken_utc.slice(0, 10)}):
+
+| Metric | Value | Note |
+|---|---|---|
+| Runs logged | {live.runs} | {live.routed} routed by the router |
+| Answered locally | {live.local_share.k}/{live.local_share.n} = {pct(live.local_share.pct)} | 95% CI {pct(live.local_share.ci95[0])}–{pct(live.local_share.ci95[1])}; the rest went to Haiku, none to Sonnet or Opus |
+| Marked sensitive | {live.sensitive.k}/{live.sensitive.n} | all stayed local |
+| Classifier fallbacks | {live.classifier_fallback.k}/{live.classifier_fallback.n} | |
+| Routing decision time | p50 {s(live.latency_ms.route_stage.p50)} · p95 {s(live.latency_ms.route_stage.p95)} | n={live.latency_ms.route_stage.n}; CPU-only classifier |
+| End-to-end, executed runs | p50 {s(live.latency_ms.wall_executed.p50)} · p95 {s(live.latency_ms.wall_executed.p95)} | n={live.latency_ms.wall_executed.n} |
+| Cloud limit saved | ≈{pct(live.savings.saved_pct)} (estimate) | vs. baseline “{live.savings.baseline_policy}”, n={live.savings.counted_decisions} router decisions |
+
+**How “saved” is computed.** Both jev and the baseline are priced with the same cost model: a per-call
+overhead plus per-token prices for each Claude model, measured on 2026-10-20 with one cold `claude -p` call
+per model; input tokens are estimated from prompt length. The figure is a **proxy for subscription limits,
+not money**, and n=15 is small — treat it as a direction, not a result. Forced-local runs and Arena baseline
+runs are excluded.
+
+## Decisions
+
+| ADR | Decision |
+|---|---|
+| 001 | LLM extracts features; code decides the route; sensitive → local |
+| 002 | qwen2.5:7b for classifier and privacy guard |
+| 003 | Cloud only via `claude -p` with a prompt-bound ticket; local via Ollama; no cloud fallback |
+| 004 | CLI pipeline order, privacy scope by origin, size gate (very long input never goes to the cloud) |
+| 005 | Privacy-safe run log: allow-listed fields, keyed prompt ids, canary test |
+| 006 | Evals: frozen holdout, preregistration, savings always shown with under-routing and a quality gate |
+| 007 | Fix by harm: gold routes derived from policy, offline policy replay, opus only on explicit override |
+| 008 | Outcome-based gold with an LLM judge — built, judge not valid, not adopted |
+| 009 | Model per role on the CPU box: 7B stays; facts layer for the executor (A1) |
+| 010 | Second judge design also not valid as an automatic scorer; satisfaction measured by product feedback |
+| 011 | OpenAI-compatible server: virtual models, whole-transcript check, sticky privacy, loopback only |
+| 012 | Deterministic injection layer before the classifier, fail-closed on “treat as public” |
+| 013 | Web console (PWA) inside the tailnet; keys server-side; no text stored on the server |
+| 014 | Arena: blind duels jev vs. “everything in Sonnet” inside the console, never on sensitive turns |
+| 015 | A hidden architecture page inside the console |
+
+Arena (ADR-014) is a running pilot; its result will be added when its preregistered window closes.
+
+## What I'd do next
+
+- **Fine-tune a small classifier (0.5–1.5B) with LoRA on a GPU**, compare it with 7B on the same frozen
+  holdouts and gates, ship it as GGUF to Ollama behind a config hash with a one-line rollback.
+- **Close the arena pilot** and publish its result against the preregistered rule.
+- **Aggregate the latency breakdown** (load / prefill / generation / TTFT) in the stats tool — it is logged
+  per run but not summarised yet.
