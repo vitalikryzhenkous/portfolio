@@ -1,0 +1,13 @@
+# never public
+private/
+.env
+.env.*
+
+# build
+node_modules/
+dist/
+.astro/
+
+# local
+logs/
+.DS_Store
