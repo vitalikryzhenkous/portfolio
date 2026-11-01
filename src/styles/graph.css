@@ -155,3 +155,74 @@
   vertical-align: middle;
   margin-right: 0.35rem;
 }
+
+/* --- animated flows ---------------------------------------------------------------------- */
+.pg-main {
+  min-width: 0;
+}
+
+.pg-player {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.pg-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.pg-btn:hover,
+.pg-btn:focus-visible {
+  border-color: var(--accent);
+}
+
+.pg-btn-on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pg-btn-stop {
+  color: var(--muted);
+}
+
+.pg-caption {
+  min-height: 3em;
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+}
+
+.pg-step {
+  display: inline-block;
+  min-width: 2.4em;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.pg-pulse {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 4px var(--accent));
+}
+
+.pg-edge-live .react-flow__edge-path {
+  stroke: var(--accent);
+  stroke-width: 2.2;
+}
+
+.pg-lit {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 14px -2px var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pg-node {
+    transition: box-shadow 0.25s ease;
+  }
+}

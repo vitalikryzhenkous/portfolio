@@ -131,7 +131,31 @@ columns.forEach((col, ci) => {
   col.forEach((n, ri) => pos.set(n.id, { x: ci * (NODE_W + COL_GAP), y: Math.round(offset + ri * (NODE_H + ROW_GAP)) }));
 });
 
-// --- 4. write ----------------------------------------------------------------------------------
+// --- 4. scenarios: "a>b" / "<a>b" → edge id + direction, validated against the graph ---------------
+type ScenarioIn = { id: string; title: string; steps: { edges: string[]; caption: string }[] };
+const scenariosIn: { scenarios: ScenarioIn[] } = JSON.parse(
+  readFileSync(resolve(root, 'data/graph-scenarios.json'), 'utf8'),
+);
+const edgeId = new Map(edges.map((e, i) => [`${e.source}>${e.target}`, `e${i}`]));
+const scenarios = scenariosIn.scenarios.map((s) => ({
+  id: s.id,
+  title: s.title,
+  steps: s.steps.map((step) => ({
+    caption: step.caption,
+    pulses: step.edges.map((ref) => {
+      const reverse = ref.startsWith('<');
+      const key = reverse ? ref.slice(1) : ref;
+      const id = edgeId.get(key);
+      if (!id) {
+        console.error(`build-graph: scenario "${s.id}" references a missing edge ${key}`);
+        process.exit(1);
+      }
+      return { edge: id, reverse };
+    }),
+  })),
+}));
+
+// --- 5. write ----------------------------------------------------------------------------------
 const wikiCommit = (() => {
   try {
     return execFileSync('git', ['-C', dirname(registryPath), 'log', '-1', '--format=%h', '--', registryPath], {
@@ -149,6 +173,7 @@ const out = {
   layers: allow.layers,
   nodes: nodes.map((n) => ({ ...n, ...pos.get(n.id)! })),
   edges: edges.map((e, i) => ({ id: `e${i}`, ...e })),
+  scenarios,
 };
 const outPath = resolve(root, 'src/data/graph.json');
 mkdirSync(dirname(outPath), { recursive: true });

@@ -1,11 +1,14 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   Background,
+  BaseEdge,
   Controls,
   Handle,
   Position,
+  getSmoothStepPath,
   type Edge,
+  type EdgeProps,
   type Node,
   type NodeProps,
   type OnSelectionChangeParams,
@@ -15,13 +18,19 @@ import graph from '../data/graph.json';
 
 type Card = { what: string; why: string; decision: string; link?: string };
 type GraphNode = (typeof graph.nodes)[number];
-type PlatformData = { label: string; status: string; layer: string; card: Card };
+type Scenario = (typeof graph.scenarios)[number];
+type PlatformData = { label: string; status: string; layer: string; card: Card; lit: boolean };
 type LayerData = { label: string };
+type Pulse = { run: number; reverse: boolean };
+type FlowEdgeData = { pulse: Pulse | null };
 
 const { nodeWidth: W, nodeHeight: H } = graph.size;
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 // Case pages that exist; links to the rest stay hidden until the page ships (no 404s).
 const LIVE_CASES = new Set<string>([]);
+
+const TRAVEL_MS = 1100; // one pulse along an edge
+const PAUSE_MS = 1700; // reading time after the pulse lands
 
 const STATUS_LABEL: Record<string, string> = {
   running: 'running',
@@ -29,9 +38,16 @@ const STATUS_LABEL: Record<string, string> = {
   active: 'in use',
 };
 
+const edgeById = new Map(graph.edges.map((e) => [e.id, e]));
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function PlatformNode({ data, selected }: NodeProps<Node<PlatformData>>) {
+  const cls = ['pg-node', `pg-${data.layer}`, selected && 'pg-selected', data.lit && 'pg-lit'].filter(Boolean).join(' ');
   return (
-    <div className={`pg-node pg-${data.layer}${selected ? ' pg-selected' : ''}`} style={{ width: W, height: H }}>
+    <div className={cls} style={{ width: W, height: H }}>
       <Handle type="target" position={Position.Left} className="pg-handle" />
       <span className={`pg-dot pg-dot-${data.status}`} aria-hidden="true" />
       <span className="pg-label">{data.label}</span>
@@ -44,11 +60,115 @@ function LayerNode({ data }: NodeProps<Node<LayerData>>) {
   return <div className="pg-layer">{data.label}</div>;
 }
 
+/** Smooth-step edge that can send one pulse along its path (SVG animateMotion, restarted per run). */
+function FlowEdge(props: EdgeProps<Edge<FlowEdgeData>>) {
+  const [path, labelX, labelY] = getSmoothStepPath(props);
+  const motion = useRef<SVGAnimateMotionElement>(null);
+  const pulse = props.data?.pulse ?? null;
+
+  useEffect(() => {
+    if (pulse) motion.current?.beginElement();
+  }, [pulse?.run]);
+
+  return (
+    <>
+      <BaseEdge
+        id={props.id}
+        path={path}
+        labelX={labelX}
+        labelY={labelY}
+        {...(props.label ? { label: props.label } : {})}
+        labelBgPadding={[4, 2]}
+        labelBgBorderRadius={4}
+        {...(props.markerEnd ? { markerEnd: props.markerEnd } : {})}
+      />
+      {pulse ? (
+        <circle r={5} className="pg-pulse">
+          <animateMotion
+            ref={motion}
+            begin="indefinite"
+            dur={`${TRAVEL_MS}ms`}
+            fill="freeze"
+            path={path}
+            keyPoints={pulse.reverse ? '1;0' : '0;1'}
+            keyTimes="0;1"
+            calcMode="linear"
+          />
+        </circle>
+      ) : null}
+    </>
+  );
+}
+
 const nodeTypes = { platform: PlatformNode, layer: LayerNode };
+const edgeTypes = { flow: FlowEdge };
 
 export default function PlatformGraph() {
   const [active, setActive] = useState<GraphNode | null>(null);
+  const [scenario, setScenario] = useState<Scenario | null>(null);
+  const [step, setStep] = useState(-1);
+  const [run, setRun] = useState(0);
+  const autoplayed = useRef(false);
+  const host = useRef<HTMLDivElement>(null);
 
+  // --- playback --------------------------------------------------------------------------------
+  const play = useCallback((s: Scenario) => {
+    setScenario(s);
+    setStep(0);
+    setRun((r) => r + 1);
+  }, []);
+  const stop = useCallback(() => {
+    setScenario(null);
+    setStep(-1);
+  }, []);
+
+  useEffect(() => {
+    if (!scenario || step < 0) return;
+    const reduced = prefersReducedMotion();
+    const t = window.setTimeout(
+      () => {
+        if (step + 1 < scenario.steps.length) {
+          setStep(step + 1);
+          setRun((r) => r + 1);
+        } else {
+          setStep(scenario.steps.length); // finished: keep the last caption, clear pulses
+        }
+      },
+      (reduced ? 0 : TRAVEL_MS) + PAUSE_MS + (scenario.steps[step]?.caption.length ?? 0) * 18,
+    );
+    return () => window.clearTimeout(t);
+  }, [scenario, step]);
+
+  // Autoplay the first scenario once, when the graph scrolls into view (not with reduced motion).
+  useEffect(() => {
+    const el = host.current;
+    const first = graph.scenarios[0];
+    if (!el || !first || prefersReducedMotion()) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && !autoplayed.current) {
+          autoplayed.current = true;
+          play(first);
+        }
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [play]);
+
+  const current = scenario && step >= 0 && step < scenario.steps.length ? scenario.steps[step] : null;
+  const pulses = useMemo(() => new Map((current?.pulses ?? []).map((p) => [p.edge, p.reverse])), [current]);
+  const litNodes = useMemo(() => {
+    const s = new Set<string>();
+    for (const id of pulses.keys()) {
+      const e = edgeById.get(id);
+      if (e) s.add(e.source).add(e.target);
+    }
+    return s;
+  }, [pulses]);
+
+  // --- graph -----------------------------------------------------------------------------------
   const nodes = useMemo<Node[]>(() => {
     const columnX = new Map<string, number>();
     for (const n of graph.nodes) columnX.set(n.layer, n.x);
@@ -67,26 +187,28 @@ export default function PlatformGraph() {
       id: n.id,
       type: 'platform',
       position: { x: n.x, y: n.y },
-      data: { label: n.label, status: n.status, layer: n.layer, card: n.card },
+      data: { label: n.label, status: n.status, layer: n.layer, card: n.card, lit: litNodes.has(n.id) },
       draggable: false,
       ariaLabel: `${n.label}, ${STATUS_LABEL[n.status] ?? n.status}. Press Enter for details.`,
     }));
     return [...headers, ...items];
-  }, []);
+  }, [litNodes]);
 
-  const edges = useMemo<Edge[]>(
+  const edges = useMemo<Edge<FlowEdgeData>[]>(
     () =>
-      graph.edges.map((e) => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        type: 'smoothstep',
-        className: `pg-edge pg-edge-${e.kind}`,
-        ...('label' in e && e.label ? { label: e.label } : {}),
-        labelBgPadding: [4, 2] as [number, number],
-        labelBgBorderRadius: 4,
-      })),
-    [],
+      graph.edges.map((e) => {
+        const reverse = pulses.get(e.id);
+        return {
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          type: 'flow',
+          className: `pg-edge pg-edge-${e.kind}${reverse !== undefined ? ' pg-edge-live' : ''}`,
+          ...('label' in e && e.label ? { label: e.label } : {}),
+          data: { pulse: reverse !== undefined && !prefersReducedMotion() ? { run, reverse } : null },
+        };
+      }),
+    [pulses, run],
   );
 
   const onSelectionChange = useCallback(({ nodes: sel }: OnSelectionChangeParams) => {
@@ -94,25 +216,60 @@ export default function PlatformGraph() {
     setActive(id ? (graph.nodes.find((n) => n.id === id) ?? null) : null);
   }, []);
 
+  const playing = scenario !== null && step >= 0 && step < scenario.steps.length;
+  const caption = scenario && step >= 0 ? scenario.steps[Math.min(step, scenario.steps.length - 1)]?.caption : null;
+
   return (
-    <div className="pg">
-      <div className="pg-canvas">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onSelectionChange={onSelectionChange}
-          fitView
-          fitViewOptions={{ padding: 0.06 }}
-          minZoom={0.2}
-          maxZoom={1.6}
-          nodesConnectable={false}
-          elementsSelectable
-          proOptions={{ hideAttribution: false }}
-        >
-          <Background gap={24} size={1} />
-          <Controls showInteractive={false} />
-        </ReactFlow>
+    <div className="pg" ref={host}>
+      <div className="pg-main">
+        <div className="pg-player" role="group" aria-label="Animated flows">
+          {graph.scenarios.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className={scenario?.id === s.id ? 'pg-btn pg-btn-on' : 'pg-btn'}
+              aria-pressed={scenario?.id === s.id}
+              onClick={() => play(s)}
+            >
+              ▶ {s.title}
+            </button>
+          ))}
+          {playing ? (
+            <button type="button" className="pg-btn pg-btn-stop" onClick={stop}>
+              ■ Stop
+            </button>
+          ) : null}
+        </div>
+        <p className="pg-caption" aria-live="polite">
+          {caption ? (
+            <>
+              <span className="pg-step">
+                {Math.min(step, (scenario?.steps.length ?? 1) - 1) + 1}/{scenario?.steps.length}
+              </span>{' '}
+              {caption}
+            </>
+          ) : (
+            <span className="muted">Pick a flow to watch data move through the platform.</span>
+          )}
+        </p>
+        <div className="pg-canvas">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            onSelectionChange={onSelectionChange}
+            fitView
+            fitViewOptions={{ padding: 0.06 }}
+            minZoom={0.2}
+            maxZoom={1.6}
+            nodesConnectable={false}
+            elementsSelectable
+          >
+            <Background gap={24} size={1} />
+            <Controls showInteractive={false} />
+          </ReactFlow>
+        </div>
       </div>
       <aside className="pg-card" aria-live="polite">
         {active ? (
@@ -134,7 +291,9 @@ export default function PlatformGraph() {
             ) : null}
           </>
         ) : (
-          <p className="muted">Click a node (or Tab to it and press Enter) to see what it is, why it exists and the decision behind it.</p>
+          <p className="muted">
+            Click a node (or Tab to it and press Enter) to see what it is, why it exists and the decision behind it.
+          </p>
         )}
       </aside>
     </div>

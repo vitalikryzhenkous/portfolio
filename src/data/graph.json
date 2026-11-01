@@ -67,7 +67,7 @@
       "layer": "devices",
       "label": "Tablet kiosk",
       "card": {
-        "what": "An old tablet (iOS 12) on the wall showing the status board: projects, running agents, who needs a human.",
+        "what": "An old tablet (iOS 12) showing the status board: projects, running agents, who needs a human.",
         "why": "Agents that wait for permission are visible without opening a terminal.",
         "decision": "ES5-only front end for Safari 12; polls the board every 10 s. The device cannot run Tailscale, so it is the one LAN exception."
       },
@@ -485,6 +485,200 @@
       "source": "tailnet",
       "target": "uptime",
       "kind": "tailnet"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "private-question",
+      "title": "A private question to jev",
+      "steps": [
+        {
+          "caption": "The console opens inside the private tailnet — it is not reachable from the internet.",
+          "pulses": [
+            {
+              "edge": "e1",
+              "reverse": false
+            },
+            {
+              "edge": "e22",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "The console calls the API over loopback. API keys exist only on the server.",
+          "pulses": [
+            {
+              "edge": "e15",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "Rules and a local classifier mark the request as sensitive, so policy keeps it on the local 7B model.",
+          "pulses": [
+            {
+              "edge": "e16",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "The answer streams back from the CPU box. Nothing went to the cloud.",
+          "pulses": [
+            {
+              "edge": "e16",
+              "reverse": true
+            },
+            {
+              "edge": "e15",
+              "reverse": true
+            }
+          ]
+        },
+        {
+          "caption": "The run log records the decision, route and latency — never the text.",
+          "pulses": [
+            {
+              "edge": "e17",
+              "reverse": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "make-change",
+      "title": "A change through /make",
+      "steps": [
+        {
+          "caption": "I start `/make <intent>` in an agent session on the server.",
+          "pulses": [
+            {
+              "edge": "e1",
+              "reverse": false
+            },
+            {
+              "edge": "e3",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "The executor finds the matching procedure and writes a plan.",
+          "pulses": [
+            {
+              "edge": "e4",
+              "reverse": false
+            },
+            {
+              "edge": "e7",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP.",
+          "pulses": [
+            {
+              "edge": "e6",
+              "reverse": false
+            },
+            {
+              "edge": "e8",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "After the change it runs deterministic checks on the services: PASS or FAIL.",
+          "pulses": [
+            {
+              "edge": "e9",
+              "reverse": false
+            },
+            {
+              "edge": "e10",
+              "reverse": false
+            },
+            {
+              "edge": "e11",
+              "reverse": false
+            },
+            {
+              "edge": "e12",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "A pull request for review (merging is human-only) and an entry in the session log.",
+          "pulses": [
+            {
+              "edge": "e20",
+              "reverse": false
+            },
+            {
+              "edge": "e19",
+              "reverse": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agent-waits",
+      "title": "An agent needs me",
+      "steps": [
+        {
+          "caption": "An agent asks for permission. A Claude Code hook writes one line: session, project, event — no prompt text.",
+          "pulses": [
+            {
+              "edge": "e5",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "The status board turns that session to “needs you”.",
+          "pulses": [
+            {
+              "edge": "e13",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "The tablet polls the board every 10 s and shows the banner.",
+          "pulses": [
+            {
+              "edge": "e14",
+              "reverse": true
+            },
+            {
+              "edge": "e2",
+              "reverse": true
+            }
+          ]
+        },
+        {
+          "caption": "One Stream Deck key reattaches me to exactly that session.",
+          "pulses": [
+            {
+              "edge": "e0",
+              "reverse": false
+            },
+            {
+              "edge": "e1",
+              "reverse": false
+            },
+            {
+              "edge": "e3",
+              "reverse": false
+            }
+          ]
+        }
+      ]
     }
   ]
 }

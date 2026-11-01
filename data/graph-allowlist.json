@@ -34,7 +34,7 @@
       "layer": "devices",
       "label": "Tablet kiosk",
       "card": {
-        "what": "An old tablet (iOS 12) on the wall showing the status board: projects, running agents, who needs a human.",
+        "what": "An old tablet (iOS 12) showing the status board: projects, running agents, who needs a human.",
         "why": "Agents that wait for permission are visible without opening a terminal.",
         "decision": "ES5-only front end for Safari 12; polls the board every 10 s. The device cannot run Tailscale, so it is the one LAN exception."
       }

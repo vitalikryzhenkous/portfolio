@@ -16,6 +16,10 @@ const layers = graph.layers.map((l) => ({
   wide
 >
   <h1>How I work</h1>
+  <p class="lead">
+    <strong>In short:</strong> AI agents do real work on my infrastructure — but only under written rules, with a second,
+    independent agent checking every change, and without private data leaving the machine.
+  </p>
   <p>
     I run my own projects the way I would want a team's agents to run: on written rules, with an independent check
     before and after every change, and with a record of what happened. Below is the platform as it is today —
@@ -68,6 +72,9 @@ const layers = graph.layers.map((l) => ({
 </Base>
 
 <style>
+  .lead {
+    font-size: 1.1rem;
+  }
   .loop li {
     margin-bottom: 0.5rem;
   }
