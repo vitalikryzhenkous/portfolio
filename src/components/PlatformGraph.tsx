@@ -238,9 +238,7 @@ export default function PlatformGraph() {
             <button type="button" className="pg-btn pg-btn-stop" onClick={stop}>
               ■ Stop
             </button>
-          ) : null}
-          <span className="pg-hint">Tip: click any node for what · why · decision</span>
-        </div>
+          ) : null}        </div>
         <p className="pg-caption" aria-live="polite">
           {caption ? (
             <>
@@ -296,31 +294,6 @@ export default function PlatformGraph() {
           ) : null}
         </div>
       </div>
-      <aside className="pg-card" aria-live="polite">
-        {active ? (
-          <>
-            <p className="pg-card-layer">
-              {graph.layers.find((l) => l.id === active.layer)?.label} · {STATUS_LABEL[active.status]}
-            </p>
-            <h3>{active.label}</h3>
-            <dl>
-              <dt>What</dt>
-              <dd>{active.card.what}</dd>
-              <dt>Why</dt>
-              <dd>{active.card.why}</dd>
-              <dt>Decision</dt>
-              <dd>{active.card.decision}</dd>
-            </dl>
-            {'link' in active.card && active.card.link && LIVE_CASES.has(active.card.link) ? (
-              <a href={`${BASE}/${active.card.link}/`}>Case study →</a>
-            ) : null}
-          </>
-        ) : (
-          <p className="muted">
-            Click a node (or Tab to it and press Enter) to see what it is, why it exists and the decision behind it.
-          </p>
-        )}
-      </aside>
     </div>
   );
 }

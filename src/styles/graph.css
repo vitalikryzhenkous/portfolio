@@ -147,12 +147,6 @@
   background: var(--surface);
 }
 
-.pg-hint {
-  align-self: center;
-  margin-left: auto;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
 
 .pg-card h3 {
   margin: 0.2rem 0 0.6rem;
