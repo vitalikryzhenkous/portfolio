@@ -17,6 +17,8 @@ facts:
 ---
 import snap from '../../../data/snapshots/2026-11-02.json';
 import StackBlock from '../../components/StackBlock.astro';
+import Replay from '../../components/Replay.tsx';
+import '../../styles/replay.css';
 
 export const p = snap.platform;
 export const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -95,7 +97,14 @@ Each problem ended as a rule or a check, not a sentence in a chat:
 ## A real run: 5 repositories moved, every phase checked
 
 On 2026-11-01 I moved 5 repositories and their services (containers, systemd units, agent sessions) into a
-single folder layout with `/make`, phase by phase, each phase checked before and after:
+single folder layout with `/make`, phase by phase, each phase checked before and after.
+
+Press play — this is the actual sequence of plans, verdicts, human decisions and incidents from that run.
+
+<Replay client:visible />
+
+<details class="more">
+<summary>The same run as a table</summary>
 
 | Phase | What | Verifier |
 |---|---|---|
@@ -107,6 +116,8 @@ single folder layout with `/make`, phase by phase, each phase checked before and
 | 5 | The wiki itself — moved by me | done |
 
 \* The secrets check failed on findings already in jev's git history, unrelated to the move — reported, not hidden.
+
+</details>
 
 What went wrong, honestly: the status board was down for about **9 minutes** — a scripted edit of its systemd
 unit failed on the first try and the service crash-looped until fixed. Final state: all security checks green
