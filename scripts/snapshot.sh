@@ -89,6 +89,14 @@ out['open_total'] = sum(r['open'] for r in out['repos'])
 print(json.dumps(out))
 ")"
 
+# --- agent platform: wiki + status board (counts only) -----------------------------------------
+WIKI="$APPS/agent-wiki"; BOARD="$APPS/uptime-board"
+platform="$(printf '{"wiki_git":%s,"board_git":%s,"policies":%s,"procedures":%s,"checks":%s}' \
+  "$(git_info "$WIKI")" "$(git_info "$BOARD")" \
+  "$(grep -cE '^\| S[0-9]+ \|' "$WIKI/conventions/security.md")" \
+  "$(ls "$WIKI"/procedures/*.md | wc -l | tr -d ' ')" \
+  "$(ls "$WIKI"/checks/*.sh "$WIKI"/checks/security/*.sh | grep -v '/lib.sh$' | wc -l | tr -d ' ')")"
+
 python3 - "$OUT" <<PY
 import json, sys
 snap = {
@@ -103,6 +111,7 @@ snap = {
         "live": $python_out,
     },
     "oss": $oss,
+    "platform": $platform,
 }
 snap["jev"]["eval_cases_total"] = sum(snap["jev"]["eval_cases"].values())
 with open(sys.argv[1], "w") as f:
