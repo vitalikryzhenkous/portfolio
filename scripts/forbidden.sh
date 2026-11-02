@@ -8,7 +8,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-targets=(src public data scripts .github astro.config.mjs package.json README.md)
+targets=(src public data scripts root-site .github astro.config.mjs package.json README.md)
 [[ -d dist ]] && targets+=(dist)
 existing=()
 for t in "${targets[@]}"; do [[ -e $t ]] && existing+=("$t"); done
