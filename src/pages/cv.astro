@@ -11,12 +11,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <div class="actions no-print">
     {
       profile.cv.map((c) => (
-        <a class="btn" href={`${base}/${c.file}`} download>
+        <a class="btn" href={`${base}/${c.file}`} download data-track={`cv-download:${c.id}:cv-page`}>
           Download PDF — {c.label}
         </a>
       ))
     }
-    <button type="button" class="btn" id="print-cv">Print this page</button>
+    <button type="button" class="btn" id="print-cv" data-track="cv-print">Print this page</button>
   </div>
 
   <article class="cv">

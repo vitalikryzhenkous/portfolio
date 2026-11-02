@@ -15,6 +15,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import graph from '../data/graph.json';
+import { track } from '../lib/track';
 
 type Card = { what: string; why: string; decision: string; link?: string };
 type Active = { label: string; where: string; card: Card };
@@ -261,7 +262,10 @@ export default function PlatformGraph() {
               type="button"
               className={scenario?.id === s.id ? 'pg-btn pg-btn-on' : 'pg-btn'}
               aria-pressed={scenario?.id === s.id}
-              onClick={() => play(s)}
+              onClick={() => {
+                track(`graph-flow:${s.id}`, s.title);
+                play(s);
+              }}
             >
               ▶ {s.title}
             </button>
@@ -304,7 +308,10 @@ export default function PlatformGraph() {
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onSelectionChange={onSelectionChange}
-            onNodeClick={(_, n) => setActive(activeFor(n.id))}
+            onNodeClick={(_, n) => {
+              track(`graph-node:${n.id}`);
+              setActive(activeFor(n.id));
+            }}
             onPaneClick={() => setActive(null)}
             fitView
             fitViewOptions={{ padding: 0.06 }}

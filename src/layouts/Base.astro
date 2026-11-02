@@ -58,6 +58,14 @@ const person = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <!-- Anonymous page counts, no cookies (GoatCounter). Pinned v4 script with SRI. -->
+    <script
+      is:inline
+      data-goatcounter="https://vitaliius.goatcounter.com/count"
+      async
+      src="https://gc.zgo.at/count.v4.js"
+      integrity="sha384-nRw6qfbWyJha9LhsOtSb2YJDyZdKvvCFh0fJYlkquSFjUxp9FVNugbfy8q1jdxI+"
+      crossorigin="anonymous"></script>
     <script is:inline>
       // Apply a saved theme before first paint (no flash). Storage can be blocked: then follow the OS.
       try {
@@ -82,6 +90,12 @@ const person = {
     <main id="main" tabindex="-1" class:list={[{ wide }]}>
       <slot />
     </main>
+    <footer class="site-footer">
+      <p>
+        Privacy: no cookies; anonymous page and click counts via
+        <a href="https://www.goatcounter.com/" rel="noopener">GoatCounter</a>.
+      </p>
+    </footer>
     <script>
       const btn = document.getElementById('theme-toggle');
       const root = document.documentElement;
@@ -97,6 +111,24 @@ const person = {
         if (btn) btn.textContent = next === 'light' ? 'Light theme' : 'Dark theme';
       };
       label();
+      // Analytics events (anonymous): elements with data-track, and opening a collapsed section.
+      import('../lib/track').then(({ track }) => {
+        document.addEventListener('click', (e) => {
+          const el = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
+          if (el?.dataset['track']) track(el.dataset['track'], el.textContent?.trim().slice(0, 80));
+        });
+        document.addEventListener(
+          'toggle',
+          (e) => {
+            const d = e.target as HTMLDetailsElement;
+            if (d.open && d.matches('details')) {
+              const label = d.querySelector('summary')?.textContent?.trim().slice(0, 60) ?? '';
+              track(`open:${location.pathname.replace(/\/$/, '').split('/').pop() || 'home'}:${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`, label);
+            }
+          },
+          true,
+        );
+      });
       btn?.addEventListener('click', () => {
         const next = current() === 'dark' ? 'light' : 'dark';
         root.dataset.theme = next;
