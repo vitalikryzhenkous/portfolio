@@ -242,8 +242,10 @@ export default function PlatformGraph() {
   );
 
   const onSelectionChange = useCallback(({ nodes: sel }: OnSelectionChangeParams) => {
+    // Open on selection (mouse or Enter on a focused node). An empty selection does NOT close the card:
+    // the animation rebuilds nodes every step, which clears React Flow's selection. Close = × or pane click.
     const id = sel[0]?.id;
-    setActive(id ? activeFor(id) : null);
+    if (id) setActive(activeFor(id));
   }, []);
 
   const playing = scenario !== null && step >= 0 && step < scenario.steps.length;
