@@ -27,8 +27,11 @@ test('graph is usable from the keyboard', async ({ page }) => {
   const node = page.locator('.react-flow__node-platform').first();
   // React Flow keeps nodes hidden until measured; focus() on a hidden node silently does nothing.
   await expect(node).toBeVisible();
-  await node.focus();
-  await expect(node).toBeFocused();
+  // Hydration may replace the server-rendered node element once; retry until focus sticks.
+  await expect(async () => {
+    await node.focus();
+    await expect(node).toBeFocused({ timeout: 500 });
+  }).toPass({ timeout: 10_000 });
   await page.keyboard.press('Enter');
   await expect(page.locator('.pg-card')).toBeVisible();
   await page.keyboard.press('Escape');
