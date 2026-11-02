@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "forbidden": "bash scripts/forbidden.sh",
     "graph": "node scripts/build-graph.ts",
-    "test:a11y": "playwright test"
+    "test:a11y": "playwright test",
+    "cv": "uv run scripts/build-cv.py"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
