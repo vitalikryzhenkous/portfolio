@@ -2,9 +2,25 @@
 import Base from '../layouts/Base.astro';
 import profile from '../data/profile.json';
 import cv from '../data/cv.json';
+import snapOss from '../../data/snapshots/2026-11-02.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const creatio = cv.experience[0]!;
+const oss = snapOss.oss;
+// Highlights: PRs that show agent tooling (MCP tools, guidance routing, classifiers, orchestration).
+const HIGHLIGHT: Record<string, number[]> = {
+  'Advance-Technologies-Foundation/clio': [721, 1008, 632],
+  'Advance-Technologies-Foundation/clio-knowledge': [170],
+  'Creatio-Platform/creatio-ai-app-development-toolkit': [77],
+};
+const clean = (t: string) => t.replace(/#?\b(ENG|RND)-\d+[.:]?\s*/g, '').replace(/\(\s*\)/g, '').trim();
+const highlights = oss.repos.flatMap((r) =>
+  r.merged_prs
+    .filter((p) => (HIGHLIGHT[r.repo] ?? []).includes(p.number))
+    .map((p) => ({ ...p, repo: r.repo.split('/')[1]!, title: clean(p.title) })),
+);
+const prList = (repo: string) =>
+  `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${oss.author}`)}`;
 const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
 const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
 
@@ -61,11 +77,34 @@ const work = [
   <ul class="bullets">
     {ai.slice(0, 5).map((t) => <li>{t}</li>)}
   </ul>
-  <p class="sub">
-    Public repositories:
-    <a href="https://github.com/Advance-Technologies-Foundation/clio" rel="noopener">clio</a> ·
-    <a href="https://github.com/Advance-Technologies-Foundation/clio-knowledge" rel="noopener">clio-knowledge</a>
+  <h3 class="oss-h">Open-source contributions</h3>
+  <p>
+    <strong>{oss.merged_total} merged pull requests</strong> in {oss.repos.length} public repositories
+    ({oss.open_total} open), including MCP tools and agent guidance:
+    {
+      oss.repos.map((r, i) => (
+        <>
+          {i > 0 ? ' · ' : ' '}
+          <a href={prList(r.repo)} rel="noopener">
+            {r.repo.split('/')[1]} ({r.merged})
+          </a>
+        </>
+      ))
+    }
   </p>
+  <ul class="bullets prs">
+    {
+      highlights.map((p) => (
+        <li>
+          <a href={p.url} rel="noopener">
+            {p.repo} #{p.number}
+          </a>{' '}
+          — {p.title} <span class="muted">({p.merged})</span>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="sub">Source: GitHub, author {oss.author}, snapshot {snapOss.taken_utc.slice(0, 10)}.</p>
 
   <h2>In front of customers</h2>
   <ul class="bullets">
@@ -204,6 +243,13 @@ const work = [
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--muted);
+  }
+  .oss-h {
+    margin: 1.4rem 0 0.3rem;
+    font-size: 1.05rem;
+  }
+  .prs li {
+    font-size: 0.95rem;
   }
   .certs {
     padding-left: 1.2rem;
