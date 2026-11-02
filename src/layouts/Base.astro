@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import '../styles/global.css';
 import og from '../data/og.json';
 import profile from '../data/profile.json';
@@ -12,12 +13,24 @@ interface Props {
 const { title, description, wide = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+// Main navigation; the current section is marked for screen readers (aria-current) and styled.
+const here = Astro.url.pathname.replace(/\/$/, '');
+const nav = [
+  { href: `${base}/work/`, label: 'Case studies', section: `${base}/work` },
+  { href: `${base}/stack/`, label: 'Stack', section: `${base}/stack` },
+  { href: `${base}/cv/`, label: 'CV', section: `${base}/cv` },
+].map((n) => ({ ...n, current: here === n.section || here.startsWith(`${n.section}/`) }));
+
 // Canonical URL and link-preview image for this page.
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const path = Astro.url.pathname.replace(base, '').replace(/^\/|\/$/g, '');
 const slug = path === '' ? 'home' : path.replace(/\//g, '-');
 const ogSlug = slug in og.pages ? slug : 'home';
-const ogImage = new URL(`${base}/og/${ogSlug}.png`, Astro.site).href;
+// Version the image URL by its text: link-preview caches (LinkedIn, Slack) key on the URL, so a changed
+// headline must produce a new URL or the old picture keeps showing.
+const ogPage = og.pages[ogSlug as keyof typeof og.pages];
+const ogVersion = createHash('sha256').update(`${ogPage.kicker}|${ogPage.title}`).digest('hex').slice(0, 8);
+const ogImage = new URL(`${base}/og/${ogSlug}.png?v=${ogVersion}`, Astro.site).href;
 
 // Machine-readable profile (schema.org Person) for search engines and AI agents.
 const person = {
@@ -77,13 +90,30 @@ const person = {
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
-      <nav aria-label="Main">
-        <a href={`${base}/`} class="brand">Vitalii Ryzhenko</a>
-        <a href={`${base}/work/`}>Case studies</a>
-        <a href={`${base}/stack/`}>Stack</a>
-        <a href={`${base}/cv/`}>CV</a>
-        <button type="button" class="theme-toggle" id="theme-toggle">Theme</button>
-      </nav>
+      <div class="site-header-inner">
+        <div class="identity">
+          <a href={`${base}/`} class="brand">{profile.name}</a>
+          <p class="contacts">
+            <a href={`mailto:${profile.email}`} data-track="email:header">{profile.email}</a>
+            <span aria-hidden="true">·</span>
+            <a href={profile.links.linkedin} rel="noopener" data-track="linkedin:header">LinkedIn</a>
+            <span aria-hidden="true">·</span>
+            <a href={profile.links.github} rel="noopener" data-track="github:header">GitHub</a>
+            <span aria-hidden="true">·</span>
+            <a href={profile.links.booking} rel="noopener" data-track="book-call:header">Book a call</a>
+          </p>
+        </div>
+        <nav aria-label="Main">
+          {
+            nav.map((n) => (
+              <a href={n.href} class="nav-link" aria-current={n.current ? 'page' : undefined}>
+                {n.label}
+              </a>
+            ))
+          }
+          <button type="button" class="theme-toggle" id="theme-toggle">Theme</button>
+        </nav>
+      </div>
     </header>
     <main id="main" tabindex="-1" class:list={[{ wide }]}>
       <slot />
