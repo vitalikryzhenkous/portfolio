@@ -13,7 +13,7 @@ Astro + React islands, MDX for case studies, TypeScript strict. Exact package ve
 - `private/` (gitignored) holds inputs that never get published.
 
 ## Launch checklist
-- Remove `noindex` in `src/layouts/Base.astro` and `public/robots.txt`.
+- Remove `noindex` in `src/layouts/Base.astro` and `root-site/index.html`, then `bash scripts/publish-root-site.sh --push`.
 - In `lighthouserc.json` replace the individual SEO audits with `"categories:seo": ["error", {"minScore": 0.9}]`
   (the category score is ~0.63 while `noindex` is on, by design).
 - Check a page in Google Rich Results Test and LinkedIn Post Inspector.
@@ -27,4 +27,5 @@ npm run forbidden  # guard
 npm run cv         # rebuild both CV PDFs from src/data (uv + ReportLab)
 npm run og         # rebuild link-preview images (uv + Pillow)
 bash scripts/snapshot.sh  # on the server: dated numbers from jev, GitHub PRs, platform
+bash scripts/publish-root-site.sh [--push]  # root-site/ → vitalikryzhenkous.github.io (robots.txt, llms.txt, redirect)
 ```
