@@ -28,7 +28,7 @@
     },
     {
       "id": "services",
-      "label": "Services"
+      "label": "Projects (run on the platform)"
     },
     {
       "id": "records",
@@ -258,7 +258,7 @@
       "label": "Interview Gym",
       "status": "running",
       "card": {
-        "what": "Interview trainer: Python in the browser (Pyodide), behavioral and system-design practice, a 14-day plan.",
+        "what": "Project · uses the tailnet (own sidecar node), /make and the checks. Interview trainer: Python in the browser (Pyodide), behavioral and system-design practice, a 14-day plan.",
         "why": "Built for my own interview preparation.",
         "decision": "Own tailnet node through a Tailscale sidecar, tailnet-only; moved there with the service-own-address procedure (verifier GO → PASS).",
         "link": "work/interview-gym"
@@ -303,7 +303,7 @@
       "label": "Status board (uptime-board)",
       "status": "running",
       "card": {
-        "what": "FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
+        "what": "Project · the platform’s own dashboard; uses the hooks, the LAN exception and Notion. FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
         "why": "See at a glance which agent is working and which one waits for me.",
         "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
       },
@@ -332,7 +332,7 @@
       "id": "jev",
       "label": "jev — LLM router",
       "card": {
-        "what": "One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
+        "what": "Project · uses the tailnet (console only), /make and the checks. One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
         "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
         "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes are decided with preregistered evals.",
         "link": "work/jev"
