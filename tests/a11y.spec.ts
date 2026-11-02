@@ -22,6 +22,8 @@ for (const theme of THEMES) {
 
 test('graph is usable from the keyboard', async ({ page }) => {
   await page.goto('how-i-work/');
+  // The graph is an Astro island: its HTML exists before React hydrates. Wait for hydration.
+  await page.waitForSelector('astro-island:not([ssr])', { state: 'attached' });
   const node = page.locator('.react-flow__node-platform').first();
   await node.focus();
   await page.keyboard.press('Enter');
