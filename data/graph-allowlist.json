@@ -48,16 +48,6 @@
       }
     },
     {
-      "id": "tablet",
-      "layer": "devices",
-      "label": "Tablet kiosk",
-      "card": {
-        "what": "An old tablet (iOS 12) showing the status board: projects, running agents, who needs a human.",
-        "why": "Agents that wait for permission are visible without opening a terminal.",
-        "decision": "ES5-only front end for Safari 12; polls the board every 10 s. The device cannot run Tailscale, so it is the one LAN exception."
-      }
-    },
-    {
       "id": "tailnet",
       "layer": "access",
       "label": "Private tailnet",
@@ -65,16 +55,6 @@
         "what": "Tailscale network: every device and service talks over it, with HTTPS certificates inside the tailnet.",
         "why": "Nothing on the server is reachable from the internet.",
         "decision": "Policy S2: no Funnel, no router port-forwarding. A service can get its own tailnet node through a sidecar container (Interview Gym does)."
-      }
-    },
-    {
-      "id": "lan",
-      "layer": "access",
-      "label": "LAN, one device",
-      "card": {
-        "what": "A single firewall rule lets exactly one device (the tablet) reach the status board over the home LAN.",
-        "why": "The tablet cannot join the tailnet.",
-        "decision": "An automated exposure check flagged the board listening on all interfaces → documented exception with date and owner → firewall narrowed from the whole subnet to one device."
       }
     },
     {
@@ -115,8 +95,9 @@
       "label": "Claude Code hooks",
       "card": {
         "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
-        "why": "The board knows which agent is working, waiting for permission or idle.",
-        "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents."
+        "why": "The status board (its own case study) shows which agent is working, waiting for permission or idle, and writes a daily log.",
+        "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents.",
+        "link": "work/status-board"
       }
     },
     {
@@ -203,16 +184,6 @@
     }
   ],
   "services": {
-    "Interview Gym": {
-      "id": "gym",
-      "label": "Interview Gym",
-      "card": {
-        "what": "Project · uses the tailnet (own sidecar node), /make and the checks. Interview trainer: Python in the browser (Pyodide), behavioral and system-design practice, a 14-day plan.",
-        "why": "Built for my own interview preparation.",
-        "decision": "Own tailnet node through a Tailscale sidecar, tailnet-only; moved there with the service-own-address procedure (verifier GO → PASS).",
-        "link": "work/interview-gym"
-      }
-    },
     "jev-web (console)": {
       "id": "jev-web",
       "label": "jev console (PWA)",
@@ -231,15 +202,6 @@
         "why": "Any OpenAI-shaped client can use privacy-aware routing.",
         "decision": "Refuses to bind anything but loopback; policy routes requests marked sensitive to the local model (ADR-005, ADR-011).",
         "link": "work/jev"
-      }
-    },
-    "uptime-board (iPad dashboard)": {
-      "id": "uptime",
-      "label": "Status board (uptime-board)",
-      "card": {
-        "what": "Project · the platform’s own dashboard; uses the hooks, the LAN exception and Notion. FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
-        "why": "See at a glance which agent is working and which one waits for me.",
-        "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
       }
     },
     "ollama": {
@@ -264,11 +226,6 @@
       "source": "laptop",
       "target": "tailnet",
       "kind": "tailnet"
-    },
-    {
-      "source": "tablet",
-      "target": "lan",
-      "kind": "lan"
     },
     {
       "source": "tailnet",
@@ -309,23 +266,8 @@
     },
     {
       "source": "checks",
-      "target": "gym",
-      "kind": "verify"
-    },
-    {
-      "source": "checks",
       "target": "jev-web",
       "kind": "verify"
-    },
-    {
-      "source": "hooks",
-      "target": "uptime",
-      "kind": "event"
-    },
-    {
-      "source": "lan",
-      "target": "uptime",
-      "kind": "lan"
     },
     {
       "source": "jev-web",
@@ -344,11 +286,6 @@
       "kind": "write"
     },
     {
-      "source": "uptime",
-      "target": "notion",
-      "kind": "write"
-    },
-    {
       "source": "make",
       "target": "notion",
       "kind": "write",
@@ -359,6 +296,12 @@
       "target": "github",
       "kind": "write",
       "label": "PR"
+    },
+    {
+      "source": "hooks",
+      "target": "notion",
+      "kind": "write",
+      "label": "daily log"
     }
   ]
 }

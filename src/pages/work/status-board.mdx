@@ -1,0 +1,61 @@
+---
+layout: ../../layouts/Case.astro
+title: A status board for coding agents
+kicker: Case study · Agent operations
+description: A small dashboard that shows which coding agent is working, which one waits for me, and what each project is doing — fed by Claude Code hooks, without logging prompts.
+summary: When several coding agents run in parallel, the bottleneck is the one waiting for my approval. The board makes that visible at a glance — from an old tablet, the laptop or the phone — and can start the day's agent for a project without typing anything on the tablet.
+snapshot: 2026-11-02
+tldr:
+  problem: Agents that wait for permission sit idle until I notice — and checking every terminal by hand does not scale with several projects.
+  built: Claude Code hooks write one metadata line per event; a FastAPI board turns that into working / waiting / idle per project, next to the project list from Notion; an old tablet shows it; a button starts an agent with a prompt taken from Notion.
+  result: '“Needs you” is visible from across the room; the board writes a daily log entry per project in the evening. {{platform.board_git.commits}} commits, 26 merged pull requests.'
+facts:
+  - { value: '6', label: 'Claude Code hook events feed the board' }
+  - { value: '10 s', label: 'refresh on the tablet (ES5 JavaScript for Safari 12)' }
+  - { value: '0', label: 'prompts, responses or file contents logged' }
+  - { value: '{{platform.board_git.commits}}', label: 'commits since {{platform.board_git.first}}' }
+---
+import StackBlock from '../../components/StackBlock.astro';
+
+## The problem: idle agents are invisible
+
+Several Claude Code sessions run in tmux, one per project. Any of them can stop to ask for permission. A waiting
+agent costs nothing — except the hours until someone looks. I wanted that state on a wall-sized glance, not in a
+terminal I have to open.
+
+## Hooks write metadata, the board derives state
+
+- **6 hook events** — session start and end, prompt submit, stop, notification, tool use — each append one line
+  to a local log: time, event, a short session id, the project, the tool with a file name or the command's first
+  word, the agent's own task titles, and whether a notification asks for permission.
+- **Never** prompts, responses, file contents or full commands. The hook prints nothing and always exits 0, so it
+  cannot block or change the agent.
+- The **FastAPI** board turns the stream into *working / waiting for you / idle* per session, next to the project
+  list, today's focus and the machine's load.
+
+## Notion is the source of truth; the tablet only points
+
+- Every 5 minutes the board takes a snapshot of the project list from Notion. Projects marked sensitive are
+  scrubbed to ID and status before anything is displayed.
+- **Start an agent from the tablet:** the tablet sends only an id. The server takes the prompt from the Notion
+  snapshot and the folder from the project's repo field, then starts Claude Code in that project's tmux session.
+  Nothing typed on the tablet is ever executed; the agent runs in its normal permission mode, so anything risky
+  stops at “waiting” — which the board shows.
+- At 20:55 the board writes one session-log entry per project from the day's hook events and commit subjects.
+
+## Built for an old tablet
+
+The display is an iPad mini 2 on iOS 12: ES5-only JavaScript, polling every 10 seconds, separate morning, day,
+evening and night screens, and a no-cache policy so Safari never shows a stale board. The tablet cannot join the
+private network, so it is the one documented LAN exception: an automated exposure check flagged the board
+listening on all interfaces, and the firewall was narrowed from the whole subnet to this one device. From the
+laptop and phone the board is reached over the private network with HTTPS.
+
+<StackBlock project="status-board" />
+
+## What I'd do next
+
+- Push notifications for “needs you” instead of polling a screen.
+- Per-project time-in-waiting as a metric, to see which tasks need better permissions up front.
+
+<p class="note">Part of my <a href="../platform/">agent platform</a>. Private repository — demo on request.</p>

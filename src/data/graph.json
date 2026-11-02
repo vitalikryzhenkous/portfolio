@@ -47,7 +47,7 @@
       },
       "status": "active",
       "x": 0,
-      "y": 231,
+      "y": 148,
       "group": null
     },
     {
@@ -61,21 +61,7 @@
       },
       "status": "active",
       "x": 0,
-      "y": 157,
-      "group": null
-    },
-    {
-      "id": "tablet",
-      "layer": "devices",
-      "label": "Tablet kiosk",
-      "card": {
-        "what": "An old tablet (iOS 12) showing the status board: projects, running agents, who needs a human.",
-        "why": "Agents that wait for permission are visible without opening a terminal.",
-        "decision": "ES5-only front end for Safari 12; polls the board every 10 s. The device cannot run Tailscale, so it is the one LAN exception."
-      },
-      "status": "active",
-      "x": 0,
-      "y": 83,
+      "y": 74,
       "group": null
     },
     {
@@ -89,21 +75,7 @@
       },
       "status": "active",
       "x": 280,
-      "y": 194,
-      "group": null
-    },
-    {
-      "id": "lan",
-      "layer": "access",
-      "label": "LAN, one device",
-      "card": {
-        "what": "A single firewall rule lets exactly one device (the tablet) reach the status board over the home LAN.",
-        "why": "The tablet cannot join the tailnet.",
-        "decision": "An automated exposure check flagged the board listening on all interfaces → documented exception with date and owner → firewall narrowed from the whole subnet to one device."
-      },
-      "status": "active",
-      "x": 280,
-      "y": 120,
+      "y": 111,
       "group": null
     },
     {
@@ -117,7 +89,7 @@
       },
       "status": "active",
       "x": 560,
-      "y": 120,
+      "y": 74,
       "group": null
     },
     {
@@ -132,7 +104,7 @@
       },
       "status": "active",
       "x": 560,
-      "y": 194,
+      "y": 148,
       "group": null
     },
     {
@@ -147,7 +119,7 @@
       },
       "status": "active",
       "x": 560,
-      "y": 268,
+      "y": 222,
       "group": null
     },
     {
@@ -156,12 +128,13 @@
       "label": "Claude Code hooks",
       "card": {
         "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
-        "why": "The board knows which agent is working, waiting for permission or idle.",
-        "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents."
+        "why": "The status board (its own case study) shows which agent is working, waiting for permission or idle, and writes a daily log.",
+        "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents.",
+        "link": "work/status-board"
       },
       "status": "active",
       "x": 560,
-      "y": 46,
+      "y": 0,
       "group": null
     },
     {
@@ -176,7 +149,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 157,
+      "y": 37,
       "group": null
     },
     {
@@ -191,7 +164,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 83,
+      "y": 185,
       "group": null
     },
     {
@@ -206,7 +179,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 231,
+      "y": 111,
       "group": null
     },
     {
@@ -220,7 +193,7 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 83,
+      "y": 37,
       "group": null
     },
     {
@@ -234,7 +207,7 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 231,
+      "y": 111,
       "group": null
     },
     {
@@ -249,22 +222,7 @@
       },
       "status": "active",
       "x": 1400,
-      "y": 157,
-      "group": null
-    },
-    {
-      "id": "gym",
-      "layer": "services",
-      "label": "Interview Gym",
-      "status": "running",
-      "card": {
-        "what": "Project · uses the tailnet (own sidecar node), /make and the checks. Interview trainer: Python in the browser (Pyodide), behavioral and system-design practice, a 14-day plan.",
-        "why": "Built for my own interview preparation.",
-        "decision": "Own tailnet node through a Tailscale sidecar, tailnet-only; moved there with the service-own-address procedure (verifier GO → PASS).",
-        "link": "work/interview-gym"
-      },
-      "x": 1120,
-      "y": 74,
+      "y": 185,
       "group": null
     },
     {
@@ -279,7 +237,7 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 240,
+      "y": 120,
       "group": "jev"
     },
     {
@@ -294,22 +252,8 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 302,
+      "y": 182,
       "group": "jev"
-    },
-    {
-      "id": "uptime",
-      "layer": "services",
-      "label": "Status board (uptime-board)",
-      "status": "running",
-      "card": {
-        "what": "Project · the platform’s own dashboard; uses the hooks, the LAN exception and Notion. FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
-        "why": "See at a glance which agent is working and which one waits for me.",
-        "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
-      },
-      "x": 1120,
-      "y": 0,
-      "group": null
     },
     {
       "id": "ollama",
@@ -323,7 +267,7 @@
         "link": "work/jev"
       },
       "x": 1120,
-      "y": 178,
+      "y": 58,
       "group": "jev"
     }
   ],
@@ -338,7 +282,7 @@
         "link": "work/jev"
       },
       "x": 1108,
-      "y": 148,
+      "y": 28,
       "width": 214,
       "height": 214,
       "members": [
@@ -364,133 +308,98 @@
     },
     {
       "id": "e2",
-      "source": "tablet",
-      "target": "lan",
-      "kind": "lan"
-    },
-    {
-      "id": "e3",
       "source": "tailnet",
       "target": "tmux",
       "kind": "ssh",
       "label": "SSH"
     },
     {
-      "id": "e4",
+      "id": "e3",
       "source": "tmux",
       "target": "make",
       "kind": "run"
     },
     {
-      "id": "e5",
+      "id": "e4",
       "source": "tmux",
       "target": "hooks",
       "kind": "event"
     },
     {
-      "id": "e6",
+      "id": "e5",
       "source": "make",
       "target": "verifier",
       "kind": "verify",
       "label": "before / after"
     },
     {
-      "id": "e7",
+      "id": "e6",
       "source": "make",
       "target": "procedures",
       "kind": "read"
     },
     {
-      "id": "e8",
+      "id": "e7",
       "source": "verifier",
       "target": "conventions",
       "kind": "read"
     },
     {
-      "id": "e9",
+      "id": "e8",
       "source": "verifier",
       "target": "checks",
       "kind": "run"
     },
     {
-      "id": "e10",
-      "source": "checks",
-      "target": "gym",
-      "kind": "verify"
-    },
-    {
-      "id": "e11",
+      "id": "e9",
       "source": "checks",
       "target": "jev-web",
       "kind": "verify"
     },
     {
-      "id": "e12",
-      "source": "hooks",
-      "target": "uptime",
-      "kind": "event"
-    },
-    {
-      "id": "e13",
-      "source": "lan",
-      "target": "uptime",
-      "kind": "lan"
-    },
-    {
-      "id": "e14",
+      "id": "e10",
       "source": "jev-web",
       "target": "jev-api",
       "kind": "local",
       "label": "loopback"
     },
     {
-      "id": "e15",
+      "id": "e11",
       "source": "jev-api",
       "target": "ollama",
       "kind": "local"
     },
     {
-      "id": "e16",
+      "id": "e12",
       "source": "jev-api",
       "target": "runlog",
       "kind": "write"
     },
     {
-      "id": "e17",
-      "source": "uptime",
-      "target": "notion",
-      "kind": "write"
-    },
-    {
-      "id": "e18",
+      "id": "e13",
       "source": "make",
       "target": "notion",
       "kind": "write",
       "label": "session log"
     },
     {
-      "id": "e19",
+      "id": "e14",
       "source": "make",
       "target": "github",
       "kind": "write",
       "label": "PR"
     },
     {
-      "id": "e20",
-      "source": "tailnet",
-      "target": "gym",
-      "kind": "tailnet"
+      "id": "e15",
+      "source": "hooks",
+      "target": "notion",
+      "kind": "write",
+      "label": "daily log"
     },
     {
-      "id": "e21",
+      "id": "e16",
       "source": "tailnet",
       "target": "jev-web",
-      "kind": "tailnet"
-    },
-    {
-      "id": "e22",
-      "source": "tailnet",
-      "target": "uptime",
       "kind": "tailnet"
     }
   ],
@@ -507,7 +416,7 @@
               "reverse": false
             },
             {
-              "edge": "e21",
+              "edge": "e16",
               "reverse": false
             }
           ]
@@ -516,7 +425,7 @@
           "caption": "The console calls the API over loopback. API keys exist only on the server.",
           "pulses": [
             {
-              "edge": "e14",
+              "edge": "e10",
               "reverse": false
             }
           ]
@@ -525,7 +434,7 @@
           "caption": "Rules and a local classifier mark the request as sensitive, so policy keeps it on the local 7B model.",
           "pulses": [
             {
-              "edge": "e15",
+              "edge": "e11",
               "reverse": false
             }
           ]
@@ -534,11 +443,11 @@
           "caption": "The answer streams back from the CPU box. Nothing went to the cloud.",
           "pulses": [
             {
-              "edge": "e15",
+              "edge": "e11",
               "reverse": true
             },
             {
-              "edge": "e14",
+              "edge": "e10",
               "reverse": true
             }
           ]
@@ -547,7 +456,7 @@
           "caption": "The run log records the decision, route and latency — never the text.",
           "pulses": [
             {
-              "edge": "e16",
+              "edge": "e12",
               "reverse": false
             }
           ]
@@ -566,7 +475,7 @@
               "reverse": false
             },
             {
-              "edge": "e3",
+              "edge": "e2",
               "reverse": false
             }
           ]
@@ -575,7 +484,20 @@
           "caption": "The executor finds the matching procedure and writes a plan.",
           "pulses": [
             {
-              "edge": "e4",
+              "edge": "e3",
+              "reverse": false
+            },
+            {
+              "edge": "e6",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP.",
+          "pulses": [
+            {
+              "edge": "e5",
               "reverse": false
             },
             {
@@ -585,31 +507,14 @@
           ]
         },
         {
-          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP.",
-          "pulses": [
-            {
-              "edge": "e6",
-              "reverse": false
-            },
-            {
-              "edge": "e8",
-              "reverse": false
-            }
-          ]
-        },
-        {
           "caption": "After the change it runs deterministic checks on the services: PASS or FAIL.",
           "pulses": [
             {
+              "edge": "e8",
+              "reverse": false
+            },
+            {
               "edge": "e9",
-              "reverse": false
-            },
-            {
-              "edge": "e10",
-              "reverse": false
-            },
-            {
-              "edge": "e11",
               "reverse": false
             }
           ]
@@ -618,65 +523,11 @@
           "caption": "A pull request for review (merging is human-only) and an entry in the session log.",
           "pulses": [
             {
-              "edge": "e19",
+              "edge": "e14",
               "reverse": false
             },
-            {
-              "edge": "e18",
-              "reverse": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "agent-waits",
-      "title": "An agent needs me",
-      "steps": [
-        {
-          "caption": "An agent asks for permission. A Claude Code hook writes one line: session, project, event — no prompt text.",
-          "pulses": [
-            {
-              "edge": "e5",
-              "reverse": false
-            }
-          ]
-        },
-        {
-          "caption": "The status board turns that session to “needs you”.",
-          "pulses": [
-            {
-              "edge": "e12",
-              "reverse": false
-            }
-          ]
-        },
-        {
-          "caption": "The tablet polls the board every 10 s and shows the banner.",
-          "pulses": [
             {
               "edge": "e13",
-              "reverse": true
-            },
-            {
-              "edge": "e2",
-              "reverse": true
-            }
-          ]
-        },
-        {
-          "caption": "One Stream Deck key reattaches me to exactly that session.",
-          "pulses": [
-            {
-              "edge": "e0",
-              "reverse": false
-            },
-            {
-              "edge": "e1",
-              "reverse": false
-            },
-            {
-              "edge": "e3",
               "reverse": false
             }
           ]

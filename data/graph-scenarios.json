@@ -5,32 +5,79 @@
       "id": "private-question",
       "title": "A private question to jev",
       "steps": [
-        { "edges": ["laptop>tailnet", "tailnet>jev-web"], "caption": "The console opens inside the private tailnet — it is not reachable from the internet." },
-        { "edges": ["jev-web>jev-api"], "caption": "The console calls the API over loopback. API keys exist only on the server." },
-        { "edges": ["jev-api>ollama"], "caption": "Rules and a local classifier mark the request as sensitive, so policy keeps it on the local 7B model." },
-        { "edges": ["<jev-api>ollama", "<jev-web>jev-api"], "caption": "The answer streams back from the CPU box. Nothing went to the cloud." },
-        { "edges": ["jev-api>runlog"], "caption": "The run log records the decision, route and latency — never the text." }
+        {
+          "edges": [
+            "laptop>tailnet",
+            "tailnet>jev-web"
+          ],
+          "caption": "The console opens inside the private tailnet — it is not reachable from the internet."
+        },
+        {
+          "edges": [
+            "jev-web>jev-api"
+          ],
+          "caption": "The console calls the API over loopback. API keys exist only on the server."
+        },
+        {
+          "edges": [
+            "jev-api>ollama"
+          ],
+          "caption": "Rules and a local classifier mark the request as sensitive, so policy keeps it on the local 7B model."
+        },
+        {
+          "edges": [
+            "<jev-api>ollama",
+            "<jev-web>jev-api"
+          ],
+          "caption": "The answer streams back from the CPU box. Nothing went to the cloud."
+        },
+        {
+          "edges": [
+            "jev-api>runlog"
+          ],
+          "caption": "The run log records the decision, route and latency — never the text."
+        }
       ]
     },
     {
       "id": "make-change",
       "title": "A change through /make",
       "steps": [
-        { "edges": ["laptop>tailnet", "tailnet>tmux"], "caption": "I start `/make <intent>` in an agent session on the server." },
-        { "edges": ["tmux>make", "make>procedures"], "caption": "The executor finds the matching procedure and writes a plan." },
-        { "edges": ["make>verifier", "verifier>conventions"], "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP." },
-        { "edges": ["verifier>checks", "checks>gym", "checks>jev-web"], "caption": "After the change it runs deterministic checks on the services: PASS or FAIL." },
-        { "edges": ["make>github", "make>notion"], "caption": "A pull request for review (merging is human-only) and an entry in the session log." }
-      ]
-    },
-    {
-      "id": "agent-waits",
-      "title": "An agent needs me",
-      "steps": [
-        { "edges": ["tmux>hooks"], "caption": "An agent asks for permission. A Claude Code hook writes one line: session, project, event — no prompt text." },
-        { "edges": ["hooks>uptime"], "caption": "The status board turns that session to “needs you”." },
-        { "edges": ["<lan>uptime", "<tablet>lan"], "caption": "The tablet polls the board every 10 s and shows the banner." },
-        { "edges": ["streamdeck>laptop", "laptop>tailnet", "tailnet>tmux"], "caption": "One Stream Deck key reattaches me to exactly that session." }
+        {
+          "edges": [
+            "laptop>tailnet",
+            "tailnet>tmux"
+          ],
+          "caption": "I start `/make <intent>` in an agent session on the server."
+        },
+        {
+          "edges": [
+            "tmux>make",
+            "make>procedures"
+          ],
+          "caption": "The executor finds the matching procedure and writes a plan."
+        },
+        {
+          "edges": [
+            "make>verifier",
+            "verifier>conventions"
+          ],
+          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP."
+        },
+        {
+          "edges": [
+            "verifier>checks",
+            "checks>jev-web"
+          ],
+          "caption": "After the change it runs deterministic checks on the services: PASS or FAIL."
+        },
+        {
+          "edges": [
+            "make>github",
+            "make>notion"
+          ],
+          "caption": "A pull request for review (merging is human-only) and an entry in the session log."
+        }
       ]
     }
   ]

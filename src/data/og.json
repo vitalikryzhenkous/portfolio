@@ -32,6 +32,14 @@
     "work-babyloop": {
       "title": "babyloop — shipping a mobile app with an agent team",
       "kicker": "Case study · AI-assisted product engineering"
+    },
+    "work-status-board": {
+      "title": "A status board for coding agents",
+      "kicker": "Case study · Agent operations"
+    },
+    "work-interview-gym": {
+      "title": "Interview Gym — a trainer I built for my own preparation",
+      "kicker": "Case study · Product for one user"
     }
   }
 }
