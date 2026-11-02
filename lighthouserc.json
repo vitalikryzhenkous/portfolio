@@ -35,14 +35,12 @@
             "minScore": 0.9
           }
         ],
-        "document-title": "error",
-        "meta-description": "error",
-        "http-status-code": "error",
-        "link-text": "error",
-        "crawlable-anchors": "error",
-        "canonical": "error",
-        "image-alt": "error",
-        "hreflang": "error"
+        "categories:seo": [
+          "error",
+          {
+            "minScore": 0.9
+          }
+        ]
       }
     },
     "upload": {

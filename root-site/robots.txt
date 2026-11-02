@@ -1,5 +1,4 @@
 # Root of vitalikryzhenkous.github.io (source: portfolio/root-site, published by scripts/publish-root-site.sh).
-# Crawling is allowed; pages stay out of search through their own noindex until launch.
 User-agent: *
 Allow: /
 

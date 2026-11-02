@@ -12,11 +12,10 @@ Astro + React islands, MDX for case studies, TypeScript strict. Exact package ve
   plus a gitleaks scan of the full history. The script prints only file:line and the rule name.
 - `private/` (gitignored) holds inputs that never get published.
 
-## Launch checklist
-- Remove `noindex` in `src/layouts/Base.astro` and `root-site/index.html`, then `bash scripts/publish-root-site.sh --push`.
-- In `lighthouserc.json` replace the individual SEO audits with `"categories:seo": ["error", {"minScore": 0.9}]`
-  (the category score is ~0.63 while `noindex` is on, by design).
-- Check a page in Google Rich Results Test and LinkedIn Post Inspector.
+## Launch (done 2026-11-02)
+- `noindex` removed from the pages and from `root-site/index.html`; root site republished.
+- Lighthouse asserts the full SEO category again (≥ 0.9).
+- Manual checks: Google Rich Results Test (JSON-LD `Person`), LinkedIn Post Inspector (preview card).
 
 ## Develop
 ```bash
