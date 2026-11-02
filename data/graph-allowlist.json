@@ -64,7 +64,7 @@
       "card": {
         "what": "Tailscale network: every device and service talks over it, with HTTPS certificates inside the tailnet.",
         "why": "Nothing on the server is reachable from the internet.",
-        "decision": "Policy S2: no Funnel, no router port-forwarding. Services get their own tailnet node via a sidecar container."
+        "decision": "Policy S2: no Funnel, no router port-forwarding. A service can get its own tailnet node through a sidecar container (Interview Gym does)."
       }
     },
     {
@@ -103,7 +103,7 @@
       "layer": "agents",
       "label": "Independent verifier",
       "card": {
-        "what": "A separate subagent with a fresh context and read-only tools. Before: GO/STOP on the plan. After: PASS/FAIL from checks.",
+        "what": "A separate subagent with a fresh context. Its brief makes it read-only: it may read, search and run checks. Before: GO/STOP on the plan. After: PASS/FAIL from checks.",
         "why": "The executor should not grade its own work. A check that could not run counts as FAIL.",
         "decision": "A STOP overrides the executor. It never prints or expands secrets — a rule added after an API key surfaced in its output during a migration (the key was rotated).",
         "link": "work/platform"
@@ -116,7 +116,7 @@
       "card": {
         "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
         "why": "The board knows which agent is working, waiting for permission or idle.",
-        "decision": "Only metadata is logged: event, short session id, project, tool name. Never prompt text or file contents."
+        "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents."
       }
     },
     {
@@ -125,7 +125,7 @@
       "label": "Conventions & policies",
       "card": {
         "what": "agent-wiki: service registry, permissions (agent alone / asks / human only), security policies S1–S10, secrets rules.",
-        "why": "Agents and the owner read the same rules; every change is a reviewed diff.",
+        "why": "Agents and the owner read the same rules; rules live in git, newer changes go through pull requests.",
         "decision": "Exceptions are recorded with date, reason and owner, and mirrored in a machine-readable file the checks honour.",
         "link": "work/platform"
       }
@@ -197,7 +197,7 @@
       "card": {
         "what": "One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
         "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
-        "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes go through preregistered evals.",
+        "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes are decided with preregistered evals.",
         "link": "work/jev"
       }
     }
@@ -229,37 +229,17 @@
       "card": {
         "what": "OpenAI-compatible server for the jev router: rules → local classifier → policy → local or cloud executor.",
         "why": "Any OpenAI-shaped client can use privacy-aware routing.",
-        "decision": "Refuses to bind anything but loopback; sensitive requests never leave the machine (ADR-005, ADR-011).",
+        "decision": "Refuses to bind anything but loopback; policy routes requests marked sensitive to the local model (ADR-005, ADR-011).",
         "link": "work/jev"
       }
     },
     "uptime-board (iPad dashboard)": {
       "id": "uptime",
-      "label": "Status board",
+      "label": "Status board (uptime-board)",
       "card": {
         "what": "FastAPI board: projects from Notion, agent sessions from hook events, system load; can launch an agent per project.",
         "why": "See at a glance which agent is working and which one waits for me.",
         "decision": "Launch takes its prompt from Notion, never from text typed on the tablet. Sensitive projects are scrubbed to ID and status."
-      }
-    },
-    "livecode-kit (Postgres)": {
-      "id": "livecode",
-      "label": "livecode-kit DB",
-      "card": {
-        "what": "Postgres for a production-shaped Express 5 + Prisma service used to practise live coding with agents.",
-        "why": "Practice on something with real constraints, not a toy.",
-        "decision": "Local only, bound to loopback; container hardening by default.",
-        "link": "work/livecode-kit"
-      }
-    },
-    "babyloop": {
-      "id": "babyloop",
-      "label": "babyloop",
-      "card": {
-        "what": "Mobile app (Expo) for a family sleep routine with a Python calculation core.",
-        "why": "Real users at home; a design system and accessibility from day one.",
-        "decision": "Code only, not deployed yet; a node name is reserved for it.",
-        "link": "work/babyloop"
       }
     },
     "ollama": {
@@ -335,11 +315,6 @@
     {
       "source": "checks",
       "target": "jev-web",
-      "kind": "verify"
-    },
-    {
-      "source": "checks",
-      "target": "livecode",
       "kind": "verify"
     },
     {

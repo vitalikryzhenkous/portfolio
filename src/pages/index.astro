@@ -15,11 +15,17 @@ const prList = (repo: string) =>
   `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${oss.author}`)}`;
 const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
 const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
+// Three AI bullets for the home page (full list on /cv); the PR count lives in the open-source block below.
+const aiShort = [0, 2, 3].map((i) => ai[i]!.replace(/; \d+ merged PRs[^.]*\.?$/, '.').replace(/\.\.$/, '.'));
+const byIssuer = profile.certifications.reduce<Record<string, typeof profile.certifications>>((acc, c) => {
+  (acc[c.issuer] ??= []).push(c);
+  return acc;
+}, {});
 
 const work = [
   {
     title: 'jev — privacy-first LLM router',
-    text: 'Sensitive requests stay on a CPU-only home server, the rest go to the cheapest Claude model that can do the job. Every model and policy change is decided by a preregistered eval.',
+    text: 'Built so sensitive requests stay on a CPU-only home server and the rest go to the cheapest Claude model that can do the job. Model and policy choices are backed by preregistered evals.',
     href: `${base}/work/jev/`,
     tag: 'Case study',
   },
@@ -37,7 +43,7 @@ const work = [
   },
   {
     title: 'donecheck',
-    text: 'An independent checker that verifies whether a coding agent did what it was asked. In progress — built in the open.',
+    text: 'An independent checker that verifies whether a coding agent did what it was asked. In progress — the repository goes public with its first release.',
     href: null,
     tag: 'In progress',
   },
@@ -61,13 +67,14 @@ const work = [
       <a class="btn btn-primary" href={profile.links.booking} rel="noopener" data-track="book-call:hero">Book a 30-min call</a>
       <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download data-track="cv-download:applied-ai:home">Download CV (PDF)</a>
       <a class="btn" href={`${base}/cv/`} data-track="cv-page:home">CV page &amp; print</a>
+      <a class="btn" href={`mailto:${profile.email}`} data-track="email:hero">{profile.email}</a>
     </div>
   </section>
 
   <h2>Applied AI at work</h2>
   <p class="sub">{creatio.company} · {creatio.role} · {creatio.period}</p>
   <ul class="bullets">
-    {ai.slice(0, 5).map((t) => <li>{t}</li>)}
+    {aiShort.map((t) => <li>{t}</li>)}
   </ul>
   <h3 class="oss-h">Open-source contributions</h3>
   <p>
@@ -116,7 +123,6 @@ const work = [
   <h2>In front of customers</h2>
   <ul class="bullets">
     {l4.map((t) => <li>{t}</li>)}
-    <li>Before engineering: B2B sales, from cold calls to multi-million contracts — scoping, cost and value are familiar ground.</li>
   </ul>
 
   <h2>Selected work</h2>
@@ -138,7 +144,7 @@ const work = [
       more.items.map((m) => (
         <li class="card">
           <span class="tag">{m.visibility}</span>
-          <h3>{'href' in m && m.href ? <a href={m.href} rel="noopener">{m.title} ↗</a> : m.title}</h3>
+          <h3>{m.title}</h3>
           <p>{m.what}</p>
           <p class="detail">{m.detail}</p>
           {m.numbers && <p class="nums">{m.numbers}</p>}
@@ -151,20 +157,21 @@ const work = [
   <h2>Certifications</h2>
   <ul class="certs">
     {
-      profile.certifications.map((c) => (
+      Object.entries(byIssuer).map(([issuer, list]) => (
         <li>
-          {'url' in c && c.url ? (
-            <a href={c.url} rel="noopener">
-              {c.name}
-            </a>
-          ) : (
-            c.name
-          )}
-          <span class="muted">
-            {' '}
-            · {c.issuer}
-            {'date' in c && c.date ? ` · ${c.date}` : ''}
-          </span>
+          <strong>{issuer}</strong> ({list.length}):{' '}
+          {list.map((c, i) => (
+            <>
+              {i > 0 ? ', ' : ''}
+              {'url' in c && c.url ? (
+                <a href={c.url} rel="noopener">
+                  {c.name}
+                </a>
+              ) : (
+                c.name
+              )}
+            </>
+          ))}
         </li>
       ))
     }

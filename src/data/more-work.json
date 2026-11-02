@@ -4,27 +4,32 @@
     {
       "title": "Interview Gym",
       "what": "A trainer I built for my own interview preparation: algorithm patterns with Python running in the browser, behavioral and system-design practice, a 14-day plan.",
-      "detail": "Every reference solution is executed against its tests at build time (at least 4 tests per exercise) — content cannot ship broken.",
-      "numbers": "12 patterns · 377 problems · 57 behavioral questions · 35 system-design cases",
-      "stack": ["Pyodide in a Web Worker", "FastAPI", "SQLite", "Docker", "Tailscale sidecar"],
-      "visibility": "private repo"
+      "detail": "A validator script runs every reference solution against its tests in CPython (at least 4 tests per exercise) before content changes go in.",
+      "numbers": "12 patterns · 36 coding exercises with tests · 377 curated practice problems · 57 behavioral questions · 35 system-design cases",
+      "stack": [
+        "Pyodide in a Web Worker",
+        "FastAPI",
+        "SQLite",
+        "Docker",
+        "Tailscale sidecar"
+      ],
+      "visibility": "private, demo on request"
     },
     {
       "title": "babyloop",
-      "what": "A mobile app for a family's baby-sleep routine, used at home first: one-tap events and the next sleep time.",
-      "detail": "Sleep calculations exist twice — a Python core and an offline TypeScript port — and the same JSON cases run in pytest and Jest to prove they agree. Colour contrast is computed by a test for every token pair in every theme.",
+      "what": "A mobile app for a family’s baby-sleep routine, built for home use first: one-tap events and the next sleep time.",
+      "detail": "Sleep calculations exist twice — a Python core and an offline TypeScript port — and the same JSON cases run in pytest and Jest to prove they agree. A test computes colour contrast for the specified text/background pairs in every theme.",
       "numbers": "Design system v1 in 4 parts · light, dark and a dedicated night theme",
-      "stack": ["Expo", "React Native", "TypeScript", "Python", "Jest", "pytest", "GitHub Actions"],
-      "visibility": "private repo"
-    },
-    {
-      "title": "sexy-hooks",
-      "what": "A VS Code extension with snippets for React hooks.",
-      "detail": "13 snippets with keyboard shortcuts; MIT licensed.",
-      "numbers": "",
-      "stack": ["VS Code extension", "JavaScript"],
-      "href": "https://github.com/vitalikryzhenkous/sexy-hooks",
-      "visibility": "open source"
+      "stack": [
+        "Expo",
+        "React Native",
+        "TypeScript",
+        "Python",
+        "Jest",
+        "pytest",
+        "GitHub Actions"
+      ],
+      "visibility": "private, demo on request"
     }
   ]
 }

@@ -19,7 +19,7 @@
         { "edges": ["laptop>tailnet", "tailnet>tmux"], "caption": "I start `/make <intent>` in an agent session on the server." },
         { "edges": ["tmux>make", "make>procedures"], "caption": "The executor finds the matching procedure and writes a plan." },
         { "edges": ["make>verifier", "verifier>conventions"], "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP." },
-        { "edges": ["verifier>checks", "checks>gym", "checks>jev-web", "checks>livecode"], "caption": "After the change it runs deterministic checks on the services: PASS or FAIL." },
+        { "edges": ["verifier>checks", "checks>gym", "checks>jev-web"], "caption": "After the change it runs deterministic checks on the services: PASS or FAIL." },
         { "edges": ["make>github", "make>notion"], "caption": "A pull request for review (merging is human-only) and an entry in the session log." }
       ]
     },
