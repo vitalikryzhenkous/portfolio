@@ -25,22 +25,24 @@ test('graph is usable from the keyboard', async ({ page }) => {
   // The graph is an Astro island: its HTML exists before React hydrates. Wait for hydration.
   await page.waitForSelector('astro-island:not([ssr])', { state: 'attached' });
   const node = page.locator('.react-flow__node-platform').first();
-  // React Flow keeps nodes hidden until measured; focus() on a hidden node silently does nothing.
-  await expect(node).toBeVisible();
-  // Hydration may replace the server-rendered node element once; retry until focus sticks.
-  await expect(async () => {
-    await node.focus();
-    await expect(node).toBeFocused({ timeout: 500 });
-  }).toPass({ timeout: 10_000 });
-  await page.keyboard.press('Enter');
-  await expect(page.locator('.pg-card')).toBeVisible();
+  const card = page.locator('.pg-card');
+  // React Flow keeps nodes hidden until measured, and hydration may replace the node element once:
+  // retry focus + Enter until the card opens.
+  const openWithKeyboard = () =>
+    expect(async () => {
+      await node.focus();
+      await expect(node).toBeFocused({ timeout: 500 });
+      await page.keyboard.press('Enter');
+      await expect(card).toBeVisible({ timeout: 500 });
+    }).toPass({ timeout: 10_000 });
+
+  await openWithKeyboard();
   await page.keyboard.press('Escape');
-  await expect(page.locator('.pg-card')).toHaveCount(0);
-  await node.focus();
-  await expect(node).toBeFocused();
-  await page.keyboard.press('Enter');
+  await expect(card).toHaveCount(0);
+
+  await openWithKeyboard();
   await page.getByRole('button', { name: 'Close details' }).click();
-  await expect(page.locator('.pg-card')).toHaveCount(0);
+  await expect(card).toHaveCount(0);
 });
 
 test('skip link moves focus to main content', async ({ page }) => {
