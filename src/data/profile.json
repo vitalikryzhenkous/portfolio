@@ -33,42 +33,50 @@
     {
       "issuer": "Anthropic Academy",
       "name": "Claude Platform 101",
-      "date": "2026-06-26"
+      "date": "2026-06-26",
+      "url": "https://academy.claude.com/badges/9b9b6480-19e9-45d3-b43e-88dd1c7899fc"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Introduction to Model Context Protocol",
-      "date": "2026-06-12"
+      "date": "2026-06-12",
+      "url": "https://academy.claude.com/badges/38e6cf74-475c-4782-94bb-953d5ac30381"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "AI Fluency: Framework and Foundations",
-      "date": "2026-06-03"
+      "date": "2026-06-03",
+      "url": "https://academy.claude.com/badges/28f04306-fd3c-4d66-ac67-0bff37e07a31"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Claude Code 101",
-      "date": "2026-06-03"
+      "date": "2026-06-03",
+      "url": "https://academy.claude.com/badges/4a240147-bab0-4358-9188-44e2cb4b92f2"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Introduction to subagents",
-      "date": "2026-05-15"
+      "date": "2026-05-15",
+      "url": "https://academy.claude.com/badges/0a865c2f-246c-41e9-a066-ba2025caf687"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Introduction to agent skills",
-      "date": "2026-05-15"
+      "date": "2026-05-15",
+      "url": "https://academy.claude.com/badges/ed3d5a55-037f-4b3a-ba93-5d7694141176"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Claude Code in Action",
-      "date": "2026-05-15"
+      "date": "2026-05-15",
+      "url": "https://academy.claude.com/badges/e1e0342f-7041-4ad1-a99b-e5dc6bfc0f95"
     },
     {
       "issuer": "Anthropic Academy",
       "name": "Claude 101",
-      "date": "2026-05-13"
+      "date": "2026-05-13",
+      "url": "https://academy.claude.com/badges/d8962c40-6855-4505-851f-3490d0249ec0"
     }
   ],
   "learning": [

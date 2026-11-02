@@ -120,7 +120,7 @@ function activeFor(id: string): Active | null {
     return { label: n.label, where: `${layerLabel(n.layer)} · ${STATUS_LABEL[n.status] ?? n.status}${part}`, card: n.card };
   }
   const g = graph.groups.find((x) => x.id === id);
-  return g ? { label: g.label, where: `${layerLabel('services')} · project`, card: g.card } : null;
+  return g ? { label: g.label, where: layerLabel('services'), card: g.card } : null;
 }
 const edgeTypes = { flow: FlowEdge };
 
