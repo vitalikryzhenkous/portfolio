@@ -72,6 +72,23 @@ for f in "$JEV"/evals/*.jsonl; do evals+="$sep\"$(basename "$f" .jsonl)\":$(coun
 adrs="$(ls "$JEV"/docs/adr/*.md | wc -l | tr -d ' ')"
 preregs="$(ls "$JEV"/docs/preregistration-l*.md | wc -l | tr -d ' ')"
 
+# --- public open-source PRs (GitHub, author vryzhenko): counts + merged list -------------------
+oss="$(for r in Advance-Technologies-Foundation/clio Advance-Technologies-Foundation/clio-knowledge Creatio-Platform/creatio-ai-app-development-toolkit; do
+  gh pr list -R "$r" --author vryzhenko --state all --limit 200 --json number,title,state,mergedAt,url \
+    | python3 -c "import json,sys; print(json.dumps({'repo': '$r', 'prs': json.load(sys.stdin)}))"
+done | python3 -c "
+import json, sys
+repos = [json.loads(l) for l in sys.stdin if l.strip()]
+out = {'author': 'vryzhenko', 'repos': []}
+for r in repos:
+    merged = sorted([p for p in r['prs'] if p['state'] == 'MERGED'], key=lambda p: p['mergedAt'], reverse=True)
+    out['repos'].append({'repo': r['repo'], 'merged': len(merged), 'open': sum(p['state'] == 'OPEN' for p in r['prs']),
+                         'merged_prs': [{'number': p['number'], 'title': p['title'], 'merged': p['mergedAt'][:10], 'url': p['url']} for p in merged]})
+out['merged_total'] = sum(r['merged'] for r in out['repos'])
+out['open_total'] = sum(r['open'] for r in out['repos'])
+print(json.dumps(out))
+")"
+
 python3 - "$OUT" <<PY
 import json, sys
 snap = {
@@ -85,6 +102,7 @@ snap = {
         "preregistrations": $preregs,
         "live": $python_out,
     },
+    "oss": $oss,
 }
 snap["jev"]["eval_cases_total"] = sum(snap["jev"]["eval_cases"].values())
 with open(sys.argv[1], "w") as f:

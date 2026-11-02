@@ -2,9 +2,16 @@
 import Base from '../layouts/Base.astro';
 import profile from '../data/profile.json';
 import cv from '../data/cv.json';
+import snapOss from '../../data/snapshots/2026-11-02.json';
+import ossCards from '../data/oss-highlights.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const creatio = cv.experience[0]!;
+const oss = snapOss.oss;
+const prUrl = (repo: string, n: number) => `https://github.com/${repo}/pull/${n}`;
+const short = (repo: string) => repo.split('/')[1]!;
+const prList = (repo: string) =>
+  `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${oss.author}`)}`;
 const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
 const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
 
@@ -61,11 +68,49 @@ const work = [
   <ul class="bullets">
     {ai.slice(0, 5).map((t) => <li>{t}</li>)}
   </ul>
-  <p class="sub">
-    Public repositories:
-    <a href="https://github.com/Advance-Technologies-Foundation/clio" rel="noopener">clio</a> ·
-    <a href="https://github.com/Advance-Technologies-Foundation/clio-knowledge" rel="noopener">clio-knowledge</a>
+  <h3 class="oss-h">Open-source contributions</h3>
+  <p>
+    <strong>{oss.merged_total} merged pull requests</strong> in {oss.repos.length} public repositories
+    ({oss.open_total} open), including MCP tools and agent guidance:
+    {
+      oss.repos.map((r, i) => (
+        <>
+          {i > 0 ? ' · ' : ' '}
+          <a href={prList(r.repo)} rel="noopener">
+            {r.repo.split('/')[1]} ({r.merged})
+          </a>
+        </>
+      ))
+    }
   </p>
+  <ul class="oss-cards">
+    {
+      ossCards.cards.map((c) => (
+        <li class="card">
+          <h4>{c.title}</h4>
+          <dl>
+            <dt>Problem</dt>
+            <dd>{c.problem}</dd>
+            <dt>Built</dt>
+            <dd>{c.built}</dd>
+            <dt>Result</dt>
+            <dd>{c.result}</dd>
+          </dl>
+          <p class="pr-links">
+            {c.prs.map((p, i) => (
+              <>
+                {i > 0 ? ' · ' : ''}
+                <a href={prUrl(p.repo, p.number)} rel="noopener">
+                  {short(p.repo)} #{p.number}
+                </a>
+              </>
+            ))}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="sub">Source: GitHub, author {oss.author}, snapshot {snapOss.taken_utc.slice(0, 10)}.</p>
 
   <h2>In front of customers</h2>
   <ul class="bullets">
@@ -204,6 +249,41 @@ const work = [
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--muted);
+  }
+  .oss-h {
+    margin: 1.4rem 0 0.3rem;
+    font-size: 1.05rem;
+  }
+  .oss-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 0.8rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 0.4rem;
+  }
+  .oss-cards h4 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+  }
+  .oss-cards dl {
+    margin: 0;
+  }
+  .oss-cards dt {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+  .oss-cards dd {
+    margin: 0.1rem 0 0;
+    font-size: 0.9rem;
+  }
+  .pr-links {
+    margin: 0.7rem 0 0;
+    font-size: 0.85rem;
   }
   .certs {
     padding-left: 1.2rem;

@@ -1,0 +1,34 @@
+{
+  "$comment": "What the public PRs did, in plain words. Facts and numbers are taken from the PR descriptions (public, GitHub). Each card links its PRs.",
+  "cards": [
+    {
+      "title": "Rules that actually reach the agent",
+      "problem": "Always-on MCP server instructions had grown to ~2,199 tokens; the client truncated them past ~1,000, so rules silently dropped, and nothing forced the agent to load the right guide.",
+      "built": "A thin router: hard invariants on top plus a names-only routing table, and guidance forced through channels the client always delivers — tool descriptions and tool results.",
+      "result": "Instructions 2,199 → 506 tokens (−77%); dashboard and metric rules now reach the agent when it touches those tools.",
+      "prs": [{ "repo": "Advance-Technologies-Foundation/clio", "number": 721 }]
+    },
+    {
+      "title": "Agents configure the platform — only valid configs get saved",
+      "problem": "Agent-generated configuration could pass validation, save and still break at runtime: a mobile metric that shows no value, a widget title rendered as a raw localization key.",
+      "built": "Deterministic validation in the MCP layer before save: a typed contract for business-rule static filters, checks that refuse metrics the mobile runtime cannot execute, and a gate for titles bound to unresolvable keys — each with a diagnostic that names the missing path.",
+      "result": "These failures are now rejected when the agent authors the config, not discovered later by users.",
+      "prs": [
+        { "repo": "Advance-Technologies-Foundation/clio", "number": 632 },
+        { "repo": "Advance-Technologies-Foundation/clio", "number": 1660 },
+        { "repo": "Advance-Technologies-Foundation/clio", "number": 899 }
+      ]
+    },
+    {
+      "title": "One feature, three repositories: code, guidance, decision",
+      "problem": "Apps created by agents landed in a section only system administrators can see — the placement question was never asked.",
+      "built": "Split by responsibility: new MCP commands and contracts in clio, a guidance article and routing edits in clio-knowledge, and in the app-development toolkit navigation placement and audience became a required discovery question.",
+      "result": "The decision is made during discovery, before anything is created, and each repo can be reviewed on its own.",
+      "prs": [
+        { "repo": "Advance-Technologies-Foundation/clio", "number": 1008 },
+        { "repo": "Advance-Technologies-Foundation/clio-knowledge", "number": 36 },
+        { "repo": "Creatio-Platform/creatio-ai-app-development-toolkit", "number": 77 }
+      ]
+    }
+  ]
+}
