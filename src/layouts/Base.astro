@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import '../styles/global.css';
 import og from '../data/og.json';
 import profile from '../data/profile.json';
@@ -17,7 +18,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const path = Astro.url.pathname.replace(base, '').replace(/^\/|\/$/g, '');
 const slug = path === '' ? 'home' : path.replace(/\//g, '-');
 const ogSlug = slug in og.pages ? slug : 'home';
-const ogImage = new URL(`${base}/og/${ogSlug}.png`, Astro.site).href;
+// Version the image URL by its text: link-preview caches (LinkedIn, Slack) key on the URL, so a changed
+// headline must produce a new URL or the old picture keeps showing.
+const ogPage = og.pages[ogSlug as keyof typeof og.pages];
+const ogVersion = createHash('sha256').update(`${ogPage.kicker}|${ogPage.title}`).digest('hex').slice(0, 8);
+const ogImage = new URL(`${base}/og/${ogSlug}.png?v=${ogVersion}`, Astro.site).href;
 
 // Machine-readable profile (schema.org Person) for search engines and AI agents.
 const person = {
