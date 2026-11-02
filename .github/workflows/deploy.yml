@@ -43,6 +43,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Accessibility (axe, WCAG 2.2 AA, both themes) + keyboard checks
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:a11y
       - name: Forbidden patterns (built site)
         env:
           FORBIDDEN_EXTRA: ${{ secrets.FORBIDDEN_EXTRA }}
