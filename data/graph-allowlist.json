@@ -19,7 +19,7 @@
     },
     {
       "id": "services",
-      "label": "Projects (run on the platform)"
+      "label": "Local services"
     },
     {
       "id": "records",
@@ -176,7 +176,7 @@
         "ollama"
       ],
       "card": {
-        "what": "Project · uses the tailnet (console only), /make and the checks. One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
+        "what": "Project running as local services; uses the tailnet (console only), /make and the checks. One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
         "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
         "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes are decided with preregistered evals.",
         "link": "work/jev"
