@@ -2,10 +2,8 @@
 import Base from '../layouts/Base.astro';
 import profile from '../data/profile.json';
 import cv from '../data/cv.json';
-import snap from '../../data/snapshots/2026-11-01.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const live = snap.jev.live;
 const creatio = cv.experience[0]!;
 const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
 const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
@@ -57,22 +55,6 @@ const work = [
       <a class="btn" href={`${base}/cv/`}>CV page &amp; print</a>
     </div>
   </section>
-
-  <ul class="facts" aria-label="Key numbers">
-    <li>
-      <span class="fv">14</span>
-      <span class="fl">merged PRs with MCP tools to the public clio / clio-knowledge repos</span>
-    </li>
-    <li>
-      <span class="fv">~175</span>
-      <span class="fl">L4 customer escalations handled, median ~1 week to close</span>
-    </li>
-    <li>
-      <span class="fv">{Math.round(live.local_share.pct * 100)}%</span>
-      <span class="fl">of jev's routed requests answered on local hardware ({live.local_share.k}/{live.local_share.n})</span>
-    </li>
-  </ul>
-  <p class="src">First two numbers: CV (Creatio). Third: jev run log, snapshot {snap.taken_utc.slice(0, 10)}.</p>
 
   <h2>Applied AI at work</h2>
   <p class="sub">{creatio.company} · {creatio.role} · {creatio.period}</p>
@@ -161,6 +143,7 @@ const work = [
     margin: 0.3rem 0 1rem;
   }
   .cta {
+    margin-bottom: 1rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
@@ -184,33 +167,6 @@ const work = [
     color: var(--bg);
     font-weight: 600;
   }
-  .facts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    gap: 0.8rem;
-    list-style: none;
-    padding: 0;
-    margin: 2rem 0 0.3rem;
-  }
-  .facts li {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 0.8rem;
-    background: var(--surface);
-  }
-  .fv {
-    display: block;
-    font-size: 1.8rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
-  .fl {
-    display: block;
-    color: var(--muted);
-    font-size: 0.88rem;
-    line-height: 1.35;
-  }
-  .src,
   .sub {
     color: var(--muted);
     font-size: 0.85rem;
