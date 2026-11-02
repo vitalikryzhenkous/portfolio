@@ -25,12 +25,16 @@ test('graph is usable from the keyboard', async ({ page }) => {
   // The graph is an Astro island: its HTML exists before React hydrates. Wait for hydration.
   await page.waitForSelector('astro-island:not([ssr])', { state: 'attached' });
   const node = page.locator('.react-flow__node-platform').first();
+  // React Flow keeps nodes hidden until measured; focus() on a hidden node silently does nothing.
+  await expect(node).toBeVisible();
   await node.focus();
+  await expect(node).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('.pg-card')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('.pg-card')).toHaveCount(0);
   await node.focus();
+  await expect(node).toBeFocused();
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Close details' }).click();
   await expect(page.locator('.pg-card')).toHaveCount(0);
