@@ -5,6 +5,10 @@ kicker: Case study · Agentic systems
 description: How I let coding agents change real infrastructure — written rules, a second agent that checks every plan and result, deterministic checks, and a log of what happened.
 summary: Coding agents run my home server — services, containers, networking, secrets nearby. They act only through written procedures, a second agent with a fresh context checks every plan and every result, and the decisions that matter stay with a human.
 snapshot: 2026-11-02
+tldr:
+  problem: Coding agents that can run Docker, edit services and touch the firewall are useful only as far as you can trust them — and reviewing every command by hand does not scale.
+  built: Written rules and procedures in a git wiki, an executor skill that follows them, and an independent verifier agent that checks every plan (GO/STOP) and every result (PASS/FAIL) with deterministic checks.
+  result: A 5-repository migration ran phase by phase under the verifier; three real incidents each became a new rule or check instead of a note in a chat.
 facts:
   - { value: '10', label: 'security policies, each tied to a check or a review step' }
   - { value: '6', label: 'deterministic checks: exit 0 pass · 1 fail · 2 warn' }
@@ -17,7 +21,7 @@ import StackBlock from '../../components/StackBlock.astro';
 export const p = snap.platform;
 export const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-## The problem
+## The problem: trust, not capability
 
 An agent that can run `docker`, edit systemd units and touch firewall rules is useful exactly to the extent you
 can trust it. Prompting “be careful” does not scale; neither does reviewing every command by hand.
@@ -25,7 +29,7 @@ can trust it. Prompting “be careful” does not scale; neither does reviewing 
 What I wanted: agents that **do the work**, a process that **catches their mistakes before they matter**, and a
 record that tells me afterwards **what happened and why** — without me reading transcripts.
 
-## Architecture
+## Every change runs the same loop
 
 The full picture, with animated flows, is on <a href={`${base}/how-i-work/`}>How I work</a>. The core is a loop:
 
@@ -40,7 +44,7 @@ The full picture, with animated flows, is on <a href={`${base}/how-i-work/`}>How
 No procedure for an intent? The executor says so, does the job step by step with me, and drafts a new procedure
 afterwards — the wiki grows from real runs (3 procedures so far, the newest written from its first run).
 
-## Why the verifier can be trusted
+## The verifier is independent by design
 
 Independence is designed in, not assumed:
 
@@ -52,7 +56,11 @@ Independence is designed in, not assumed:
 - **A STOP overrides the executor.** It must fix the plan and get a GO — or ask me.
 - **Freshness gate.** Both executor and verifier refuse to work from a wiki that is behind its remote.
 
-## Rules the checks enforce
+Ten security policies define what “safe” means here — loopback-only ports, nothing public, no secrets in git,
+pinned images — and each one is enforced by a check or by the verifier's review.
+
+<details class="more">
+<summary>The ten policies, exceptions and permissions</summary>
 
 | # | Policy | Level |
 |---|---|---|
@@ -72,6 +80,8 @@ read. **Permissions** split work three ways: the agent acts alone (read, edit on
 scope, run checks, open a PR); asks first (anything near secrets, deleting data, public exposure, pushing to main,
 admin consoles, anything that costs money); and some things are **human-only** — merging a PR, `sudo`, secret values.
 
+</details>
+
 ## Three incidents, three new rules
 
 Each problem ended as a rule or a check, not a sentence in a chat:
@@ -82,7 +92,7 @@ Each problem ended as a rule or a check, not a sentence in a chat:
 | During a migration an API key surfaced in the verifier's output: a config-rendering command expands environment files. | The key was rotated. | The verifier never runs commands that expand secrets; a list of forbidden commands is in its brief. |
 | The first real run started from a local wiki that was 5 commits behind. | Fast-forwarded; the procedure itself had not changed. | Freshness check is step 0 for both executor and verifier — a stale wiki is a STOP. |
 
-## A real run: moving everything into one place
+## A real run: 5 repositories moved, every phase checked
 
 On 2026-11-01 I moved 5 repositories and their services (containers, systemd units, agent sessions) into a
 single folder layout with `/make`, phase by phase, each phase checked before and after:
@@ -102,7 +112,13 @@ What went wrong, honestly: the status board was down for about **9 minutes** —
 unit failed on the first try and the service crash-looped until fixed. Final state: all security checks green
 (one warning: some containers still run as root, S6), a reboot test passed, and the home folder holds only projects.
 
-## The status board
+## Agents waiting for me are visible
+
+Claude Code hooks feed a small status board that shows, per project, whether an agent is working, waiting for me or
+idle — metadata only, never prompt text or file contents.
+
+<details class="more">
+<summary>How the board, the tablet and the Stream Deck work</summary>
 
 Agents waiting for me are the real bottleneck, so I made it visible:
 
@@ -114,6 +130,8 @@ Agents waiting for me are the real bottleneck, so I made it visible:
   prompt taken from Notion — never from text typed on the tablet.
 - In the evening the board writes one session-log entry per project from the day's events and commit subjects.
 - A **Stream Deck** on the laptop has one key per project: it reattaches to that project's agent session.
+
+</details>
 
 <StackBlock project="platform" />
 

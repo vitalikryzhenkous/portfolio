@@ -13,6 +13,7 @@ interface Props {
     description: string;
     facts?: Fact[];
     snapshot?: string;
+    tldr?: { problem: string; built: string; result: string };
   };
 }
 
@@ -24,6 +25,21 @@ const { frontmatter: fm } = Astro.props;
     <p class="kicker">{fm.kicker}</p>
     <h1>{fm.title}</h1>
     <p class="summary">{fm.summary}</p>
+    {
+      fm.tldr && (
+        <section class="tldr" aria-label="In 30 seconds">
+          <h2>In 30 seconds</h2>
+          <dl>
+            <dt>Problem</dt>
+            <dd>{fm.tldr.problem}</dd>
+            <dt>Built</dt>
+            <dd>{fm.tldr.built}</dd>
+            <dt>Result</dt>
+            <dd>{fm.tldr.result}</dd>
+          </dl>
+        </section>
+      )
+    }
     {
       fm.facts && (
         <ul class="facts">
@@ -80,6 +96,48 @@ const { frontmatter: fm } = Astro.props;
     color: var(--muted);
     font-size: 0.85rem;
     line-height: 1.35;
+  }
+  .tldr {
+    margin: 1.2rem 0 0;
+    padding: 0.9rem 1.1rem;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    background: var(--surface);
+  }
+  .tldr h2 {
+    margin: 0 0 0.4rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tldr dl {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0.35rem 0.8rem;
+    margin: 0;
+  }
+  .tldr dt {
+    font-weight: 600;
+  }
+  .tldr dd {
+    margin: 0;
+  }
+  @media (max-width: 560px) {
+    .tldr dl {
+      grid-template-columns: 1fr;
+    }
+  }
+  .case :global(details.more) {
+    margin: 1rem 0;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .case :global(details.more > summary) {
+    cursor: pointer;
+    color: var(--accent);
+    font-weight: 600;
   }
   .snap {
     color: var(--muted);
