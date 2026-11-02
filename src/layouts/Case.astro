@@ -17,7 +17,30 @@ interface Props {
   };
 }
 
-const { frontmatter: fm } = Astro.props;
+const { frontmatter: raw } = Astro.props;
+
+// Numbers in facts/tldr come from the page's dated snapshot, not from hand-typed text:
+// {{path.to.value}} inserts a value, {{pct:path}} a rounded percentage, {{n:path}} a grouped number.
+const snaps = import.meta.glob('../../data/snapshots/*.json', { eager: true, import: 'default' });
+// YAML turns `snapshot: 2026-11-02` into a Date; normalise to the file name.
+const snapId = raw.snapshot ? new Date(raw.snapshot as string | Date).toISOString().slice(0, 10) : undefined;
+const snap = snapId ? (snaps[`../../data/snapshots/${snapId}.json`] as Record<string, unknown>) : undefined;
+if (snapId && !snap) throw new Error(`Case: snapshot ${snapId} not found`);
+const fill = (text: string) =>
+  text.replace(/\{\{(?:(pct|n):)?([\w.]+)\}\}/g, (_, fmt: string | undefined, path: string) => {
+    const v = path.split('.').reduce<unknown>((o, k) => (o as Record<string, unknown> | undefined)?.[k], snap);
+    if (v === undefined) throw new Error(`Case: ${path} missing in snapshot ${snapId}`);
+    if (fmt === 'pct') return `${Math.round(Number(v) * 100)}%`;
+    if (fmt === 'n') return Number(v).toLocaleString('en-US');
+    return String(v);
+  });
+const fm = {
+  ...raw,
+  snapshot: snapId,
+  summary: fill(raw.summary),
+  facts: raw.facts?.map((f) => ({ value: fill(f.value), label: fill(f.label) })),
+  tldr: raw.tldr && { problem: fill(raw.tldr.problem), built: fill(raw.tldr.built), result: fill(raw.tldr.result) },
+};
 ---
 
 <Base title={`${fm.title} — Vitalii Ryzhenko`} description={fm.description}>

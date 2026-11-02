@@ -8,7 +8,8 @@
         "http://127.0.0.1:4321/portfolio/work/jev/",
         "http://127.0.0.1:4321/portfolio/work/platform/",
         "http://127.0.0.1:4321/portfolio/how-i-work/",
-        "http://127.0.0.1:4321/portfolio/cv/"
+        "http://127.0.0.1:4321/portfolio/cv/",
+        "http://127.0.0.1:4321/portfolio/work/babyloop/"
       ],
       "numberOfRuns": 1,
       "settings": {

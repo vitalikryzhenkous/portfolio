@@ -12,7 +12,7 @@ tldr:
 facts:
   - { value: '10', label: 'security policies, each tied to a check or a review step' }
   - { value: '6', label: 'deterministic checks: exit 0 pass · 1 fail · 2 warn' }
-  - { value: '5', label: 'repositories moved in 6 phases, each checked before and after' }
+  - { value: '5', label: 'repositories moved in 6 phases under the verifier: inventory, 4 moves, the wiki last' }
   - { value: '3', label: 'incidents that each became a rule or a check' }
 ---
 import snap from '../../../data/snapshots/2026-11-02.json';
@@ -36,7 +36,7 @@ record that tells me afterwards **what happened and why** — without me reading
 The full picture, with animated flows, is on <a href={`${base}/how-i-work/`}>How I work</a>. The core is a loop:
 
 1. **Rules** live in a git wiki: a service registry, permissions, {p.policies} security policies, secrets rules and
-   step-by-step procedures. Every change to the rules is a reviewed diff.
+   step-by-step procedures. Rules live in git; newer changes go through pull requests that only I merge.
 2. **Executor** — a Claude Code skill, `/make <intent>`: finds the matching procedure, fills its inputs by reading
    the machine, writes the exact commands, and asks the human at every step the permissions mark “ask”.
 3. **Verifier** — a separate subagent. Before: **GO / STOP** on the plan. After: **PASS / FAIL** from the
@@ -52,14 +52,15 @@ Independence is designed in, not assumed:
 
 - **Fresh context.** It never sees the executor's reasoning — only the procedure, inputs and plan. Its brief
   starts with: *“You verify work you did not do. Assume the executor may be wrong. Evidence beats statements.”*
-- **Read-only tools** (read, search, run checks). It cannot fix what it finds; it can only stop the run.
+- **Read-only by its brief:** it may read, search and run checks, but must not change files, containers or
+  settings. It cannot fix what it finds; it can only stop the run.
 - **Evidence tables.** Every verdict lists check → result → the command and its output.
-- **A check that could not run is a FAIL** (“not verified”), never a pass.
+- **If the verifier cannot run a check, the verdict is FAIL** (“not verified”), never a pass.
 - **A STOP overrides the executor.** It must fix the plan and get a GO — or ask me.
 - **Freshness gate.** Both executor and verifier refuse to work from a wiki that is behind its remote.
 
 Ten security policies define what “safe” means here — loopback-only ports, nothing public, no secrets in git,
-pinned images — and each one is enforced by a check or by the verifier's review.
+pinned images (the network sidecar may track `stable`) — and each one is enforced by a check or by the verifier's review.
 
 <details class="more">
 <summary>The ten policies, exceptions and permissions</summary>
@@ -120,13 +121,14 @@ Press play — this is the actual sequence of plans, verdicts, human decisions a
 </details>
 
 What went wrong, honestly: the status board was down for about **9 minutes** — a scripted edit of its systemd
-unit failed on the first try and the service crash-looped until fixed. Final state: all security checks green
-(one warning: some containers still run as root, S6), a reboot test passed, and the home folder holds only projects.
+unit failed on the first try and the service crash-looped until fixed. Final state: all checks green except secrets
+(the findings already in jev's history), one warning (some containers still run as root, S6), a reboot test
+passed, and the home folder holds only projects.
 
 ## Agents waiting for me are visible
 
 Claude Code hooks feed a small status board that shows, per project, whether an agent is working, waiting for me or
-idle — metadata only, never prompt text or file contents.
+idle — metadata only: never prompts, responses or file contents.
 
 <details class="more">
 <summary>How the board, the tablet and the Stream Deck work</summary>
@@ -134,7 +136,8 @@ idle — metadata only, never prompt text or file contents.
 Agents waiting for me are the real bottleneck, so I made it visible:
 
 - **Claude Code hooks** (6 events: session start/end, prompt submit, stop, notification, tool use) append one line
-  each: event, short session id, project, tool name. **Never prompt text or file contents.**
+  each: event, short session id, project, the tool with a file name or the command's first word, and the agent's
+  own task titles. **Never prompts, responses, file contents or full commands.**
 - A small **FastAPI** board turns that into *working / waiting for you / idle* per project, next to the project
   list from Notion and the machine's load. Sensitive projects are scrubbed to ID and status before display.
 - An old **tablet** (iOS 12, ES5-only JavaScript) shows it; one button launches an agent for a project with a

@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import og from '../../data/og.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const cases = [
+  {
+    href: `${base}/work/jev/`,
+    kicker: og.pages['work-jev'].kicker,
+    title: og.pages['work-jev'].title,
+    text: 'Built so sensitive requests stay on a CPU-only home server and the rest go to the cheapest Claude model that can do the job. Model and policy choices are backed by preregistered evals.',
+  },
+  {
+    href: `${base}/work/babyloop/`,
+    kicker: og.pages['work-babyloop'].kicker,
+    title: og.pages['work-babyloop'].title,
+    text: 'A family app built mostly by coding agents: spec-first pipeline, independent reviewer agents, tests before code, hooks that block shortcuts, and a metrics row for every task.',
+  },
+  {
+    href: `${base}/work/platform/`,
+    kicker: og.pages['work-platform'].kicker,
+    title: og.pages['work-platform'].title,
+    text: 'Coding agents change real infrastructure only under written rules; a second agent with a fresh context checks every plan and result. Includes a replay of a real run.',
+  },
+];
+---
+
+<Base title="Case studies — Vitalii Ryzhenko" description="Case studies: a privacy-first LLM router and an agent platform with an independent verifier.">
+  <h1>Case studies</h1>
+  <p>Each one starts with a 30-second summary; details are one click away.</p>
+  <ul class="cases">
+    {
+      cases.map((c) => (
+        <li>
+          <p class="kicker">{c.kicker}</p>
+          <h2>
+            <a href={c.href}>{c.title}</a>
+          </h2>
+          <p>{c.text}</p>
+        </li>
+      ))
+    }
+  </ul>
+  <p>
+    The platform as an interactive graph, with animated flows: <a href={`${base}/how-i-work/`}>How I work →</a>
+  </p>
+</Base>
+
+<style>
+  .cases {
+    display: grid;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+  .cases li {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    background: var(--surface);
+  }
+  .kicker {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h2 {
+    margin: 0.3rem 0 0.4rem;
+    font-size: 1.2rem;
+  }
+  .cases p:last-child {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>

@@ -3,14 +3,14 @@
   "applied-ai": {
     "file": "public/cv/vitalii-ryzhenko-cv-applied-ai-fde.pdf",
     "headline": "Applied AI / Forward Deployed Engineer | Full-Stack TypeScript · .NET · Python | LLM Features, MCP, Agent Evals",
-    "summary": "Applied AI engineer with 9+ years of full-stack experience across enterprise, healthcare and e-commerce platforms (TypeScript, Angular/React, .NET/Node). I ship LLM features and AI-agent tooling to production — MCP tools, structured outputs, context engineering and agent evals — and work directly with customers, taking vague problems to production fixes. Before engineering I worked in B2B sales, so discussing scope, cost and value with customers comes naturally.",
+    "summary": "Applied AI engineer with 9+ years of full-stack experience across enterprise, healthcare and e-commerce platforms (TypeScript, Angular/React, .NET/Node). I ship LLM features and AI-agent tooling to production — MCP tools, structured outputs, context engineering and agent evals — and work directly with customers, taking vague problems to production fixes. Before engineering I worked in B2B sales — closing large deals and leading negotiations — so discussing scope, cost and value with customers comes naturally.",
     "skills": ["AI & LLM", "Frontend", "Backend & Data", "Build & Delivery", "Testing", "Practices"],
     "groups": ["AI & agent tooling", "Customer escalations (L4)", "Front-end performance & architecture", "Product features", "Quality"]
   },
   "full-stack": {
     "file": "public/cv/vitalii-ryzhenko-cv-full-stack.pdf",
     "headline": "Senior Full-Stack Engineer | Angular · React · TypeScript · .NET | Front-End Architecture & Performance",
-    "summary": "Senior full-stack engineer with 9+ years building enterprise, healthcare and e-commerce web platforms with Angular, React, TypeScript and .NET. Focused on front-end architecture and performance at scale, quality and testing, and shipping LLM features to production. Before engineering I worked in B2B sales, so discussing scope, cost and value with customers comes naturally.",
+    "summary": "Senior full-stack engineer with 9+ years building enterprise, healthcare and e-commerce web platforms with Angular, React, TypeScript and .NET. Focused on front-end architecture and performance at scale, quality and testing, and shipping LLM features to production. Before engineering I worked in B2B sales — closing large deals and leading negotiations — so discussing scope, cost and value with customers comes naturally.",
     "skills": ["Frontend", "Backend & Data", "AI & LLM", "Build & Delivery", "Testing", "Practices"],
     "groups": ["Front-end performance & architecture", "Product features", "Quality", "Customer escalations (L4)", "AI & agent tooling"]
   }

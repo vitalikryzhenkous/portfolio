@@ -18,7 +18,7 @@ const layers = graph.layers.map((l) => ({
   <h1>How I work</h1>
   <p class="lead">
     <strong>In short:</strong> AI agents do real work on my infrastructure — but only under written rules, with a second,
-    independent agent checking every change, and without private data leaving the machine.
+    independent agent checking every change, and designed so private data stays on the machine.
   </p>
   <p>
     I run my own projects the way I would want a team's agents to run: on written rules, with an independent check
@@ -39,7 +39,7 @@ const layers = graph.layers.map((l) => ({
   <ol class="loop">
     <li><strong>Rules.</strong> Conventions, ten security policies, permissions and procedures live in a git wiki. Agents read them before acting.</li>
     <li><strong>Executor.</strong> <code>/make &lt;intent&gt;</code> finds the matching procedure, fills its inputs and writes a plan. It asks a human where the permissions say so.</li>
-    <li><strong>Independent verifier.</strong> A separate agent with a fresh context and read-only tools returns GO/STOP on the plan and PASS/FAIL from deterministic checks after the change.</li>
+    <li><strong>Independent verifier.</strong> A separate agent with a fresh context, read-only by its brief, returns GO/STOP on the plan and PASS/FAIL from deterministic checks after the change.</li>
     <li><strong>Log.</strong> The session is written to a log; if reality differed from the procedure, the executor proposes a wiki diff for review.</li>
   </ol>
 

@@ -4,14 +4,14 @@ import StackBlock from '../components/StackBlock.astro';
 import stack from '../data/stack.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const LIVE = new Set(['work/jev', 'work/platform', 'how-i-work']);
+const LIVE = new Set(['work/jev', 'work/platform', 'work/babyloop', 'how-i-work']);
 ---
 
 <Base title="Stack — Vitalii Ryzhenko" description="Technologies I use at work and in my own projects, with versions where they are pinned.">
   <h1>Stack</h1>
   <p>
-    What I work with professionally (from my CV), and what each of my own projects runs on. Versions are listed where
-    the project pins them.
+    What I work with professionally (from my CV), and what each of my own projects runs on. Versions come from each
+    project's manifest (minimum versions where it uses ranges).
   </p>
 
   <h2>At work</h2>

@@ -3,12 +3,75 @@
   "professional": {
     "source": "CV",
     "groups": [
-      { "name": "AI & LLM", "items": ["Model Context Protocol (tool design, contracts, E2E testing)", "LLM coding agents (skills, hooks, sub-agents, parallel sessions)", "Structured output via JSON Schema", "Prompt & context engineering", "Agent eval scenarios and A/B runs", "OpenAI API"] },
-      { "name": "Frontend", "items": ["TypeScript", "Angular (DI, router, lazy modules, change detection)", "RxJS", "React", "Angular Material/CDK", "Chart.js", "Web Components", "Storybook", "SCSS"] },
-      { "name": "Backend & Data", "items": ["C#/.NET", "Node.js", "Python", "REST APIs", "MS SQL", "PostgreSQL"] },
-      { "name": "Build & Delivery", "items": ["Nx monorepo", "Webpack/Module Federation", "Jenkins", "GitLab CI", "Docker", "AWS", "SonarQube", "Feature flags", "Release-line backporting"] },
-      { "name": "Testing", "items": ["Jest + TestBed", "Playwright (page objects, test-framework SDK)", "NUnit", "Cypress", "sitespeed.io"] },
-      { "name": "Practices", "items": ["WCAG/ARIA accessibility", "i18n", "L4 production support", "ADRs and technical documentation"] }
+      {
+        "name": "AI & LLM",
+        "items": [
+          "Model Context Protocol (tool design, contracts, E2E testing)",
+          "LLM coding agents (skills, hooks, sub-agents, parallel sessions)",
+          "Structured output via JSON Schema",
+          "Prompt & context engineering",
+          "Agent eval scenarios and A/B runs",
+          "OpenAI API"
+        ]
+      },
+      {
+        "name": "Frontend",
+        "items": [
+          "TypeScript",
+          "Angular (DI, router, lazy modules, change detection)",
+          "RxJS",
+          "React",
+          "Angular Material/CDK",
+          "Chart.js",
+          "Web Components",
+          "Storybook",
+          "SCSS"
+        ]
+      },
+      {
+        "name": "Backend & Data",
+        "items": [
+          "C#/.NET",
+          "Node.js",
+          "Python",
+          "REST APIs",
+          "MS SQL",
+          "PostgreSQL"
+        ]
+      },
+      {
+        "name": "Build & Delivery",
+        "items": [
+          "Nx monorepo",
+          "Webpack/Module Federation",
+          "Jenkins",
+          "GitLab CI",
+          "Docker",
+          "AWS",
+          "SonarQube",
+          "Feature flags",
+          "Release-line backporting"
+        ]
+      },
+      {
+        "name": "Testing",
+        "items": [
+          "Jest + TestBed",
+          "Playwright (page objects, test-framework SDK)",
+          "NUnit",
+          "Cypress",
+          "sitespeed.io"
+        ]
+      },
+      {
+        "name": "Practices",
+        "items": [
+          "WCAG/ARIA accessibility",
+          "i18n",
+          "L4 production support",
+          "ADRs and technical documentation"
+        ]
+      }
     ]
   },
   "projects": [
@@ -17,11 +80,53 @@
       "name": "jev",
       "link": "work/jev",
       "groups": [
-        { "name": "AI", "items": ["Ollama 0.40.10 (CPU)", "qwen2.5:7b", "Claude via `claude -p` (Haiku, Sonnet)", "Preregistered evals, McNemar tests, confidence intervals"] },
-        { "name": "Backend", "items": ["Python ≥3.12 (uv)", "FastAPI", "Pydantic 2", "httpx", "uvicorn"] },
-        { "name": "Console", "items": ["Next.js 16.4.3", "React 19.3.0", "AI SDK 7", "Tailwind CSS 4.3.3", "shadcn/ui", "TypeScript 5.9.3", "PWA"] },
-        { "name": "Testing", "items": ["pytest", "Vitest 5.0.5", "Playwright 1.63.0"] },
-        { "name": "Ops", "items": ["systemd (loopback-only API)", "Docker (read-only, no capabilities)", "Tailscale Serve"] }
+        {
+          "name": "AI",
+          "items": [
+            "Ollama 0.40.10 (CPU)",
+            "qwen2.5:7b",
+            "Claude via `claude -p` (Haiku, Sonnet)",
+            "Preregistered evals, McNemar tests, confidence intervals"
+          ]
+        },
+        {
+          "name": "Backend",
+          "items": [
+            "Python ≥3.12 (uv)",
+            "FastAPI",
+            "Pydantic 2",
+            "httpx",
+            "uvicorn"
+          ]
+        },
+        {
+          "name": "Console",
+          "items": [
+            "Next.js 16.4.3",
+            "React 19.3.0",
+            "AI SDK 7",
+            "Tailwind CSS 4.3.3",
+            "shadcn/ui",
+            "TypeScript 5.9.3",
+            "PWA"
+          ]
+        },
+        {
+          "name": "Testing",
+          "items": [
+            "pytest",
+            "Vitest 5.0.5",
+            "Playwright 1.63.0"
+          ]
+        },
+        {
+          "name": "Ops",
+          "items": [
+            "systemd (loopback-only API)",
+            "Docker (read-only, no capabilities)",
+            "Tailscale Serve"
+          ]
+        }
       ]
     },
     {
@@ -29,45 +134,126 @@
       "name": "Agent platform",
       "link": "work/platform",
       "groups": [
-        { "name": "Agents", "items": ["Claude Code: skills, subagents, hooks", "tmux"] },
-        { "name": "Rules & checks", "items": ["Markdown wiki in git", "Bash checks (exit 0/1/2)", "gitleaks", "Trivy 0.56.2"] },
-        { "name": "Status board", "items": ["Python", "FastAPI", "uvicorn", "psutil", "Notion API", "ES5 JavaScript (Safari 12)"] },
-        { "name": "Infra", "items": ["WSL2", "Docker Compose", "systemd", "Tailscale (sidecars, Serve)", "Stream Deck+"] }
+        {
+          "name": "Agents",
+          "items": [
+            "Claude Code: skills, subagents, hooks",
+            "tmux"
+          ]
+        },
+        {
+          "name": "Rules & checks",
+          "items": [
+            "Markdown wiki in git",
+            "Bash checks (exit 0/1/2)",
+            "gitleaks",
+            "Trivy 0.56.2"
+          ]
+        },
+        {
+          "name": "Status board",
+          "items": [
+            "Python",
+            "FastAPI",
+            "uvicorn",
+            "psutil",
+            "Notion API",
+            "ES5 JavaScript (Safari 12)"
+          ]
+        },
+        {
+          "name": "Infra",
+          "items": [
+            "WSL2",
+            "Docker Compose",
+            "systemd",
+            "Tailscale (sidecars, Serve)",
+            "Stream Deck+"
+          ]
+        }
       ]
     },
     {
       "id": "interview-gym",
       "name": "Interview Gym",
       "groups": [
-        { "name": "Frontend", "items": ["Pyodide 0.26.4 in a Web Worker", "CodeMirror 5.65.16", "Mermaid 10.9.1"] },
-        { "name": "Backend", "items": ["Python 3.12", "FastAPI 0.115.6", "uvicorn 0.34.0", "SQLite"] },
-        { "name": "Ops", "items": ["Docker (3-stage build)", "Tailscale sidecar (own tailnet node)"] }
+        {
+          "name": "Frontend",
+          "items": [
+            "Pyodide 0.26.4 in a Web Worker",
+            "CodeMirror 5.65.16",
+            "Mermaid 10.9.1"
+          ]
+        },
+        {
+          "name": "Backend",
+          "items": [
+            "Python 3.12",
+            "FastAPI 0.115.6",
+            "uvicorn 0.34.0",
+            "SQLite"
+          ]
+        },
+        {
+          "name": "Ops",
+          "items": [
+            "Docker (3-stage build)",
+            "Tailscale sidecar (own tailnet node)"
+          ]
+        }
       ]
     },
     {
       "id": "babyloop",
       "name": "babyloop",
       "groups": [
-        { "name": "Mobile", "items": ["Expo SDK 58", "React Native 0.88", "React 19.3", "Expo Router", "expo-sqlite", "Reanimated 4.7", "react-native-svg 15.16", "TypeScript 6.0"] },
-        { "name": "Core", "items": ["Python ≥3.12 calculation core (uv)", "Shared JSON parity cases for Python and TS"] },
-        { "name": "Testing & CI", "items": ["Jest 30.5 (jest-expo, two time zones)", "pytest 9", "ruff", "GitHub Actions"] }
-      ]
-    },
-    {
-      "id": "livecode-kit",
-      "name": "livecode-kit",
-      "groups": [
-        { "name": "Backend", "items": ["Node.js ≥22.12", "Express 5.3.0", "Prisma 7.10.1", "PostgreSQL 17", "zod 4.6.7", "TypeScript 7.0.2"] },
-        { "name": "Security", "items": ["helmet 8.3.0", "express-rate-limit 8.7.2", "cors 2.8.6 (exact-origin allowlist)"] },
-        { "name": "Testing & Ops", "items": ["Vitest 5.0.5", "Supertest 7.3.1", "Docker multi-stage, non-root, read-only"] }
-      ]
+        {
+          "name": "Mobile",
+          "items": [
+            "Expo SDK 58",
+            "React Native 0.88",
+            "React 19.3",
+            "Expo Router",
+            "expo-sqlite",
+            "Reanimated 4.7",
+            "react-native-svg 15.16",
+            "TypeScript 6.0"
+          ]
+        },
+        {
+          "name": "Core",
+          "items": [
+            "Python ≥3.12 calculation core (uv)",
+            "Shared JSON parity cases for Python and TS"
+          ]
+        },
+        {
+          "name": "Testing & CI",
+          "items": [
+            "Jest 30.5 (jest-expo, two time zones)",
+            "pytest 9",
+            "ruff",
+            "GitHub Actions"
+          ]
+        }
+      ],
+      "link": "work/babyloop"
     },
     {
       "id": "watchface",
       "name": "connectiq-watchface-kit",
       "href": "https://github.com/vitalikryzhenkous/connectiq-watchface-kit",
       "groups": [
-        { "name": "Stack", "items": ["Garmin Connect IQ (Monkey C)", "Python", "MCP server (5 tools)", "Claude Code skill + 7 commands", "Benchmark: 10 tasks"] }
+        {
+          "name": "Stack",
+          "items": [
+            "Garmin Connect IQ (Monkey C)",
+            "Python",
+            "MCP server (5 tools)",
+            "Claude Code skill + 7 commands",
+            "Benchmark: 10 tasks"
+          ]
+        }
       ]
     },
     {
@@ -75,8 +261,25 @@
       "name": "This site",
       "href": "https://github.com/vitalikryzhenkous/portfolio",
       "groups": [
-        { "name": "Stack", "items": ["Astro 7.4.4", "React 19.3.1 islands", "React Flow 12.12.0", "elkjs 0.12.1 (layout at build time)", "MDX", "TypeScript 6.0.3 (strictest)"] },
-        { "name": "Delivery", "items": ["GitHub Actions → Pages", "gitleaks 8.30.1 over full history", "Forbidden-pattern check on source and built site"] }
+        {
+          "name": "Stack",
+          "items": [
+            "Astro 7.4.4",
+            "React 19.3.1 islands",
+            "React Flow 12.12.0",
+            "elkjs 0.12.1 (layout at build time)",
+            "MDX",
+            "TypeScript 6.0.3 (strictest)"
+          ]
+        },
+        {
+          "name": "Delivery",
+          "items": [
+            "GitHub Actions → Pages",
+            "gitleaks 8.30.1 over full history",
+            "Forbidden-pattern check on source and built site"
+          ]
+        }
       ]
     }
   ]

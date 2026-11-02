@@ -1,7 +1,7 @@
 {
   "$comment": "HTML version of the Applied AI / FDE CV — text copied from the PDF (2026-11-01). Change the PDF and this file together.",
   "headline": "Applied AI / Forward Deployed Engineer | Full-Stack TypeScript · .NET · Python | LLM Features, MCP, Agent Evals",
-  "summary": "Applied AI engineer with 9+ years of full-stack experience across enterprise, healthcare and e-commerce platforms (TypeScript, Angular/React, .NET/Node). I ship LLM features and AI-agent tooling to production — MCP tools, structured outputs, context engineering and agent evals — and work directly with customers, taking vague problems to production fixes. Before engineering I worked in B2B sales, so discussing scope, cost and value with customers comes naturally.",
+  "summary": "Applied AI engineer with 9+ years of full-stack experience across enterprise, healthcare and e-commerce platforms (TypeScript, Angular/React, .NET/Node). I ship LLM features and AI-agent tooling to production — MCP tools, structured outputs, context engineering and agent evals — and work directly with customers, taking vague problems to production fixes. Before engineering I worked in B2B sales — closing large deals and leading negotiations — so discussing scope, cost and value with customers comes naturally.",
   "experience": [
     {
       "company": "Creatio",

@@ -1,0 +1,84 @@
+---
+layout: ../../layouts/Case.astro
+title: babyloop — shipping a mobile app with an agent team
+kicker: Case study · AI-assisted product engineering
+description: How I build a real mobile app mostly with coding agents — a spec-first pipeline with independent reviewers, tests written before code, hooks that block shortcuts, and a metrics row for every task.
+summary: A mobile app for my family's baby-sleep routine, built mostly by coding agents. The interesting part is not the app but the process — every feature goes through the same pipeline, independent reviewers catch what the author agent misses, and every task leaves a measurable trace.
+tldr:
+  problem: Coding agents are fast, but left alone they skip steps, grade their own work and drift from the spec — and a family app used at night with one hand has no room for "almost right".
+  built: A 10-stage feature pipeline in Claude Code — spec, independent spec review, tests written first by a separate agent from the spec only, implementation, verifier, code review, PR, metrics — with hooks that block a commit without a green check of the exact tree and a merge without green CI.
+  result: 21 tasks in 9 days, each logged with model, time and outcome; reviewers raised 14 blockers and 41 should-fix items, addressed before the PR; a Python core and its TypeScript port agree on 87 shared cases.
+facts:
+  - { value: '21', label: 'tasks logged with model, minutes and outcome (2026-10-25 → 11-02)' }
+  - { value: '14 · 41', label: 'blockers · should-fix items raised by reviewer agents, addressed before PR' }
+  - { value: '87', label: 'shared cases run by both pytest and Jest (Python core ↔ TypeScript port)' }
+  - { value: '4 · 7', label: 'subagents · guard hooks in the pipeline' }
+---
+import StackBlock from '../../components/StackBlock.astro';
+
+## The problem: speed without shortcuts
+
+The app answers one question for a tired parent at night: *what now, and when is the next sleep?* One-tap events,
+the next sleep time, a calm night theme. Sleep calculations must match a sleep consultant's spreadsheet — a wrong
+number at 3 a.m. is worse than no number.
+
+Agents write most of the code. That only works if the process makes their usual failure modes hard: skipping the
+spec, writing tests that mirror the implementation, declaring “done” without running checks, merging on red CI.
+
+## Every feature runs the same 10-stage pipeline
+
+1. **Plan** with a size (S / M / L) and open questions.
+2. **Spec** written, then reviewed by a **spec-reviewer** agent with a fresh context (business + UX review), then my OK.
+3. **Branch** from an up-to-date main.
+4. **Tests first** — a **test-designer** agent sees only the approved spec, never the implementation.
+5. **Implement** the smallest change that makes the tests pass.
+6. **Verify** — a **verifier** agent runs tests, lint, types and the calculation-parity suite; fix until green.
+7. **Review** — a **code-reviewer** agent checks the diff against the spec and the project rules.
+8. **Commit & PR**, re-verifying if anything changed after stage 6.
+9. **Deploy** — explicitly skipped until deployment is configured (no silent “done”).
+10. **Metrics** — one row: date, task, model, minutes, accepted, notes.
+
+The pipeline keeps its state per feature, so it can resume in any stage, in any session.
+
+## Shortcuts are blocked by hooks, not by good intentions
+
+| Hook | What it blocks |
+|---|---|
+| Commit gate | A commit of code without a green verify of **exactly this tree** |
+| Merge gate | Merging a pull request unless every CI check is green |
+| Agent sandbox | Reviewer and test agents can write only their reports (test-designer also test files) |
+| Tool allowlists | Only the project's own CLI tools; `gh` limited to PR and issue commands |
+
+CI runs the same checks: backend (lint, format, pytest) and mobile (lint, types, Jest — in two time zones, because
+sleep spans midnight and daylight-saving nights exist).
+
+## Design with a brief, and accessibility as tests
+
+Screens go through a separate `/design` flow: a one-page brief (“night, one hand, half asleep”), 1–3 options, design
+system additions, every state in light / dark / **night** theme and at the largest system font, then a hand-off spec.
+Design system v1 shipped in 4 parts. A test computes colour contrast for the specified text/background pairs in
+every theme (4.5:1 text, 3:1 controls); tap targets are at least 48 pt.
+
+## What the log shows — honestly
+
+- **Reviewers earn their keep:** 14 blockers and 41 should-fix items were raised by reviewer agents and addressed
+  before the pull request.
+- **Review is not perfect:** 15 spec bugs were still found after spec review, across 13 tasks — counted in the log,
+  not hidden. One spec was rejected twice before the work started.
+- **The phone catches what tests do not:** 11 task notes mention a check on a real phone; one of them (clipped hero text on
+  a real device) became its own fix.
+- **Time is an estimate:** minutes are mostly estimated active work and include waiting for my OK; they show
+  relative effort, not productivity claims. Every task is marked accepted after my review; for UI tasks that usually included a phone check.
+- **Known gap:** for one design-system part, VoiceOver and the largest font were not checked on a device (covered by
+  tests and web instead); the device font check is tracked as an issue.
+
+<StackBlock project="babyloop" />
+
+## What I'd do next
+
+- **Deploy** the backend and the mobile builds, so stage 9 stops being skipped.
+- **Generate the metrics row** from the pipeline's state instead of writing it by hand.
+- **Measure escaped bugs per stage** (spec, tests, review, phone) to see which reviewer to strengthen next.
+
+<p class="note">Private repository — demo on request. Figures come from the project's metrics log, git history and
+test fixtures as of 2026-11-02. No real family data is used on this page.</p>

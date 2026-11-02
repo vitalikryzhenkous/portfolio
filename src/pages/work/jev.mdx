@@ -2,20 +2,20 @@
 layout: ../../layouts/Case.astro
 title: jev — a privacy-first LLM router on a CPU box
 kicker: Case study · Applied AI
-description: A local-first LLM router that keeps sensitive requests on a CPU-only home server and sends the rest to the cheapest cloud model that can handle them — with preregistered evals behind every decision.
-summary: jev sits between me and the models. Sensitive requests never leave my home server; the rest go to the cheapest Claude model that can handle them. Model, prompt and policy changes are decided by preregistered experiments, not by intuition.
-snapshot: 2026-11-01
+description: A local-first LLM router built to keep sensitive requests on a CPU-only home server and send the rest to the cheapest cloud model that can handle them — with preregistered evals behind model and policy decisions.
+summary: jev sits between me and the models. It is built so that sensitive requests stay on my home server and the rest go to the cheapest Claude model that can handle them. Since the eval protocol was set up, model, prompt and policy changes are decided by preregistered experiments, not by intuition.
+snapshot: 2026-11-02
 tldr:
   problem: Sending everything to the best cloud model leaks private data and burns the limit; sending everything to a local model is private but slow and often not good enough.
-  built: A router that runs on a CPU-only home server. A local model extracts features, code decides the route, sensitive requests never leave the machine. Every model, prompt and policy change is a preregistered experiment.
-  result: 86% of routed requests answered locally, ≈91% of cloud limit saved (estimate, n=15). A bigger model was rejected by data; a deterministic layer fixed what it could not.
+  built: A router that runs on a CPU-only home server. A local model extracts features, code decides the route, and policy sends anything marked sensitive to the local model. Changes go through preregistered experiments.
+  result: '{{pct:jev.live.local_share.pct}} of routed requests answered locally, ≈{{pct:jev.live.savings.saved_pct}} of cloud limit saved (estimate, n={{jev.live.savings.counted_decisions}}). A bigger model was rejected by data; a deterministic layer fixed what it could not.'
 facts:
-  - { value: '86%', label: 'of routed requests answered locally (37/43, 95% CI 73–93%)' }
-  - { value: '≈91%', label: 'estimated cloud-limit saved vs. “public → Sonnet” (n=15, estimate)' }
-  - { value: '987', label: 'automated tests (pytest, collected)' }
-  - { value: '289', label: 'eval cases: a dev set plus 6 frozen test sets' }
+  - { value: '{{pct:jev.live.local_share.pct}}', label: 'of routed requests answered locally ({{jev.live.local_share.k}}/{{jev.live.local_share.n}}, 95% CI {{pct:jev.live.local_share.ci95.0}}–{{pct:jev.live.local_share.ci95.1}})' }
+  - { value: '≈{{pct:jev.live.savings.saved_pct}}', label: 'estimated cloud-limit saved vs. “public → Sonnet” (n={{jev.live.savings.counted_decisions}}, estimate)' }
+  - { value: '{{n:jev.tests_pytest_collected}}', label: 'automated tests (pytest, collected)' }
+  - { value: '{{jev.eval_cases_total}}', label: 'eval cases: a dev set plus frozen test sets' }
 ---
-import snap from '../../../data/snapshots/2026-11-01.json';
+import snap from '../../../data/snapshots/2026-11-02.json';
 import JevPipeline from '../../components/JevPipeline.astro';
 import Dumbbell from '../../components/Dumbbell.astro';
 import StackBlock from '../../components/StackBlock.astro';
@@ -31,8 +31,8 @@ details, health, contacts. Sending everything to the best cloud model is easy bu
 subscription limit. Sending everything to a local model is private but slow and often not good enough.
 
 **jev decides per request**: what kind of task it is, how hard, and whether it is private — and routes it
-to a local model or to the cheapest Claude model that can do it. The hard constraint: a sensitive request
-must never reach the cloud, even when the text itself tries to talk the router into it.
+to a local model or to the cheapest Claude model that can do it. The design goal: a sensitive request
+must not reach the cloud, even when the text itself tries to talk the router into it.
 
 ## The LLM extracts features; code decides the route
 
@@ -55,7 +55,7 @@ It runs on an Intel i5-9500T with no GPU, inside my private network; the API bin
 - **Runtime:** Ollama on an Intel i5-9500T, no GPU, inside WSL. One 7B model stays resident; the API warms it
   up at start so the first answer after a reboot does not pay the 10–36 s cold load.
 - **Measured on this CPU:** decode ≈ 6 tokens/s, prefill ≈ 30 tokens/s on an idle host. Every local run logs
-  load, prefill, generation and time-to-first-token separately.
+  load, prefill and generation time separately, and time-to-first-token for streamed answers.
 - **API:** a systemd service that **refuses to bind anything but loopback**; one Ollama slot, two cloud
   slots, a short queue and 429 beyond it.
 - **Console:** a Next.js PWA in a hardened container (read-only, all capabilities dropped), reachable only
@@ -75,7 +75,8 @@ The run log is how I measure everything — so it was designed first (ADR-005):
 
 ## Every change goes through a preregistered experiment
 
-Every change to the model, prompt or policy follows the same protocol:
+Since the protocol was introduced (October 2026), every change to the model, prompt or policy follows it — the
+earliest prompt versions were tuned on the dev set before that:
 
 1. **Preregister** the question, the frozen test set (by hash), the metrics and the decision rule — committed
    *before* any run. {snap.jev.preregistrations} preregistrations so far.
@@ -96,12 +97,14 @@ property of the layered system (rules, guard, policy), not of the classifier.
 
 **2 · A deterministic layer instead of a bigger model (L12b, ADR-012).** I added a code layer before the
 classifier that normalises text (Unicode tricks, homoglyphs, spaced letters) and fails closed when a message
-claims its data is “fake” or “public”. Result on unseen attacks: **18/18 detected**, cost-raising attacks
-1/12 → **0/12**, no false positives on the existing 202-case corpus, p95 latency **1.53 ms**.
+claims its data is “fake” or “public”. Result on unseen attacks: **18/18 detected**, label-hijack and
+cost attacks 1/12 → **0/12**, no hits on the existing 202-case corpus, p95 latency **1.53 ms**. The price: one
+public case on the new holdout was failed closed (marked sensitive) by mistake.
 
 **3 · A newer 9B model for answers (L13c, ADR-009 A1).** The local executor got ID-number checks wrong, so
 the obvious move was a bigger model. The preregistered rule said: switch only if the 9B has ≤ 1/30 timeouts,
-p95 ≤ 150 s, wins more blind writing comparisons, and beats 7B on the checks.
+p95 ≤ 150 s, wins more blind writing comparisons, matches or beats 7B on the checks, and stays within the
+language and memory limits.
 
 <Dumbbell
   title="Wall time per call, p50 → p95"
@@ -138,6 +141,11 @@ p95 ≤ 150 s, wins more blind writing comparisons, and beats 7B on the checks.
 - **Decision:** 9B rejected on latency alone (13/48 timeouts, p95 180 s). Instead, a **facts layer**:
   code computes the checksum verdicts and the model only explains them — 7B went from **12/18 to 18/18**.
   The 9B model was removed from the host.
+
+**Known gaps, stated in the repo:** routing is not perfect — on an earlier frozen holdout the production
+prompt still let 2 of 13 sensitive cases through to a cloud route, and one corporate-ticket pattern is a
+documented miss. That is why privacy rests on several layers (rules, injection layer, guard, policy), not on
+the classifier alone, and why the gaps are tracked instead of hidden.
 
 <p class="note">What this is not: I did not train or fine-tune these models. The gains come from routing
 policy, prompt iterations, deterministic layers and evals around off-the-shelf models.</p>
