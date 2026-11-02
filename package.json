@@ -7,10 +7,13 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "forbidden": "bash scripts/forbidden.sh",
-    "graph": "node scripts/build-graph.ts"
+    "graph": "node scripts/build-graph.ts",
+    "test:a11y": "playwright test"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
