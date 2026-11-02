@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import og from '../data/og.json';
+import profile from '../data/profile.json';
 
 interface Props {
   title: string;
@@ -9,6 +11,26 @@ interface Props {
 
 const { title, description, wide = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Canonical URL and link-preview image for this page.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const path = Astro.url.pathname.replace(base, '').replace(/^\/|\/$/g, '');
+const slug = path === '' ? 'home' : path.replace(/\//g, '-');
+const ogSlug = slug in og.pages ? slug : 'home';
+const ogImage = new URL(`${base}/og/${ogSlug}.png`, Astro.site).href;
+
+// Machine-readable profile (schema.org Person) for search engines and AI agents.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.roles[0],
+  url: new URL(`${base}/`, Astro.site).href,
+  email: `mailto:${profile.email}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Poznań', addressCountry: 'PL' },
+  sameAs: [profile.links.linkedin, profile.links.github],
+  knowsAbout: ['Applied AI', 'LLM evaluation', 'Model Context Protocol', 'AI agents', 'TypeScript', 'Angular', 'React', '.NET'],
+};
 ---
 
 <!doctype html>
@@ -21,6 +43,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <!-- hidden until launch: remove noindex + robots.txt Disallow when the site is ready -->
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    <meta property="og:type" content={slug.startsWith('work-') ? 'article' : 'website'} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script is:inline>
       // Apply a saved theme before first paint (no flash). Storage can be blocked: then follow the OS.
       try {

@@ -12,10 +12,19 @@ Astro + React islands, MDX for case studies, TypeScript strict. Exact package ve
   plus a gitleaks scan of the full history. The script prints only file:line and the rule name.
 - `private/` (gitignored) holds inputs that never get published.
 
+## Launch checklist
+- Remove `noindex` in `src/layouts/Base.astro` and `public/robots.txt`.
+- In `lighthouserc.json` replace the individual SEO audits with `"categories:seo": ["error", {"minScore": 0.9}]`
+  (the category score is ~0.63 while `noindex` is on, by design).
+- Check a page in Google Rich Results Test and LinkedIn Post Inspector.
+
 ## Develop
 ```bash
 npm ci
 npm run dev        # http://localhost:4321/portfolio/
 npm run build      # astro check + build
 npm run forbidden  # guard
+npm run cv         # rebuild both CV PDFs from src/data (uv + ReportLab)
+npm run og         # rebuild link-preview images (uv + Pillow)
+bash scripts/snapshot.sh  # on the server: dated numbers from jev, GitHub PRs, platform
 ```
