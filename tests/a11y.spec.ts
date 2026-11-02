@@ -70,3 +70,14 @@ test('replay steps forward and back from the keyboard', async ({ page }) => {
   await replay.getByRole('button', { name: '◀ Back' }).click();
   await expect(replay.getByRole('list', { name: 'Phases' }).locator('> li')).toHaveCount(6);
 });
+
+test('case cards are clickable anywhere, with one link each', async ({ page }) => {
+  await page.goto('work/');
+  const card = page.locator('.card-link').first();
+  const links = card.getByRole('link');
+  await expect(links).toHaveCount(1);
+  const box = await card.boundingBox();
+  if (!box) throw new Error('card not rendered');
+  await page.mouse.click(box.x + 12, box.y + box.height - 12); // bottom-left corner, away from the title
+  await expect(page).toHaveURL(/\/work\/[a-z-]+\/$/);
+});

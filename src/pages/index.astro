@@ -135,7 +135,7 @@ const work = [
   <ul class="cards">
     {
       work.map((w) => (
-        <li class="card">
+        <li class:list={['card', { 'card-link': w.href }]}>
           <span class="tag">{w.tag}</span>
           <h3>{w.href ? <a href={w.href}>{w.title}</a> : w.title}</h3>
           <p>{w.text}</p>
