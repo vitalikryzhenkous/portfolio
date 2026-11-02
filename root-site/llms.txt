@@ -10,7 +10,7 @@
 - [Agent platform with an independent verifier](https://vitalikryzhenkous.github.io/portfolio/work/platform/): rules, executor, verifier, incidents turned into checks
 - [How I work](https://vitalikryzhenkous.github.io/portfolio/how-i-work/): interactive graph of the platform
 - [Stack](https://vitalikryzhenkous.github.io/portfolio/stack/): technologies at work and in projects
-- [CV](https://vitalikryzhenkous.github.io/portfolio/cv/): HTML CV and PDFs (Applied AI / FDE, Full-Stack)
+- [CV](https://vitalikryzhenkous.github.io/portfolio/cv/): HTML CV and PDF (Applied AI / FDE)
 
 ## Contact
 - Email: vitaliiryzhenkous@gmail.com

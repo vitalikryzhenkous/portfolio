@@ -8,7 +8,7 @@
     "groups": ["AI & agent tooling", "Customer escalations (L4)", "Front-end performance & architecture", "Product features", "Quality"]
   },
   "full-stack": {
-    "file": "public/cv/vitalii-ryzhenko-cv-full-stack.pdf",
+    "file": "private/cv/vitalii-ryzhenko-cv-full-stack.pdf",
     "headline": "Senior Full-Stack Engineer | Angular · React · TypeScript · .NET | Front-End Architecture & Performance",
     "summary": "Senior full-stack engineer with 9+ years building enterprise, healthcare and e-commerce web platforms with Angular, React, TypeScript and .NET. Focused on front-end architecture and performance at scale, quality and testing, and shipping LLM features to production. Before engineering I worked in B2B sales — closing large deals and leading negotiations — so discussing scope, cost and value with customers comes naturally.",
     "skills": ["Frontend", "Backend & Data", "AI & LLM", "Build & Delivery", "Testing", "Practices"],

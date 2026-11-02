@@ -11,7 +11,6 @@ import {
   type EdgeProps,
   type Node,
   type NodeProps,
-  type OnSelectionChangeParams,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import graph from '../data/graph.json';
@@ -253,12 +252,8 @@ export default function PlatformGraph() {
     return () => window.removeEventListener('keydown', onKey);
   }, [active]);
 
-  const onSelectionChange = useCallback(({ nodes: sel }: OnSelectionChangeParams) => {
-    // Open on selection (mouse or Enter on a focused node). An empty selection does NOT close the card:
-    // the animation rebuilds nodes every step, which clears React Flow's selection. Close = × or pane click.
-    const id = sel[0]?.id;
-    if (id) setActive(activeFor(id));
-  }, []);
+  // Cards open only on explicit actions: a click (onNodeClick) or Enter/Space (canvas keydown). Not on
+  // React Flow's selection: on Escape it *selects* the focused node, which used to reopen a just-closed card.
 
   const playing = scenario !== null && step >= 0 && step < scenario.steps.length;
   const caption = scenario && step >= 0 ? scenario.steps[Math.min(step, scenario.steps.length - 1)]?.caption : null;
@@ -317,7 +312,6 @@ export default function PlatformGraph() {
             edges={edges}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
-            onSelectionChange={onSelectionChange}
             onNodeClick={(_, n) => {
               track(`graph-node:${n.id}`);
               setActive(activeFor(n.id));
