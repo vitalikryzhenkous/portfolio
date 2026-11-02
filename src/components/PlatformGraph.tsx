@@ -29,7 +29,7 @@ type FlowEdgeData = { pulse: Pulse | null };
 const { nodeWidth: W, nodeHeight: H } = graph.size;
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 // Case pages that exist; links to the rest stay hidden until the page ships (no 404s).
-const LIVE_CASES = new Set<string>(['work/jev', 'work/platform']);
+const LIVE_CASES = new Set<string>(['work/jev', 'work/platform', 'work/status-board', 'work/interview-gym']);
 
 const TRAVEL_MS = 1100; // one pulse along an edge
 const PAUSE_MS = 1700; // reading time after the pulse lands

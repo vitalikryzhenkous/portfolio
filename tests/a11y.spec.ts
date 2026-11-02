@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // WCAG 2.2 AA (and below) on every page, in both themes. A violation fails the build.
-const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'work/babyloop/', 'stack/', 'cv/'];
+const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'work/babyloop/', 'work/status-board/', 'work/interview-gym/', 'stack/', 'cv/'];
 const THEMES = ['light', 'dark'] as const;
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -69,4 +69,15 @@ test('replay steps forward and back from the keyboard', async ({ page }) => {
   }).toPass({ timeout: 10_000 });
   await replay.getByRole('button', { name: '◀ Back' }).click();
   await expect(replay.getByRole('list', { name: 'Phases' }).locator('> li')).toHaveCount(6);
+});
+
+test('case cards are clickable anywhere, with one link each', async ({ page }) => {
+  await page.goto('work/');
+  const card = page.locator('.card-link').first();
+  const links = card.getByRole('link');
+  await expect(links).toHaveCount(1);
+  const box = await card.boundingBox();
+  if (!box) throw new Error('card not rendered');
+  await page.mouse.click(box.x + 12, box.y + box.height - 12); // bottom-left corner, away from the title
+  await expect(page).toHaveURL(/\/work\/[a-z-]+\/$/);
 });

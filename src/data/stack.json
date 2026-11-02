@@ -151,17 +151,6 @@
           ]
         },
         {
-          "name": "Status board (uptime-board)",
-          "items": [
-            "Python",
-            "FastAPI",
-            "uvicorn",
-            "psutil",
-            "Notion API",
-            "ES5 JavaScript (Safari 12)"
-          ]
-        },
-        {
           "name": "Infra",
           "items": [
             "WSL2",
@@ -169,6 +158,37 @@
             "systemd",
             "Tailscale (sidecars, Serve)",
             "Stream Deck+"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "status-board",
+      "name": "Status board (uptime-board)",
+      "link": "work/status-board",
+      "groups": [
+        {
+          "name": "Backend",
+          "items": [
+            "Python",
+            "FastAPI",
+            "uvicorn",
+            "psutil",
+            "Notion API"
+          ]
+        },
+        {
+          "name": "Front end",
+          "items": [
+            "ES5 JavaScript (Safari 12)",
+            "Polling, no build step"
+          ]
+        },
+        {
+          "name": "Inputs",
+          "items": [
+            "Claude Code hooks (6 events)",
+            "tmux sessions"
           ]
         }
       ]
@@ -201,7 +221,8 @@
             "Tailscale sidecar (own tailnet node)"
           ]
         }
-      ]
+      ],
+      "link": "work/interview-gym"
     },
     {
       "id": "babyloop",
