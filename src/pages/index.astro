@@ -58,9 +58,9 @@ const work = [
     </p>
     <p class="meta">{profile.location}</p>
     <div class="cta">
-      <a class="btn btn-primary" href={profile.links.booking} rel="noopener">Book a 30-min call</a>
-      <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download>Download CV (PDF)</a>
-      <a class="btn" href={`${base}/cv/`}>CV page &amp; print</a>
+      <a class="btn btn-primary" href={profile.links.booking} rel="noopener" data-track="book-call:hero">Book a 30-min call</a>
+      <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download data-track="cv-download:applied-ai:home">Download CV (PDF)</a>
+      <a class="btn" href={`${base}/cv/`} data-track="cv-page:home">CV page &amp; print</a>
     </div>
   </section>
 
@@ -101,7 +101,7 @@ const work = [
             {c.prs.map((p, i) => (
               <>
                 {i > 0 ? ' · ' : ''}
-                <a href={prUrl(p.repo, p.number)} rel="noopener">
+                <a href={prUrl(p.repo, p.number)} rel="noopener" data-track={`oss-pr:${short(p.repo)}#${p.number}`}>
                   {short(p.repo)} #{p.number}
                 </a>
               </>
@@ -177,9 +177,9 @@ const work = [
 
   <h2>Contact</h2>
   <p>
-    <a href={profile.links.booking} rel="noopener">Book a call (Google Meet)</a> ·
+    <a href={profile.links.booking} rel="noopener" data-track="book-call:contact">Book a call (Google Meet)</a> ·
     <a href={`mailto:${profile.email}`}>{profile.email}</a> ·
-    <a href={profile.links.linkedin} rel="noopener">LinkedIn</a> ·
+    <a href={profile.links.linkedin} rel="noopener" data-track="linkedin:contact">LinkedIn</a> ·
     <a href={profile.links.github} rel="noopener">GitHub</a>
   </p>
 </Base>

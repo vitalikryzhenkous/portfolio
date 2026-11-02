@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import run from '../../data/replay/consolidate-2026-11-01.json';
+import { track } from '../lib/track';
 
 type Event = (typeof run.events)[number] & { verdict?: string; time?: string };
 const events = run.events as Event[];
@@ -58,7 +59,16 @@ export default function Replay() {
   return (
     <section className="rp" aria-label={`Replay: ${run.title}, ${run.date}`}>
       <div className="rp-controls" role="group" aria-label="Replay controls">
-        <button type="button" onClick={() => (done ? (setShown(1), setPlaying(true)) : setPlaying((p) => !p))}>
+        <button
+          type="button"
+          onClick={() => {
+            if (!playing) track(done ? 'replay:restart' : 'replay:play');
+            if (done) {
+              setShown(1);
+              setPlaying(true);
+            } else setPlaying((p) => !p);
+          }}
+        >
           {playing ? '❚❚ Pause' : done ? '↺ Replay' : '▶ Play'}
         </button>
         <button type="button" onClick={() => setShown((n) => Math.max(1, n - 1))} disabled={shown <= 1}>
