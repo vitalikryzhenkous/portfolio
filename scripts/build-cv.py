@@ -8,7 +8,8 @@
 
 Sources: src/data/cv.json (experience, education, languages), src/data/stack.json (professional skills),
 src/data/profile.json (name, contacts, certifications), src/data/cv-variants.json (headline, summary, order).
-Output: public/cv/*.pdf. Only email, LinkedIn and city — no phone, no address.
+Output: the Applied AI / FDE PDF in public/cv/ (on the site); the Full-Stack PDF in private/cv/ (gitignored,
+sent only with targeted applications). Only email, LinkedIn and city — no phone, no address.
 """
 
 import json
@@ -70,6 +71,7 @@ def build(variant_id: str) -> Path:
     v = variants[variant_id]
     st = styles()
     out = ROOT / v["file"]
+    out.parent.mkdir(parents=True, exist_ok=True)
 
     linkedin = profile["links"]["linkedin"]
     contact = (
