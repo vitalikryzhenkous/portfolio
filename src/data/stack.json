@@ -151,7 +151,7 @@
           ]
         },
         {
-          "name": "Status board",
+          "name": "Status board (uptime-board)",
           "items": [
             "Python",
             "FastAPI",
