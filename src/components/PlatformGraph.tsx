@@ -283,7 +283,21 @@ export default function PlatformGraph() {
             <span className="muted">Pick a flow to watch data move through the platform.</span>
           )}
         </p>
-        <div className="pg-canvas">
+        <div
+          className="pg-canvas"
+          onKeyDown={(e) => {
+            // Keyboard: Enter/Space on a focused node opens its card, Escape closes it. React Flow's own
+            // keyboard selection goes through onNodesChange, which this read-only graph does not use.
+            if (e.key === 'Escape') return setActive(null);
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const id = (e.target as HTMLElement).closest('.react-flow__node')?.getAttribute('data-id');
+            const a = id ? activeFor(id) : null;
+            if (a) {
+              e.preventDefault();
+              setActive(a);
+            }
+          }}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}

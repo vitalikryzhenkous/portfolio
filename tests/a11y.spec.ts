@@ -26,6 +26,10 @@ test('graph is usable from the keyboard', async ({ page }) => {
   await node.focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.pg-card')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.pg-card')).toHaveCount(0);
+  await node.focus();
+  await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Close details' }).click();
   await expect(page.locator('.pg-card')).toHaveCount(0);
 });
