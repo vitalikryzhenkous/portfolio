@@ -242,6 +242,17 @@ export default function PlatformGraph() {
     [pulses, run],
   );
 
+  // While a card is open, Escape closes it from anywhere on the page — focus may have left the graph
+  // (a click on the card, or the animation re-rendering nodes).
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActive(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [active]);
+
   const onSelectionChange = useCallback(({ nodes: sel }: OnSelectionChangeParams) => {
     // Open on selection (mouse or Enter on a focused node). An empty selection does NOT close the card:
     // the animation rebuilds nodes every step, which clears React Flow's selection. Close = × or pane click.
@@ -292,7 +303,6 @@ export default function PlatformGraph() {
           onKeyDown={(e) => {
             // Keyboard: Enter/Space on a focused node opens its card, Escape closes it. React Flow's own
             // keyboard selection goes through onNodesChange, which this read-only graph does not use.
-            if (e.key === 'Escape') return setActive(null);
             if (e.key !== 'Enter' && e.key !== ' ') return;
             const id = (e.target as HTMLElement).closest('.react-flow__node')?.getAttribute('data-id');
             const a = id ? activeFor(id) : null;
