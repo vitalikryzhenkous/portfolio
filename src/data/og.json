@@ -28,6 +28,10 @@
     "work": {
       "title": "Case studies: a privacy-first LLM router and an agent platform",
       "kicker": "Case studies"
+    },
+    "work-babyloop": {
+      "title": "babyloop — shipping a mobile app with an agent team",
+      "kicker": "Case study · AI-assisted product engineering"
     }
   }
 }

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // WCAG 2.2 AA (and below) on every page, in both themes. A violation fails the build.
-const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'stack/', 'cv/'];
+const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'work/babyloop/', 'stack/', 'cv/'];
 const THEMES = ['light', 'dark'] as const;
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
