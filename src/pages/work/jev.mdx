@@ -5,6 +5,10 @@ kicker: Case study · Applied AI
 description: A local-first LLM router that keeps sensitive requests on a CPU-only home server and sends the rest to the cheapest cloud model that can handle them — with preregistered evals behind every decision.
 summary: jev sits between me and the models. Sensitive requests never leave my home server; the rest go to the cheapest Claude model that can handle them. Model, prompt and policy changes are decided by preregistered experiments, not by intuition.
 snapshot: 2026-11-01
+tldr:
+  problem: Sending everything to the best cloud model leaks private data and burns the limit; sending everything to a local model is private but slow and often not good enough.
+  built: A router that runs on a CPU-only home server. A local model extracts features, code decides the route, sensitive requests never leave the machine. Every model, prompt and policy change is a preregistered experiment.
+  result: 86% of routed requests answered locally, ≈91% of cloud limit saved (estimate, n=15). A bigger model was rejected by data; a deterministic layer fixed what it could not.
 facts:
   - { value: '86%', label: 'of routed requests answered locally (37/43, 95% CI 73–93%)' }
   - { value: '≈91%', label: 'estimated cloud-limit saved vs. “public → Sonnet” (n=15, estimate)' }
@@ -20,7 +24,7 @@ export const live = snap.jev.live;
 export const pct = (x) => `${Math.round(x * 100)}%`;
 export const s = (ms) => `${(ms / 1000).toFixed(1)} s`;
 
-## The problem
+## The problem: private data vs. good answers
 
 I use LLMs for everything, including text that should not leave my machine: national ID numbers, bank
 details, health, contacts. Sending everything to the best cloud model is easy but leaks data and burns the
@@ -30,7 +34,7 @@ subscription limit. Sending everything to a local model is private but slow and 
 to a local model or to the cheapest Claude model that can do it. The hard constraint: a sensitive request
 must never reach the cloud, even when the text itself tries to talk the router into it.
 
-## Architecture
+## The LLM extracts features; code decides the route
 
 <JevPipeline />
 
@@ -43,7 +47,10 @@ must never reach the cloud, even when the text itself tries to talk the router i
   models, `jev-auto` and `jev-local` (ADR-011). The API checks the **whole transcript**, not only the last
   message, and a conversation that was ever sensitive stays local.
 
-## Deployment on a CPU-only box
+It runs on an Intel i5-9500T with no GPU, inside my private network; the API binds only to loopback.
+
+<details class="more">
+<summary>Deployment details — runtime, latency, API, console</summary>
 
 - **Runtime:** Ollama on an Intel i5-9500T, no GPU, inside WSL. One 7B model stays resident; the API warms it
   up at start so the first answer after a reboot does not pay the 10–36 s cold load.
@@ -54,7 +61,9 @@ must never reach the cloud, even when the text itself tries to talk the router i
 - **Console:** a Next.js PWA in a hardened container (read-only, all capabilities dropped), reachable only
   inside my private tailnet. API keys stay on the server; chat history stays on the device (ADR-013).
 
-## Privacy by construction
+</details>
+
+## The run log never stores text
 
 The run log is how I measure everything — so it was designed first (ADR-005):
 
@@ -64,7 +73,7 @@ The run log is how I measure everything — so it was designed first (ADR-005):
 - **Prompt ids are keyed hashes**, not plain hashes — a short prompt's plain hash can be guessed.
 - Writing the log can never change a run's outcome, and every exit path logs exactly once.
 
-## How decisions are made
+## Every change goes through a preregistered experiment
 
 Every change to the model, prompt or policy follows the same protocol:
 
@@ -78,7 +87,7 @@ Negative results are kept, not hidden: an LLM judge for answer quality was built
 (agreement with my labels too low: κ 0.10 and 0.08, ADR-008/010); two later prompt revisions were rejected
 and the earlier prompt stayed (prompt changelog).
 
-### Decision by data, not by model size
+### Decision by data, not by model size: 7B stayed, a code layer did the rest
 
 **1 · Smaller models (L11, ADR-009).** On the CPU box I tested qwen3.5 4B and 2B against qwen2.5:7b for the
 classifier. Neither passed the gates (injection, false “sensitive”), so 7B stayed. But the run exposed that
@@ -133,7 +142,7 @@ p95 ≤ 150 s, wins more blind writing comparisons, and beats 7B on the checks.
 <p class="note">What this is not: I did not train or fine-tune these models. The gains come from routing
 policy, prompt iterations, deterministic layers and evals around off-the-shelf models.</p>
 
-## Metrics
+## {pct(live.local_share.pct)} answered locally, ≈{pct(live.savings.saved_pct)} of cloud limit saved (estimate)
 
 From the run log, {live.window.first} → {live.window.last} (snapshot {snap.taken_utc.slice(0, 10)}):
 
@@ -153,7 +162,8 @@ per model; input tokens are estimated from prompt length. The figure is a **prox
 not money**, and n=15 is small — treat it as a direction, not a result. Forced-local runs and Arena baseline
 runs are excluded.
 
-## Decisions
+<details class="more">
+<summary>All 15 architecture decisions (ADRs)</summary>
 
 | ADR | Decision |
 |---|---|
@@ -174,6 +184,8 @@ runs are excluded.
 | 015 | A hidden architecture page inside the console |
 
 Arena (ADR-014) is a running pilot; its result will be added when its preregistered window closes.
+
+</details>
 
 <StackBlock project="jev" />
 
