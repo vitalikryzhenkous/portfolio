@@ -27,7 +27,7 @@
     {
       "id": "platform",
       "name": "Agent platform",
-      "link": "how-i-work",
+      "link": "work/platform",
       "groups": [
         { "name": "Agents", "items": ["Claude Code: skills, subagents, hooks", "tmux"] },
         { "name": "Rules & checks", "items": ["Markdown wiki in git", "Bash checks (exit 0/1/2)", "gitleaks", "Trivy 0.56.2"] },

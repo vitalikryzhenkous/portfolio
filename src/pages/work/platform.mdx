@@ -1,0 +1,130 @@
+---
+layout: ../../layouts/Case.astro
+title: An agent platform with an independent verifier
+kicker: Case study · Agentic systems
+description: How I let coding agents change real infrastructure — written rules, a second agent that checks every plan and result, deterministic checks, and a log of what happened.
+summary: Coding agents run my home server — services, containers, networking, secrets nearby. They act only through written procedures, a second agent with a fresh context checks every plan and every result, and the decisions that matter stay with a human.
+snapshot: 2026-11-02
+facts:
+  - { value: '10', label: 'security policies, each tied to a check or a review step' }
+  - { value: '6', label: 'deterministic checks: exit 0 pass · 1 fail · 2 warn' }
+  - { value: '5', label: 'repositories moved in 6 phases, each checked before and after' }
+  - { value: '3', label: 'incidents that each became a rule or a check' }
+---
+import snap from '../../../data/snapshots/2026-11-02.json';
+import StackBlock from '../../components/StackBlock.astro';
+
+export const p = snap.platform;
+export const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+## The problem
+
+An agent that can run `docker`, edit systemd units and touch firewall rules is useful exactly to the extent you
+can trust it. Prompting “be careful” does not scale; neither does reviewing every command by hand.
+
+What I wanted: agents that **do the work**, a process that **catches their mistakes before they matter**, and a
+record that tells me afterwards **what happened and why** — without me reading transcripts.
+
+## Architecture
+
+The full picture, with animated flows, is on <a href={`${base}/how-i-work/`}>How I work</a>. The core is a loop:
+
+1. **Rules** live in a git wiki: a service registry, permissions, {p.policies} security policies, secrets rules and
+   step-by-step procedures. Every change to the rules is a reviewed diff.
+2. **Executor** — a Claude Code skill, `/make <intent>`: finds the matching procedure, fills its inputs by reading
+   the machine, writes the exact commands, and asks the human at every step the permissions mark “ask”.
+3. **Verifier** — a separate subagent. Before: **GO / STOP** on the plan. After: **PASS / FAIL** from the
+   procedure's checks plus the security checks.
+4. **Record** — a session-log entry, and a proposed wiki diff whenever reality differed from the procedure.
+
+No procedure for an intent? The executor says so, does the job step by step with me, and drafts a new procedure
+afterwards — the wiki grows from real runs (3 procedures so far, the newest written from its first run).
+
+## Why the verifier can be trusted
+
+Independence is designed in, not assumed:
+
+- **Fresh context.** It never sees the executor's reasoning — only the procedure, inputs and plan. Its brief
+  starts with: *“You verify work you did not do. Assume the executor may be wrong. Evidence beats statements.”*
+- **Read-only tools** (read, search, run checks). It cannot fix what it finds; it can only stop the run.
+- **Evidence tables.** Every verdict lists check → result → the command and its output.
+- **A check that could not run is a FAIL** (“not verified”), never a pass.
+- **A STOP overrides the executor.** It must fix the plan and get a GO — or ask me.
+- **Freshness gate.** Both executor and verifier refuse to work from a wiki that is behind its remote.
+
+## Rules the checks enforce
+
+| # | Policy | Level |
+|---|---|---|
+| S1 | Host ports only on loopback, never all interfaces | FAIL |
+| S2 | Nothing leaves the private network: no public tunnels, no router port-forwarding | FAIL |
+| S3 | No secrets in git, logs or chat | FAIL |
+| S4 | No privileged containers, no Docker socket mounts | FAIL |
+| S5 | Images pinned to a version | FAIL |
+| S6 | Containers should not run as root | WARN |
+| S7 | No critical CVEs in built images | WARN → FAIL once the baseline is clean |
+| S8 | Extra capabilities only for the network sidecar | FAIL |
+| S9 | Agents stay inside the permission table | FAIL |
+| S10 | External text (web, mail, files, tool output) is data, not instructions | FAIL |
+
+An exception is written down with date, reason and owner — and mirrored in a machine-readable file the checks
+read. **Permissions** split work three ways: the agent acts alone (read, edit on a branch, restart the service in
+scope, run checks, open a PR); asks first (anything near secrets, deleting data, public exposure, pushing to main,
+admin consoles, anything that costs money); and some things are **human-only** — merging a PR, `sudo`, secret values.
+
+## Three incidents, three new rules
+
+Each problem ended as a rule or a check, not a sentence in a chat:
+
+| What happened | Fix | What changed in the system |
+|---|---|---|
+| The automated exposure check flagged the status board listening on all interfaces — visible to the whole home network. | The tablet that shows the board cannot join the private network, so: a documented exception with date and owner, and the firewall narrowed from the whole subnet to that one device. | Exceptions live in the policy file and in a machine-readable list the checks honour. |
+| During a migration an API key surfaced in the verifier's output: a config-rendering command expands environment files. | The key was rotated. | The verifier never runs commands that expand secrets; a list of forbidden commands is in its brief. |
+| The first real run started from a local wiki that was 5 commits behind. | Fast-forwarded; the procedure itself had not changed. | Freshness check is step 0 for both executor and verifier — a stale wiki is a STOP. |
+
+## A real run: moving everything into one place
+
+On 2026-11-01 I moved 5 repositories and their services (containers, systemd units, agent sessions) into a
+single folder layout with `/make`, phase by phase, each phase checked before and after:
+
+| Phase | What | Verifier |
+|---|---|---|
+| 0 | Read-only inventory: folders, units, paths in configs, scheduled jobs | STOP → decisions by me, then on |
+| 1 | Database project, volume kept | GO → PASS |
+| 2 | Status board: service stopped by me, venv rebuilt from pinned versions, unit and hooks re-pointed | GO → PASS |
+| 3 | jev (API, console, agent session) | STOP (a check was called the wrong way) → GO → PASS on all checks except secrets* |
+| 4 | Leftovers: logs archived, stray secret backups removed after asking | GO → PASS |
+| 5 | The wiki itself — moved by me | done |
+
+\* The secrets check failed on findings already in jev's git history, unrelated to the move — reported, not hidden.
+
+What went wrong, honestly: the status board was down for about **9 minutes** — a scripted edit of its systemd
+unit failed on the first try and the service crash-looped until fixed. Final state: all security checks green
+(one warning: some containers still run as root, S6), a reboot test passed, and the home folder holds only projects.
+
+## The status board
+
+Agents waiting for me are the real bottleneck, so I made it visible:
+
+- **Claude Code hooks** (6 events: session start/end, prompt submit, stop, notification, tool use) append one line
+  each: event, short session id, project, tool name. **Never prompt text or file contents.**
+- A small **FastAPI** board turns that into *working / waiting for you / idle* per project, next to the project
+  list from Notion and the machine's load. Sensitive projects are scrubbed to ID and status before display.
+- An old **tablet** (iOS 12, ES5-only JavaScript) shows it; one button launches an agent for a project with a
+  prompt taken from Notion — never from text typed on the tablet.
+- In the evening the board writes one session-log entry per project from the day's events and commit subjects.
+- A **Stream Deck** on the laptop has one key per project: it reattaches to that project's agent session.
+
+<StackBlock project="platform" />
+
+## What I'd do next
+
+- **Replay** the migration run on this site from its event log — every GO/STOP/PASS in order.
+- **donecheck**: turn the verifier into an open-source tool that checks whether a coding agent actually did what
+  it was asked — with an eval set and published metrics.
+- **Tighten S6/S7**: move remaining containers off root, then make critical CVEs a hard FAIL.
+
+<p class="note">Numbers: {p.policies} policies, {p.checks} checks and {p.procedures} procedures counted from the wiki;
+{p.wiki_git.commits} wiki commits since {p.wiki_git.first}; status board {p.board_git.commits} commits since
+{p.board_git.first}. Snapshot {snap.taken_utc.slice(0, 10)}. Migration verdicts and the 9-minute outage are from the
+session log of that run.</p>
