@@ -28,7 +28,7 @@
     },
     {
       "id": "services",
-      "label": "Projects (run on the platform)"
+      "label": "Local services"
     },
     {
       "id": "records",
@@ -39,7 +39,7 @@
     {
       "id": "laptop",
       "layer": "devices",
-      "label": "Laptop",
+      "label": "Laptop (MacBook)",
       "card": {
         "what": "Thin client. All code, agents and services run on the home server; the laptop only connects.",
         "why": "One machine holds state, secrets and long-running agents; clients stay disposable.",
@@ -47,7 +47,7 @@
       },
       "status": "active",
       "x": 0,
-      "y": 148,
+      "y": 111,
       "group": null
     },
     {
@@ -61,7 +61,21 @@
       },
       "status": "active",
       "x": 0,
-      "y": 74,
+      "y": 37,
+      "group": null
+    },
+    {
+      "id": "phone",
+      "layer": "devices",
+      "label": "Phone (iPhone)",
+      "card": {
+        "what": "A tailnet client: opens the jev console (PWA) and the status board over HTTPS inside the private network.",
+        "why": "Use the router and see waiting agents away from the desk, without exposing anything to the internet.",
+        "decision": "No public endpoints: the phone reaches services only through the tailnet. Agent terminals stay on the laptop."
+      },
+      "status": "active",
+      "x": 0,
+      "y": 185,
       "group": null
     },
     {
@@ -149,7 +163,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 37,
+      "y": 111,
       "group": null
     },
     {
@@ -164,7 +178,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 185,
+      "y": 37,
       "group": null
     },
     {
@@ -179,7 +193,7 @@
       },
       "status": "active",
       "x": 840,
-      "y": 111,
+      "y": 185,
       "group": null
     },
     {
@@ -276,7 +290,7 @@
       "id": "jev",
       "label": "jev — LLM router",
       "card": {
-        "what": "Project · uses the tailnet (console only), /make and the checks. One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
+        "what": "Project running as local services; uses the tailnet (console only), /make and the checks. One project, three parts: a PWA console, an OpenAI-compatible API and a local model runtime on the same CPU-only box.",
         "why": "Keep sensitive requests on my own hardware and send the rest to the cheapest cloud model that can handle them.",
         "decision": "Only the console is reachable, and only inside the tailnet; the API binds to loopback; model and policy changes are decided with preregistered evals.",
         "link": "work/jev"
@@ -302,102 +316,108 @@
     },
     {
       "id": "e1",
-      "source": "laptop",
+      "source": "phone",
       "target": "tailnet",
       "kind": "tailnet"
     },
     {
       "id": "e2",
+      "source": "laptop",
+      "target": "tailnet",
+      "kind": "tailnet"
+    },
+    {
+      "id": "e3",
       "source": "tailnet",
       "target": "tmux",
       "kind": "ssh",
       "label": "SSH"
     },
     {
-      "id": "e3",
+      "id": "e4",
       "source": "tmux",
       "target": "make",
       "kind": "run"
     },
     {
-      "id": "e4",
+      "id": "e5",
       "source": "tmux",
       "target": "hooks",
       "kind": "event"
     },
     {
-      "id": "e5",
+      "id": "e6",
       "source": "make",
       "target": "verifier",
       "kind": "verify",
       "label": "before / after"
     },
     {
-      "id": "e6",
+      "id": "e7",
       "source": "make",
       "target": "procedures",
       "kind": "read"
     },
     {
-      "id": "e7",
+      "id": "e8",
       "source": "verifier",
       "target": "conventions",
       "kind": "read"
     },
     {
-      "id": "e8",
+      "id": "e9",
       "source": "verifier",
       "target": "checks",
       "kind": "run"
     },
     {
-      "id": "e9",
+      "id": "e10",
       "source": "checks",
       "target": "jev-web",
       "kind": "verify"
     },
     {
-      "id": "e10",
+      "id": "e11",
       "source": "jev-web",
       "target": "jev-api",
       "kind": "local",
       "label": "loopback"
     },
     {
-      "id": "e11",
+      "id": "e12",
       "source": "jev-api",
       "target": "ollama",
       "kind": "local"
     },
     {
-      "id": "e12",
+      "id": "e13",
       "source": "jev-api",
       "target": "runlog",
       "kind": "write"
     },
     {
-      "id": "e13",
+      "id": "e14",
       "source": "make",
       "target": "notion",
       "kind": "write",
       "label": "session log"
     },
     {
-      "id": "e14",
+      "id": "e15",
       "source": "make",
       "target": "github",
       "kind": "write",
       "label": "PR"
     },
     {
-      "id": "e15",
+      "id": "e16",
       "source": "hooks",
       "target": "notion",
       "kind": "write",
       "label": "daily log"
     },
     {
-      "id": "e16",
+      "id": "e17",
       "source": "tailnet",
       "target": "jev-web",
       "kind": "tailnet"
@@ -409,14 +429,18 @@
       "title": "A private question to jev",
       "steps": [
         {
-          "caption": "The console opens inside the private tailnet — it is not reachable from the internet.",
+          "caption": "The console opens from the laptop or the phone, inside the private tailnet — it is not reachable from the internet.",
           "pulses": [
+            {
+              "edge": "e2",
+              "reverse": false
+            },
             {
               "edge": "e1",
               "reverse": false
             },
             {
-              "edge": "e16",
+              "edge": "e17",
               "reverse": false
             }
           ]
@@ -425,7 +449,7 @@
           "caption": "The console calls the API over loopback. API keys exist only on the server.",
           "pulses": [
             {
-              "edge": "e10",
+              "edge": "e11",
               "reverse": false
             }
           ]
@@ -434,7 +458,7 @@
           "caption": "Rules and a local classifier mark the request as sensitive, so policy keeps it on the local 7B model.",
           "pulses": [
             {
-              "edge": "e11",
+              "edge": "e12",
               "reverse": false
             }
           ]
@@ -443,11 +467,11 @@
           "caption": "The answer streams back from the CPU box. Nothing went to the cloud.",
           "pulses": [
             {
-              "edge": "e11",
+              "edge": "e12",
               "reverse": true
             },
             {
-              "edge": "e10",
+              "edge": "e11",
               "reverse": true
             }
           ]
@@ -456,7 +480,7 @@
           "caption": "The run log records the decision, route and latency — never the text.",
           "pulses": [
             {
-              "edge": "e12",
+              "edge": "e13",
               "reverse": false
             }
           ]
@@ -471,11 +495,11 @@
           "caption": "I start `/make <intent>` in an agent session on the server.",
           "pulses": [
             {
-              "edge": "e1",
+              "edge": "e2",
               "reverse": false
             },
             {
-              "edge": "e2",
+              "edge": "e3",
               "reverse": false
             }
           ]
@@ -484,20 +508,7 @@
           "caption": "The executor finds the matching procedure and writes a plan.",
           "pulses": [
             {
-              "edge": "e3",
-              "reverse": false
-            },
-            {
-              "edge": "e6",
-              "reverse": false
-            }
-          ]
-        },
-        {
-          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP.",
-          "pulses": [
-            {
-              "edge": "e5",
+              "edge": "e4",
               "reverse": false
             },
             {
@@ -507,14 +518,27 @@
           ]
         },
         {
-          "caption": "After the change it runs deterministic checks on the services: PASS or FAIL.",
+          "caption": "A separate verifier with a fresh context checks the plan against policies and permissions: GO or STOP.",
           "pulses": [
             {
-              "edge": "e8",
+              "edge": "e6",
               "reverse": false
             },
             {
+              "edge": "e8",
+              "reverse": false
+            }
+          ]
+        },
+        {
+          "caption": "After the change it runs deterministic checks on the services: PASS or FAIL.",
+          "pulses": [
+            {
               "edge": "e9",
+              "reverse": false
+            },
+            {
+              "edge": "e10",
               "reverse": false
             }
           ]
@@ -523,11 +547,11 @@
           "caption": "A pull request for review (merging is human-only) and an entry in the session log.",
           "pulses": [
             {
-              "edge": "e14",
+              "edge": "e15",
               "reverse": false
             },
             {
-              "edge": "e13",
+              "edge": "e14",
               "reverse": false
             }
           ]

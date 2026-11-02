@@ -8,9 +8,10 @@
         {
           "edges": [
             "laptop>tailnet",
+            "phone>tailnet",
             "tailnet>jev-web"
           ],
-          "caption": "The console opens inside the private tailnet — it is not reachable from the internet."
+          "caption": "The console opens from the laptop or the phone, inside the private tailnet — it is not reachable from the internet."
         },
         {
           "edges": [
