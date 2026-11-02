@@ -53,3 +53,20 @@ test('skip link moves focus to main content', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
 });
+
+test('replay steps forward and back from the keyboard', async ({ page }) => {
+  await page.goto('work/platform/');
+  const replay = page.getByRole('region', { name: /Replay/ });
+  await replay.scrollIntoViewIfNeeded();
+  await page.waitForSelector('astro-island:not([ssr])', { state: 'attached' });
+  const log = replay.getByRole('list', { name: 'Event log' }).locator('> li');
+  const next = replay.getByRole('button', { name: 'Next ▶' });
+  await expect(async () => {
+    const before = await log.count();
+    await next.focus();
+    await page.keyboard.press('Enter');
+    await expect(log).toHaveCount(before + 1, { timeout: 500 });
+  }).toPass({ timeout: 10_000 });
+  await replay.getByRole('button', { name: '◀ Back' }).click();
+  await expect(replay.getByRole('list', { name: 'Phases' }).locator('> li')).toHaveCount(6);
+});
