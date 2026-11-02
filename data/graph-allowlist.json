@@ -30,7 +30,7 @@
     {
       "id": "laptop",
       "layer": "devices",
-      "label": "Laptop",
+      "label": "Laptop (MacBook)",
       "card": {
         "what": "Thin client. All code, agents and services run on the home server; the laptop only connects.",
         "why": "One machine holds state, secrets and long-running agents; clients stay disposable.",
@@ -45,6 +45,16 @@
         "what": "8 keys on the laptop: one per project plus the main agent and a session list.",
         "why": "One press reattaches to the right agent session instead of remembering where work stopped.",
         "decision": "Each key opens SSH into the server and attaches to a per-project tmux session (created if missing)."
+      }
+    },
+    {
+      "id": "phone",
+      "layer": "devices",
+      "label": "Phone (iPhone)",
+      "card": {
+        "what": "A tailnet client: opens the jev console (PWA) and the status board over HTTPS inside the private network.",
+        "why": "Use the router and see waiting agents away from the desk, without exposing anything to the internet.",
+        "decision": "No public endpoints: the phone reaches services only through the tailnet. Agent terminals stay on the laptop."
       }
     },
     {
@@ -221,6 +231,11 @@
       "target": "laptop",
       "kind": "local",
       "label": "USB"
+    },
+    {
+      "source": "phone",
+      "target": "tailnet",
+      "kind": "tailnet"
     },
     {
       "source": "laptop",
