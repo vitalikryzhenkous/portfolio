@@ -9,7 +9,8 @@
     "forbidden": "bash scripts/forbidden.sh",
     "graph": "node scripts/build-graph.ts",
     "test:a11y": "playwright test",
-    "cv": "uv run scripts/build-cv.py"
+    "cv": "uv run scripts/build-cv.py",
+    "og": "uv run scripts/build-og.py"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
@@ -24,6 +25,7 @@
   "dependencies": {
     "@astrojs/mdx": "8.1.2",
     "@astrojs/react": "7.1.2",
+    "@astrojs/sitemap": "3.7.4",
     "@xyflow/react": "12.12.0",
     "astro": "7.4.4",
     "react": "19.3.1",

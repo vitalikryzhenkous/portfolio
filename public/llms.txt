@@ -1,0 +1,19 @@
+# Vitalii Ryzhenko — Applied AI / Forward Deployed Engineer
+
+> Applied AI engineer in Poznań, Poland (B2B). 9+ years of full-stack engineering (TypeScript, Angular/React,
+> .NET/Node, Python). Ships LLM features and AI-agent tooling to production — MCP tools, structured outputs,
+> context engineering, agent evals — and works directly with customers.
+
+## Pages
+- [Home](https://vitalikryzhenkous.github.io/portfolio/): summary, Applied AI work, open-source contributions, contact
+- [jev — privacy-first LLM router](https://vitalikryzhenkous.github.io/portfolio/work/jev/): local-first routing on a CPU box, preregistered evals, decisions by data
+- [Agent platform with an independent verifier](https://vitalikryzhenkous.github.io/portfolio/work/platform/): rules, executor, verifier, incidents turned into checks
+- [How I work](https://vitalikryzhenkous.github.io/portfolio/how-i-work/): interactive graph of the platform
+- [Stack](https://vitalikryzhenkous.github.io/portfolio/stack/): technologies at work and in projects
+- [CV](https://vitalikryzhenkous.github.io/portfolio/cv/): HTML CV and PDFs (Applied AI / FDE, Full-Stack)
+
+## Contact
+- Email: vitaliiryzhenkous@gmail.com
+- LinkedIn: https://www.linkedin.com/in/vitalii-ryzhenko-366858116
+- GitHub: https://github.com/vitalikryzhenkous
+- Book a call: https://calendar.app.google/bRgiRnHnjNJM2mUw5
