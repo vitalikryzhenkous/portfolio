@@ -67,8 +67,8 @@ export default function Replay() {
         <button type="button" onClick={() => setShown((n) => Math.min(events.length, n + 1))} disabled={done}>
           Next ▶
         </button>
-        <button type="button" onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))} aria-label={`Speed ${speed}x, switch`}>
-          {speed}×
+        <button type="button" onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))}>
+          Speed {speed}×
         </button>
         <span className="rp-count" aria-hidden="true">
           {shown}/{events.length}
