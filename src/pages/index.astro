@@ -3,22 +3,13 @@ import Base from '../layouts/Base.astro';
 import profile from '../data/profile.json';
 import cv from '../data/cv.json';
 import snapOss from '../../data/snapshots/2026-11-02.json';
+import ossCards from '../data/oss-highlights.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const creatio = cv.experience[0]!;
 const oss = snapOss.oss;
-// Highlights: PRs that show agent tooling (MCP tools, guidance routing, classifiers, orchestration).
-const HIGHLIGHT: Record<string, number[]> = {
-  'Advance-Technologies-Foundation/clio': [721, 1008, 632],
-  'Advance-Technologies-Foundation/clio-knowledge': [170],
-  'Creatio-Platform/creatio-ai-app-development-toolkit': [77],
-};
-const clean = (t: string) => t.replace(/#?\b(ENG|RND)-\d+[.:]?\s*/g, '').replace(/\(\s*\)/g, '').trim();
-const highlights = oss.repos.flatMap((r) =>
-  r.merged_prs
-    .filter((p) => (HIGHLIGHT[r.repo] ?? []).includes(p.number))
-    .map((p) => ({ ...p, repo: r.repo.split('/')[1]!, title: clean(p.title) })),
-);
+const prUrl = (repo: string, n: number) => `https://github.com/${repo}/pull/${n}`;
+const short = (repo: string) => repo.split('/')[1]!;
 const prList = (repo: string) =>
   `https://github.com/${repo}/pulls?q=${encodeURIComponent(`is:pr author:${oss.author}`)}`;
 const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
@@ -92,14 +83,29 @@ const work = [
       ))
     }
   </p>
-  <ul class="bullets prs">
+  <ul class="oss-cards">
     {
-      highlights.map((p) => (
-        <li>
-          <a href={p.url} rel="noopener">
-            {p.repo} #{p.number}
-          </a>{' '}
-          — {p.title} <span class="muted">({p.merged})</span>
+      ossCards.cards.map((c) => (
+        <li class="card">
+          <h4>{c.title}</h4>
+          <dl>
+            <dt>Problem</dt>
+            <dd>{c.problem}</dd>
+            <dt>Built</dt>
+            <dd>{c.built}</dd>
+            <dt>Result</dt>
+            <dd>{c.result}</dd>
+          </dl>
+          <p class="pr-links">
+            {c.prs.map((p, i) => (
+              <>
+                {i > 0 ? ' · ' : ''}
+                <a href={prUrl(p.repo, p.number)} rel="noopener">
+                  {short(p.repo)} #{p.number}
+                </a>
+              </>
+            ))}
+          </p>
         </li>
       ))
     }
@@ -248,8 +254,36 @@ const work = [
     margin: 1.4rem 0 0.3rem;
     font-size: 1.05rem;
   }
-  .prs li {
-    font-size: 0.95rem;
+  .oss-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 0.8rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 0.4rem;
+  }
+  .oss-cards h4 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+  }
+  .oss-cards dl {
+    margin: 0;
+  }
+  .oss-cards dt {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+  .oss-cards dd {
+    margin: 0.1rem 0 0;
+    font-size: 0.9rem;
+  }
+  .pr-links {
+    margin: 0.7rem 0 0;
+    font-size: 0.85rem;
   }
   .certs {
     padding-left: 1.2rem;

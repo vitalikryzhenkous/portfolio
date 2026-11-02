@@ -12,7 +12,7 @@
         {
           "name": "AI & agent tooling",
           "items": [
-            "Built MCP tools for an open-source agent integration with the platform, incl. a deterministic nested-filter builder with schema validation that rejects invalid configurations before save; 14 merged PRs to the public clio and clio-knowledge repositories.",
+            "Built MCP tools for an open-source agent integration with the platform, incl. a deterministic nested-filter builder with schema validation that rejects invalid configurations before save; 23 merged PRs to the public clio, clio-knowledge and creatio-ai-app-development-toolkit repositories (as of Nov 2026).",
             "Replaced the agent's overloaded always-on instructions with a thin router and on-demand guidance via tool descriptions and versioned bundles — cut persistent context ~75% and fit it under the client's truncation limit.",
             "Extended the agent eval suite with end-to-end scenarios that verify the produced result in a real browser (Playwright), with tool whitelists and negative cases.",
             "Delivered LLM-driven generation of analytics widgets in chat (5 widget types): JSON-Schema structured output, response-to-config converters, prompt engineering.",
