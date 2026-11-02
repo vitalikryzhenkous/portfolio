@@ -43,6 +43,7 @@ const person = {
     <!-- hidden until launch: remove noindex + robots.txt Disallow when the site is ready -->
     <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
     <meta property="og:type" content={slug.startsWith('work-') ? 'article' : 'website'} />
