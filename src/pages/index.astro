@@ -4,6 +4,7 @@ import profile from '../data/profile.json';
 import cv from '../data/cv.json';
 import snapOss from '../../data/snapshots/2026-11-02.json';
 import ossCards from '../data/oss-highlights.json';
+import more from '../data/more-work.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const creatio = cv.experience[0]!;
@@ -131,6 +132,22 @@ const work = [
     }
   </ul>
 
+  <h2>More work</h2>
+  <ul class="cards more">
+    {
+      more.items.map((m) => (
+        <li class="card">
+          <span class="tag">{m.visibility}</span>
+          <h3>{'href' in m && m.href ? <a href={m.href} rel="noopener">{m.title} ↗</a> : m.title}</h3>
+          <p>{m.what}</p>
+          <p class="detail">{m.detail}</p>
+          {m.numbers && <p class="nums">{m.numbers}</p>}
+          <p class="chips">{m.stack.join(' · ')}</p>
+        </li>
+      ))
+    }
+  </ul>
+
   <h2>Certifications</h2>
   <ul class="certs">
     {
@@ -243,6 +260,16 @@ const work = [
     margin: 0;
     color: var(--muted);
     font-size: 0.92rem;
+  }
+  .more .detail {
+    margin-top: 0.5rem;
+    color: var(--fg);
+    font-size: 0.9rem;
+  }
+  .more .nums,
+  .more .chips {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
   }
   .tag {
     font-size: 0.72rem;
