@@ -212,6 +212,21 @@ policy, prompt iterations, deterministic layers and evals around off-the-shelf m
 
 ## {pct(live.local_share.pct)} answered locally, ≈{pct(live.savings.saved_pct)} of cloud limit saved (estimate)
 
+<Dumbbell
+  title="Baseline “public → Sonnet” → jev"
+  caption={`Answered locally: ${live.local_share.n} routed requests; the baseline keeps only sensitive ones local. Cloud limit used: estimate from a cost model, baseline = 100%, n=${live.savings.counted_decisions}.`}
+  rows={[
+    { label: 'answered locally', from: Math.round((live.sensitive.k / live.sensitive.n) * 100), to: Math.round(live.local_share.pct * 100), note: `${live.local_share.k}/${live.local_share.n}` },
+    { label: 'cloud limit used', from: 100, to: 100 - Math.round(live.savings.saved_pct * 100), note: 'estimate' },
+  ]}
+  max={100}
+  ticks={[0, 25, 50, 75, 100]}
+  unit="%"
+  fromLabel="baseline"
+  toLabel="jev"
+  source={`run log, snapshot ${snap.taken_utc.slice(0, 10)}; a proxy for subscription limits, not money`}
+/>
+
 From the run log, {live.window.first} → {live.window.last} (snapshot {snap.taken_utc.slice(0, 10)}):
 
 | Metric | Value | Note |
