@@ -55,6 +55,7 @@ def styles() -> dict[str, ParagraphStyle]:
         "period": ParagraphStyle("period", **{**base, "keepWithNext": 1, "fontSize": 8.8, "textColor": GREY, "spaceAfter": 2}),
         "h4": ParagraphStyle("h4", **{**base, "keepWithNext": 1, "fontName": "Sans-Bold", "fontSize": 9.4, "spaceBefore": 3, "spaceAfter": 1}),
         "body": ParagraphStyle("body", **base),
+        "earlier": ParagraphStyle("earlier", **{**base, "spaceBefore": 5}),
         "bullet": ParagraphStyle("bullet", **base),
     }
 
@@ -107,7 +108,7 @@ def build(variant_id: str) -> Path:
             if name:
                 flow.append(Paragraph(escape(name), st["h4"]))
             flow.append(bullets(named[name], st["bullet"]))
-    flow.append(Paragraph(f'<b>Earlier</b> — {escape(cv["earlier"])}', st["body"]))
+    flow.append(Paragraph(f'<b>Earlier</b> — {escape(cv["earlier"])}', st["earlier"]))
 
     by_issuer: dict[str, list[str]] = {}
     for c in profile["certifications"]:

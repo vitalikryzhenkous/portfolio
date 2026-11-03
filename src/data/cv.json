@@ -26,7 +26,8 @@
           "items": [
             "Handled ~175 L4 client escalations (2024–2026): reproduced on clean environments, traced to root cause, delivered a fix, workaround or justified closure; median time to close ~1 week.",
             "Untangled multi-layer defects (e.g. two bugs in designer and widget masking each other; a four-step metadata failure chain that froze home pages) and backported fixes to supported release lines.",
-            "~40% closed without product changes: separated product defects from configuration, environment and cross-team issues, with evidence for the owning team or clear guidance for the customer."
+            "~40% closed without product changes: separated product defects from configuration, environment and cross-team issues, with evidence for the owning team or clear guidance for the customer.",
+            "Coordinated delivery across several teams: prepared task lists for dependent teams and drove the cross-team communication."
           ]
         },
         {
@@ -63,8 +64,9 @@
         {
           "name": "",
           "items": [
-            "Built scalable healthcare and e-commerce applications with Angular and AWS.",
-            "Coordinated multi-team delivery for medical IoT integrations and online consultation systems."
+            "A US benefits-tech startup (insurance benefits management): built the product's web application with React and Redux.",
+            "E-commerce platform: front-end development with Angular, NgRx and Bootstrap; E2E tests with Cypress; CI/CD with Jenkins and Azure.",
+            "A US telehealth provider: built a proof of concept on AWS and supported a webOS IoT device connecting patients and doctors — real-time health metrics, live patient communication and multi-doctor consultations."
           ]
         }
       ]
@@ -77,7 +79,8 @@
         {
           "name": "",
           "items": [
-            "Migrated legacy automotive systems to Angular with an Nrwl/Nx monorepo; developed healthcare product-management tools with React and Redux."
+            "Automotive fleet CRM system: front-end development with Angular, NgRx and an Nx monorepo on a .NET backend; data-heavy UI with AG Grid and 3D visualization with Three.js.",
+            "Front-end performance and test automation (Cypress, Jest)."
           ]
         }
       ]

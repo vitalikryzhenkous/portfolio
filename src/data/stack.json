@@ -20,12 +20,16 @@
           "TypeScript",
           "Angular (DI, router, lazy modules, change detection)",
           "RxJS",
+          "NgRx",
           "React",
+          "Redux",
           "Angular Material/CDK",
+          "AG Grid",
           "Chart.js",
           "Web Components",
           "Storybook",
-          "SCSS"
+          "SCSS",
+          "Bootstrap"
         ]
       },
       {
@@ -48,6 +52,7 @@
           "GitLab CI",
           "Docker",
           "AWS",
+          "Azure",
           "SonarQube",
           "Feature flags",
           "Release-line backporting"
