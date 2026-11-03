@@ -146,14 +146,44 @@ language and memory limits.
 
 **4 · Native chat messages (L13e, ADR-011 A1).** Follow-up turns were slow because the model re-read most of the
 chat each time. Sending native chat messages, with the facts at the end of the last user message, brought the
-prefix cache back. On 6 four-turn dialogues, turns 2–4: time to first token **p50 11.4 s → 2.4 s**
-(p95 27.0 → 12.3 s), ID checks 17/18 → 18/18, blind votes 4 : 2 for the new format. The whole answer still takes
-about 25 s at ≈ 6 tokens/s, so the next lever is answer length, not the cache.
+prefix cache back. Time to first token fell from **11.4 s to 2.4 s**, ID checks went from 17/18 to 18/18, and blind
+votes were 4 : 2 for the new format. The whole answer still takes about 25 s at ≈ 6 tokens/s, so the next lever is
+answer length, not the cache.
+
+<Dumbbell
+  title="Time to first token on turns 2–4, old format → native messages"
+  caption="6 four-turn dialogues on the CPU box, 18 turns per format. The p50 was the preregistered rule; p95 is shown for scale."
+  rows={[
+    { label: 'p50', from: 11.4, to: 2.4 },
+    { label: 'p95', from: 27.0, to: 12.3 },
+  ]}
+  max={30}
+  ticks={[0, 5, 10, 15, 20, 25, 30]}
+  unit=" s"
+  fromLabel="old format"
+  toLabel="native messages"
+  source="preregistration L13e, ## Result (2026-11-02), one run per arm"
+/>
 
 **5 · Pinned facts, rejected (L13f).** Fixing each facts block to the turn where the number first appears cut the
 prefill after such a turn from **6.1 s to 1.6 s**. It still failed the rule: dialogue facts 2/3 vs. 3/3, language
 drift 11 vs. 9 of 66. The change stayed out, and so did a lower temperature. The arm also bundled pinning with a
 language line, so the design cannot say which of the two caused the loss. Pinning alone is a later test.
+
+<Dumbbell
+  title="What pinned facts gained, and did not ship"
+  caption="Latency improved as designed, but the arm failed the facts and drift rules, so production kept the unpinned format."
+  rows={[
+    { label: 'prefill, p50', from: 6.1, to: 1.6, note: 'turn after a facts turn' },
+    { label: 'first token, p50', from: 1.8, to: 1.3, note: 'turns 2–4' },
+  ]}
+  max={8}
+  ticks={[0, 2, 4, 6, 8]}
+  unit=" s"
+  fromLabel="production"
+  toLabel="pinned facts"
+  source="preregistration L13f, ## Result (2026-11-02), one run per arm; rejected"
+/>
 
 **6 · A stop for language drift (L13g, ADR-009 A3).** L13f showed Chinese, Japanese or Korean characters in about
 5% of local answers on these test sets, and neither a prompt line nor a lower temperature reduced it. So code now

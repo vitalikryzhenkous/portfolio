@@ -87,11 +87,11 @@ const id = `db-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
             <line class="bar" x1={x(lo)} x2={x(hi)} y1={cy} y2={cy} />
             <circle class="dot-from" cx={x(r.from)} cy={cy} r="7" />
             <circle class="dot-to" cx={x(r.to)} cy={cy} r="7" />
-            <text class="val" x={x(hi) + 12} y={cy + 4}>
-              {fmt(r.to)}
+            <text class={r.to >= r.from ? 'val' : 'val val-from'} x={x(hi) + 12} y={cy + 4}>
+              {fmt(hi)}
             </text>
-            <text class="val val-from" x={x(lo) - 12} y={cy + 4} text-anchor="end">
-              {r.from === r.to ? '' : fmt(r.from)}
+            <text class={r.to >= r.from ? 'val val-from' : 'val'} x={x(lo) - 12} y={cy + 4} text-anchor="end">
+              {r.from === r.to ? '' : fmt(lo)}
             </text>
           </g>
         );
