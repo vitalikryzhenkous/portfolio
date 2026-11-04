@@ -2,12 +2,12 @@
 layout: ../../layouts/Case.astro
 title: Interview Gym — a trainer I built for my own preparation
 kicker: Case study · Product for one user
-description: An interview trainer with Python running in the browser, behavioral and system-design practice and a 14-day plan — content checked in the build, served only inside my private network.
+description: An interview trainer with Python running in the browser, behavioral and system-design practice and a 14-day plan — content checked in the build, served only on my own machine.
 summary: Preparing for interviews, I wanted one place to practise algorithm patterns, behavioral answers and system design — with code that runs instantly and content I can trust. So I built it, and treated the content like code.
 tldr:
   problem: Practice material is scattered, and copying solutions from the web teaches little; I wanted to run my own code against tests, offline-fast, and follow a plan.
   built: A static site with Python running in the browser (Pyodide in a Web Worker), a small FastAPI + SQLite backend for progress, and content gates in the Docker build that execute every reference solution against its tests.
-  result: 12 patterns with 36 coding exercises, 57 behavioral questions, 35 system-design cases and a 14-day plan — served on its own node inside my private network.
+  result: 12 patterns with 36 coding exercises, 57 behavioral questions, 35 system-design cases and a 14-day plan — served only on my own machine, not from the internet.
 facts:
   - { value: '36', label: 'coding exercises with tests, across 12 algorithm patterns' }
   - { value: '57 · 35', label: 'behavioral questions · system-design cases' }
@@ -43,8 +43,9 @@ see the pattern behind it, and move through a plan — and do the same for behav
   export and restore.
 - A three-stage Docker build: pinned front-end assets → static site build with the content gates → a slim runtime
   with a health check.
-- The app gets **its own node in my private network** through a Tailscale sidecar — moved there with a written
-  procedure, checked by the independent verifier (GO → PASS). It is not reachable from the internet.
+- It listens on loopback only and is not reachable from the internet. It had its own node in my private network
+  through a Tailscale sidecar, moved there with a written procedure checked by the independent verifier
+  (GO → PASS); the address is removed for now with the procedure's written reverse.
 
 <StackBlock project="interview-gym" />
 

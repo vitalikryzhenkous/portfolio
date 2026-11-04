@@ -91,8 +91,9 @@ print(json.dumps(out))
 
 # --- agent platform: wiki + status board (counts only) -----------------------------------------
 WIKI="$APPS/agent-wiki"; BOARD="$APPS/uptime-board"
-platform="$(printf '{"wiki_git":%s,"board_git":%s,"policies":%s,"procedures":%s,"checks":%s}' \
-  "$(git_info "$WIKI")" "$(git_info "$BOARD")" \
+board_prs="$(gh pr list -R vitalikryzhenkous/uptime-board --state merged --limit 500 --json number --jq length)"
+platform="$(printf '{"wiki_git":%s,"board_git":%s,"board_prs_merged":%s,"policies":%s,"procedures":%s,"checks":%s}' \
+  "$(git_info "$WIKI")" "$(git_info "$BOARD")" "$board_prs" \
   "$(grep -cE '^\| S[0-9]+ \|' "$WIKI/conventions/security.md")" \
   "$(ls "$WIKI"/procedures/*.md | wc -l | tr -d ' ')" \
   "$(ls "$WIKI"/checks/*.sh "$WIKI"/checks/security/*.sh | grep -v '/lib.sh$' | wc -l | tr -d ' ')")"
