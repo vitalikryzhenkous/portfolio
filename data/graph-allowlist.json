@@ -107,7 +107,7 @@
         "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
         "why": "The status board (its own case study) shows which agent is working, waiting for permission or idle, and writes a daily log.",
         "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents.",
-        "link": "work/status-board"
+        "link": "work/uptime"
       }
     },
     {

@@ -168,9 +168,9 @@
       ]
     },
     {
-      "id": "status-board",
-      "name": "Status board (uptime-board)",
-      "link": "work/status-board",
+      "id": "uptime",
+      "name": "Uptime (uptime-board)",
+      "link": "work/uptime",
       "groups": [
         {
           "name": "Backend",
@@ -179,28 +179,29 @@
             "FastAPI",
             "uvicorn",
             "psutil",
-            "Notion API"
+            "Notion API",
+            "Server-sent events (API v1)"
           ]
         },
         {
           "name": "Front end",
           "items": [
             "ES5 JavaScript (Safari 12)",
-            "Polling, no build step"
+            "Polling, no build step (tablet)"
           ]
         },
         {
           "name": "Inputs",
           "items": [
-            "Claude Code hooks (6 events)",
+            "Claude Code hooks (11 events)",
             "tmux sessions"
           ]
         }
       ]
     },
     {
-      "id": "interview-gym",
-      "name": "Interview Gym",
+      "id": "interview-bootcamp",
+      "name": "Interview prep (interview-bootcamp + Interview Gym)",
       "groups": [
         {
           "name": "Frontend",
@@ -223,11 +224,22 @@
           "name": "Ops",
           "items": [
             "Docker (3-stage build)",
-            "Tailscale sidecar (own tailnet node)"
+            "Loopback only"
+          ]
+        },
+        {
+          "name": "Bootcamp generator",
+          "items": [
+            "Node.js scripts (gates)",
+            "Ajv (JSON Schema)",
+            "Playwright (e2e)",
+            "Pyodide 0.26.4",
+            "Mermaid 10.9.1",
+            "Claude Code subagents (writer, fact-reviewer)"
           ]
         }
       ],
-      "link": "work/interview-gym"
+      "link": "work/interview-bootcamp"
     },
     {
       "id": "babyloop",

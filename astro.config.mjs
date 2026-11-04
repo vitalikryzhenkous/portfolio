@@ -9,4 +9,9 @@ export default defineConfig({
   base: '/portfolio',
   trailingSlash: 'ignore',
   integrations: [react(), mdx(), sitemap()],
+  // renamed cases: old URLs keep working
+  redirects: {
+    '/work/status-board': '/portfolio/work/uptime/',
+    '/work/interview-gym': '/portfolio/work/interview-bootcamp/',
+  },
 });

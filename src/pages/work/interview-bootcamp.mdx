@@ -1,0 +1,77 @@
+---
+layout: ../../layouts/Case.astro
+title: Interview prep as code — a bootcamp generator and a trainer
+kicker: Case study · LLM content with gates
+description: Two tools I built for my own interview preparation — a generator that writes a one-page bootcamp for a specific vacancy with agents and gates, and a trainer with Python in the browser — both treating content like code.
+summary: For every interview I want material that fits the vacancy and that I can trust. One tool has agents write a bootcamp for a specific role and lets nothing through that a gate cannot check; the other is where I practise every day. In both, content is code — it is executed and validated before anyone reads it.
+tldr:
+  problem: LLM-written study material looks right and is often subtly wrong — a dead doc link, an API that does not exist, a story about me that never happened. Generic practice material, in turn, does not fit a specific vacancy.
+  built: 'A bootcamp generator: a writer agent and an independent fact-reviewer agent, a JSON Schema and seven gates from schema validation to a browser e2e, and a rule that only stories I confirmed may appear. Next to it, Interview Gym: a trainer with Python running in the browser and content gates in its Docker build.'
+  result: A bootcamp is published only when every gate is green; a self-test proves the gates catch broken data. The trainer covers algorithms, behavioral and system-design practice with a 14-day plan, served only on my own machine.
+facts:
+  - { value: '36', label: 'trainer: coding exercises with tests, across 12 algorithm patterns' }
+  - { value: '57 · 35', label: 'trainer: behavioral questions · system-design cases' }
+  - { value: '≥ 4', label: 'tests per auto-tested task, in both tools' }
+  - { value: '6 s', label: 'per-run timeout for Python in the browser' }
+---
+import StackBlock from '../../components/StackBlock.astro';
+
+## The problem: practise, don't read — and don't trust unchecked text
+
+Reading solutions feels productive and teaches little. I wanted to write code, run it against tests immediately and
+follow a plan. And for each vacancy I wanted material about *its* stack and *its* interview stages — which means
+letting an LLM write it, and that only works if nothing reaches me unchecked.
+
+## Part 1 — a bootcamp for one vacancy
+
+Input: the stack, the vacancy and the interview stages. Output: one interactive page with topics — theory, official
+docs, diagrams, bad/good code, pitfalls, how it works under the hood, model answers in spoken English and a quiz.
+
+- **Writer and reviewer are separate agents.** A topic-writer agent writes each topic strictly to a JSON Schema and
+  checks every doc URL and API against official docs. A fact-reviewer agent with a fresh context, which never saw
+  the generation, assumes every topic has at least one subtle error until it has checked it.
+- **Hooks limit where each agent may write:** the writer only into topics, the reviewer only into reviews.
+- **Nothing invented about me.** Model answers may cite only stories from my story bank that I marked confirmed;
+  the validator rejects any other reference. A missing fact becomes a question to me, never a guess.
+
+### Gates, all green before publishing
+
+1. **validate** — JSON Schema for every topic, and the story rule.
+2. **run-tests** — every auto-tested task in Python or JavaScript: the solution must pass all tests, the starter
+   code must *not*.
+3. **check-snippets** — TypeScript through `tsc` against real type definitions, Python through `mypy`.
+4. **check-diagrams** — every Mermaid diagram parses.
+5. **check-links** — official domains only, checked live, with a canary path to catch documentation sites that
+   answer 200 for any URL.
+6. **render** — the page is built from the template.
+7. **e2e** — Playwright at phone and desktop width: no JS errors, no horizontal scroll, every solution goes green,
+   progress survives a reload, every diagram renders.
+
+A **self-test** mutates a known-good topic and expects exactly the right gate to fail — so a gate that silently
+stopped checking is caught. What a script cannot check (excerpts of code, some rubrics) goes into a report as
+“checked by hand” or “open”, never as passed.
+
+## Part 2 — Interview Gym, the daily trainer
+
+- **Pyodide** runs in a **Web Worker**, so a runaway loop never freezes the page. Each run has a **6-second
+  timeout**; on timeout the worker is terminated and rebuilt. Nothing is executed on the server.
+- In the **Docker build**, validators check the schema of behavioral and system-design files and run every
+  reference solution, filled-in blank and primer drill against its tests in CPython — at least 4 tests per
+  exercise. **A failing exercise stops the image from being built.** The build also asserts that every case the
+  plan links to exists.
+- **FastAPI + SQLite** stores progress: a 5 MB cap per state, at most one snapshot per hour, the last 60 kept,
+  export and restore.
+- It listens on loopback only and is not reachable from the internet. It had its own node in my private network
+  through a Tailscale sidecar, moved there with a written procedure checked by the independent verifier
+  (GO → PASS); the address is removed for now with the procedure's written reverse.
+- Material from public sources is credited and rewritten in my own words.
+
+<StackBlock project="interview-bootcamp" />
+
+## What I'd do next
+
+- Feed weak spots from the trainer's progress into the next bootcamp's plan.
+- A timed mock-interview mode that mixes one coding, one behavioral and one design question.
+
+<p class="note">Private repositories — demo on request. Trainer counts as of 2026-11-02; no company or vacancy
+names are shown.</p>

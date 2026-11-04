@@ -20,8 +20,8 @@ from pathlib import Path
 
 apps, out = Path(sys.argv[1]), Path(sys.argv[2])
 # case page -> the repo(s) it describes
-CASES = {"jev": ["jev"], "platform": ["agent-wiki"], "status-board": ["uptime-board"],
-         "babyloop": ["babyloop"], "interview-gym": ["interview-gym"]}
+CASES = {"jev": ["jev"], "platform": ["agent-wiki"], "uptime": ["uptime-board"],
+         "babyloop": ["babyloop"], "interview-bootcamp": ["interview-bootcamp", "interview-gym"]}
 NOT_PROJECTS = {"portfolio", "_archive"}
 MAX_SUBJECTS = 15
 
