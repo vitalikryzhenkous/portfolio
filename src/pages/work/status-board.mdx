@@ -47,8 +47,13 @@ session's tmux pane only if every rule holds:
   allowed is a fixed `/compact`;
 - one send per session every few seconds; the log keeps that a reply was sent and how it went, never its text.
 
-Permissions themselves are still answered in the terminal. An earlier button that started a new agent from the tablet
-was removed: replying to a running session covers the need with a smaller surface.
+Permissions are a separate, opt-in path: the app can answer a pending request with *allow once* or *deny*, while the
+terminal dialog stays open and whoever answers first wins. A command that matches a danger list can only be denied
+from the app, and Claude Code's own deny rules beat any “allow”. The log keeps the decision and how long it waited,
+never the command.
+
+An earlier button that started a new agent from the tablet was removed: replying to a running session covers the
+need with a smaller surface.
 
 ## Notion is the source of truth
 
