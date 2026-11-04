@@ -7,12 +7,7 @@ summary: A mobile app for my family's baby-sleep routine, built mostly by coding
 tldr:
   problem: Coding agents are fast, but left alone they skip steps, grade their own work and drift from the spec — and a family app used at night with one hand has no room for "almost right".
   built: A 10-stage feature pipeline in Claude Code — spec, independent spec review, tests written first by a separate agent from the spec only, implementation, verifier, code review, PR, metrics — with hooks that block a commit without a green check of the exact tree and a merge without green CI.
-  result: 21 tasks in 9 days, each logged with model, time and outcome; reviewers raised 14 blockers and 41 should-fix items, addressed before the PR; a Python core and its TypeScript port agree on 87 shared cases.
-facts:
-  - { value: '21', label: 'tasks logged with model, minutes and outcome (2026-10-25 → 11-02)' }
-  - { value: '14 · 41', label: 'blockers · should-fix items raised by reviewer agents, addressed before PR' }
-  - { value: '87', label: 'shared cases run by both pytest and Jest (Python core ↔ TypeScript port)' }
-  - { value: '4 · 7', label: 'subagents · guard hooks in the pipeline' }
+  result: 'Every task leaves a metrics row with model, time and outcome; reviewer findings are addressed before the PR; a Python core and its TypeScript port run the same shared cases. Counts: TBD — they will be quoted at a commit once a reproducible script computes them.'
 ---
 import StackBlock from '../../components/StackBlock.astro';
 
@@ -61,12 +56,13 @@ every theme (4.5:1 text, 3:1 controls); tap targets are at least 48 pt.
 
 ## What the log shows — honestly
 
-- **Reviewers earn their keep:** 14 blockers and 41 should-fix items were raised by reviewer agents and addressed
-  before the pull request.
-- **Review is not perfect:** 15 spec bugs were still found after spec review, across 13 tasks — counted in the log,
-  not hidden. One spec was rejected twice before the work started.
-- **The phone catches what tests do not:** 11 task notes mention a check on a real phone; one of them (clipped hero text on
-  a real device) became its own fix.
+- **Reviewers earn their keep:** reviewer agents raise blockers and should-fix items, and they are addressed before
+  the pull request.
+- **Review is not perfect:** spec bugs are still found after spec review — counted in the log, not hidden.
+- **The phone catches what tests do not:** task notes record checks on a real phone; one of them (clipped hero text
+  on a real device) became its own fix.
+- **Counts: TBD.** They will appear once a script in the project computes them reproducibly, labelled with the
+  commit and date they were taken at.
 - **Time is an estimate:** minutes are mostly estimated active work and include waiting for my OK; they show
   relative effort, not productivity claims. Every task is marked accepted after my review; for UI tasks that usually included a phone check.
 - **Known gap:** for one design-system part, VoiceOver and the largest font were not checked on a device (covered by
@@ -80,5 +76,4 @@ every theme (4.5:1 text, 3:1 controls); tap targets are at least 48 pt.
 - **Generate the metrics row** from the pipeline's state instead of writing it by hand.
 - **Measure escaped bugs per stage** (spec, tests, review, phone) to see which reviewer to strengthen next.
 
-<p class="note">Private repository — demo on request. Figures come from the project's metrics log, git history and
-test fixtures as of 2026-11-02. No real family data is used on this page.</p>
+<p class="note">Private repository — demo on request. Process described as of 2026-11-04. No real family data is used on this page.</p>
