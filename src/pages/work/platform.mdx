@@ -4,18 +4,18 @@ title: An agent platform with an independent verifier
 kicker: Case study · Agentic systems
 description: How I let coding agents change real infrastructure — written rules, a second agent that checks every plan and result, deterministic checks, and a log of what happened.
 summary: Coding agents run my home server — services, containers, networking, secrets nearby. They act only through written procedures, a second agent with a fresh context checks every plan and every result, and the decisions that matter stay with a human.
-snapshot: 2026-11-02
+snapshot: 2026-11-05
 tldr:
   problem: Coding agents that can run Docker, edit services and touch the firewall are useful only as far as you can trust them — and reviewing every command by hand does not scale.
   built: Written rules and procedures in a git wiki, an executor skill that follows them, and an independent verifier agent that checks every plan (GO/STOP) and every result (PASS/FAIL) with deterministic checks.
-  result: A 5-repository migration ran phase by phase under the verifier; three real incidents each became a new rule or check instead of a note in a chat.
+  result: A multi-repository migration ran phase by phase under the verifier; each real incident became a new rule or check instead of a note in a chat.
 facts:
-  - { value: '10', label: 'security policies, each tied to a check or a review step' }
-  - { value: '6', label: 'deterministic checks: exit 0 pass · 1 fail · 2 warn' }
-  - { value: '5', label: 'repositories moved in 6 phases under the verifier: inventory, 4 moves, the wiki last' }
-  - { value: '3', label: 'incidents that each became a rule or a check' }
+  - { value: '{{platform.policies}}', label: 'security policies, each tied to a check or a review step' }
+  - { value: '{{platform.checks}}', label: 'deterministic checks: exit 0 pass · 1 fail · 2 warn' }
+  - { value: 'TBD', label: 'repositories moved phase by phase under the verifier — count pending a reproducible source' }
+  - { value: 'TBD', label: 'incidents that each became a rule or a check — count pending a reproducible source' }
 ---
-import snap from '../../../data/snapshots/2026-11-02.json';
+import snap from '../../../data/snapshots/2026-11-05.json';
 import StackBlock from '../../components/StackBlock.astro';
 import Replay from '../../components/Replay.tsx';
 import '../../styles/replay.css';
@@ -44,7 +44,7 @@ The full picture, with animated flows, is on <a href={`${base}/how-i-work/`}>How
 4. **Record** — a session-log entry, and a proposed wiki diff whenever reality differed from the procedure.
 
 No procedure for an intent? The executor says so, does the job step by step with me, and drafts a new procedure
-afterwards — the wiki grows from real runs (3 procedures so far, the newest written from its first run).
+afterwards — the wiki grows from real runs ({p.procedures} procedures so far).
 
 ## The verifier is independent by design
 
@@ -59,11 +59,11 @@ Independence is designed in, not assumed:
 - **A STOP overrides the executor.** It must fix the plan and get a GO — or ask me.
 - **Freshness gate.** Both executor and verifier refuse to work from a wiki that is behind its remote.
 
-Ten security policies define what “safe” means here — loopback-only ports, nothing public, no secrets in git,
+{p.policies} security policies define what “safe” means here — loopback-only ports, nothing public, no secrets in git,
 pinned images (the network sidecar may track `stable`) — and each one is enforced by a check or by the verifier's review.
 
 <details class="more">
-<summary>The ten policies, exceptions and permissions</summary>
+<summary>The policies, exceptions and permissions</summary>
 
 | # | Policy | Level |
 |---|---|---|
@@ -125,6 +125,19 @@ unit failed on the first try and the service crash-looped until fixed. Final sta
 (the findings already in jev's history), one warning (some containers still run as root, S6), a reboot test
 passed, and the home folder holds only projects.
 
+## A second opinion on code, and a measure of my attention
+
+The same idea — a reviewer that never saw the author's reasoning — now covers code changes too:
+
+- **second-opinion** is a read-only review skill that runs in a clean context on a finished change. It reads only
+  the task, the diff and the check output, never the author's reasoning or reports. It runs the built-in code review
+  first and adds only what that misses: which check proves each claim of the task, and which changed paths no check
+  reaches. A defect counts only with a file, a line and a concrete failing scenario; anything else is a hypothesis.
+  It is wired into the feature pipeline before anything is handed to me.
+- **session-stats.py** is a report, not a gate: per project, how many prompts I wrote, how much output I carried
+  between tools by hand, API calls, context size and cache tokens — counted from the session logs, never from
+  message text. I run it before and after an automation to see whether it actually took work off me.
+
 ## Agents waiting for me are visible
 
 Claude Code hooks feed a small [status board](../uptime/) (its own case study) that shows, per project, whether an agent is working, waiting for me or
@@ -135,8 +148,7 @@ idle — metadata only: never prompts, responses or file contents.
 
 Agents waiting for me are the real bottleneck, so I made it visible:
 
-- **Claude Code hooks** (6 events: session start/end, prompt submit, stop, notification, tool use) append one line
-  each: event, short session id, project, the tool with a file name or the command's first word, and the agent's
+- **Claude Code hooks** (the event list is in the [uptime case](../uptime/)) append one line per event: event, short session id, project, the tool with a file name or the command's first word, and the agent's
   own task titles. **Never prompts, responses, file contents or full commands.**
 - A small **FastAPI** board turns that into *working / waiting for you / idle* per project, next to the project
   list from Notion and the machine's load. Sensitive projects are scrubbed to ID and status before display.
