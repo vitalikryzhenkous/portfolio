@@ -6,7 +6,7 @@ description: How I build a real mobile app mostly with coding agents — a spec-
 summary: A mobile app for my family's baby-sleep routine, built mostly by coding agents. The interesting part is not the app but the process — every feature goes through the same pipeline, independent reviewers catch what the author agent misses, and every task leaves a measurable trace.
 tldr:
   problem: Coding agents are fast, but left alone they skip steps, grade their own work and drift from the spec — and a family app used at night with one hand has no room for "almost right".
-  built: A 10-stage feature pipeline in Claude Code — spec, independent spec review, tests written first by a separate agent from the spec only, implementation, verifier, code review, PR, metrics — with hooks that block a commit without a green check of the exact tree and a merge without green CI.
+  built: A feature pipeline in Claude Code — spec, independent spec review, tests written first by a separate agent from the spec only, implementation, one verify script, code review, PR, metrics, finish — with hooks that block a commit without a green check of the exact tree and a merge without green CI.
   result: 'Every task leaves a metrics row with model, time and outcome; reviewer findings are addressed before the PR; a Python core and its TypeScript port run the same shared cases. Counts: TBD — they will be quoted at a commit once a reproducible script computes them.'
 ---
 import StackBlock from '../../components/StackBlock.astro';
@@ -20,18 +20,22 @@ number at 3 a.m. is worse than no number.
 Agents write most of the code. That only works if the process makes their usual failure modes hard: skipping the
 spec, writing tests that mirror the implementation, declaring “done” without running checks, merging on red CI.
 
-## Every feature runs the same 10-stage pipeline
+## Every feature runs the same pipeline
 
 1. **Plan** with a size (S / M / L) and open questions.
 2. **Spec** written, then reviewed by a **spec-reviewer** agent with a fresh context (business + UX review), then my OK.
 3. **Branch** from an up-to-date main.
 4. **Tests first** — a **test-designer** agent sees only the approved spec, never the implementation.
 5. **Implement** the smallest change that makes the tests pass.
-6. **Verify** — a **verifier** agent runs tests, lint, types and the calculation-parity suite; fix until green.
+6. **Verify** — one script, `scripts/verify.sh`, not an agent: lint, format, tests, types, the calculation-parity
+   suite in Python and TypeScript, and a secrets scan; fix until green. A skipped step counts as not verified. CI runs
+   the same script.
 7. **Review** — a **code-reviewer** agent checks the diff against the spec and the project rules.
 8. **Commit & PR**, re-verifying if anything changed after stage 6.
 9. **Deploy** — explicitly skipped until deployment is configured (no silent “done”).
 10. **Metrics** — one row: date, task, model, minutes, accepted, notes.
+11. **Finish** — after the merge a script checks that the PR is really merged, updates main, removes the branch and
+    writes the session-log entry.
 
 The pipeline keeps its state per feature, so it can resume in any stage, in any session.
 
