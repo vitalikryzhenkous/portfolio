@@ -95,8 +95,11 @@ print(json.dumps(out))
 # --- agent platform: wiki + status board (counts only) -----------------------------------------
 WIKI="$APPS/agent-wiki"; BOARD="$APPS/uptime-board"
 board_prs="$(gh pr list -R vitalikryzhenkous/uptime-board --state merged --limit 500 --json number --jq length)"
-platform="$(printf '{"wiki_git":%s,"board_git":%s,"board_prs_merged":%s,"policies":%s,"procedures":%s,"checks":%s}' \
-  "$(git_info "$WIKI")" "$(git_info "$BOARD")" "$board_prs" \
+# the Mac app (uptime-apple) is not cloned on the server: merged PRs and their date range from GitHub
+apple_prs="$(gh pr list -R vitalikryzhenkous/uptime-apple --state merged --limit 500 --json mergedAt \
+  --jq '{merged: length, first: (map(.mergedAt) | min | .[:10]), last: (map(.mergedAt) | max | .[:10])}')"
+platform="$(printf '{"wiki_git":%s,"board_git":%s,"board_prs_merged":%s,"mac_app_prs":%s,"policies":%s,"procedures":%s,"checks":%s}' \
+  "$(git_info "$WIKI")" "$(git_info "$BOARD")" "$board_prs" "$apple_prs" \
   "$(grep -cE '^\| S[0-9]+ \|' "$WIKI/conventions/security.md")" \
   "$(ls "$WIKI"/procedures/*.md | wc -l | tr -d ' ')" \
   "$(ls "$WIKI"/checks/*.sh "$WIKI"/checks/security/*.sh | grep -v '/lib.sh$' | wc -l | tr -d ' ')")"
