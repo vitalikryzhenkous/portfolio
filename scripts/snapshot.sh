@@ -101,6 +101,34 @@ platform="$(printf '{"wiki_git":%s,"board_git":%s,"board_prs_merged":%s,"policie
   "$(ls "$WIKI"/procedures/*.md | wc -l | tr -d ' ')" \
   "$(ls "$WIKI"/checks/*.sh "$WIKI"/checks/security/*.sh | grep -v '/lib.sh$' | wc -l | tr -d ' ')")"
 
+# --- interview-gym trainer: counts of the content its Docker build validates (counts only) -----
+# The plan length comes from executing the gym's own build/algo_data.py, exactly as its build.py does.
+GYM="$APPS/interview-gym"
+trainer="$(python3 -I - "$GYM" <<'PY'
+import glob, json, os, re, subprocess, sys
+g = sys.argv[1]
+py = os.path.join(g, "content/algo/data/py")
+pats = [f for f in sorted(glob.glob(f"{py}/*.json")) if os.path.basename(f) not in ("cheatsheets.json", "python-primer.json")]
+ex = [e for f in pats for e in json.load(open(f))["exercises"]]
+ns = {"R": os.path.join(g, "content/algo")}
+exec(open(os.path.join(g, "build/algo_data.py")).read(), ns)
+m = re.search(r"timeoutMs = (\d+)", open(os.path.join(g, "src/app.js")).read())
+if not m:
+    sys.exit("snapshot: runCode timeoutMs not found in interview-gym src/app.js")
+git = lambda *a: subprocess.run(["git", "-C", g, *a], capture_output=True, text=True, check=True).stdout.strip()
+print(json.dumps({
+    "git": {"commits": int(git("rev-list", "--count", "HEAD")), "last": git("log", "-1", "--format=%cs"), "sha": git("rev-parse", "--short", "HEAD")},
+    "patterns": len(pats),
+    "exercises": len(ex),
+    "exercise_tests_min": min(len(e["tests"]) for e in ex),
+    "behavioral": sum(len(json.load(open(f))) for f in glob.glob(f"{g}/content/beh/beh-questions-*.json")),
+    "system_design": sum(len(json.load(open(f))) for f in glob.glob(f"{g}/content/sd/sd-cases-*.json")),
+    "plan_days": len(ns["plan"]),
+    "run_timeout_s": int(m.group(1)) // 1000,
+}))
+PY
+)"
+
 # --- babyloop: the project's own stats script, when it exists ----------------------------------
 BL="$APPS/babyloop"; babyloop=""
 if [ -f "$BL/scripts/portfolio-stats.py" ]; then
@@ -123,6 +151,7 @@ snap = {
     },
     "oss": $oss,
     "platform": $platform,
+    "trainer": $trainer,
 }
 if os.environ.get("BABYLOOP_JSON"):
     snap["babyloop"] = json.loads(os.environ["BABYLOOP_JSON"])

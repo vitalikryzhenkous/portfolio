@@ -3,18 +3,22 @@ layout: ../../layouts/Case.astro
 title: Interview prep as code — a bootcamp generator and a trainer
 kicker: Case study · LLM content with gates
 description: Two tools I built for my own interview preparation — a generator that writes a one-page bootcamp for a specific vacancy with agents and gates, and a trainer with Python in the browser — both treating content like code.
+snapshot: 2026-11-05
 summary: For every interview I want material that fits the vacancy and that I can trust. One tool has agents write a bootcamp for a specific role and lets nothing through that a gate cannot check; the other is where I practise every day. In both, content is code — it is executed and validated before anyone reads it.
 tldr:
   problem: LLM-written study material looks right and is often subtly wrong — a dead doc link, an API that does not exist, a story about me that never happened. Generic practice material, in turn, does not fit a specific vacancy.
   built: 'A bootcamp generator: a writer agent and an independent fact-reviewer agent, a JSON Schema and seven gates from schema validation to a browser e2e, and a rule that only stories I confirmed may appear. Next to it, Interview Gym: a trainer with Python running in the browser and content gates in its Docker build.'
-  result: A bootcamp is published only when every gate is green; a self-test proves the gates catch broken data. The trainer covers algorithms, behavioral and system-design practice with a 14-day plan, served only on my own machine.
+  result: A bootcamp is published only when every gate is green; a self-test proves the gates catch broken data. The trainer covers algorithms, behavioral and system-design practice with a {{trainer.plan_days}}-day plan, served only on my own machine.
 facts:
-  - { value: '36', label: 'trainer: coding exercises with tests, across 12 algorithm patterns' }
-  - { value: '57 · 35', label: 'trainer: behavioral questions · system-design cases' }
-  - { value: '≥ 4', label: 'tests per auto-tested task, in both tools' }
-  - { value: '6 s', label: 'per-run timeout for Python in the browser' }
+  - { value: '{{trainer.exercises}}', label: 'trainer: coding exercises with tests, across {{trainer.patterns}} algorithm patterns' }
+  - { value: '{{trainer.behavioral}} · {{trainer.system_design}}', label: 'trainer: behavioral questions · system-design cases' }
+  - { value: '{{trainer.exercise_tests_min}}', label: 'trainer: fewest tests on any coding exercise; the build fails below its threshold' }
+  - { value: '{{trainer.run_timeout_s}} s', label: 'per-run timeout for Python in the browser' }
 ---
+import snap from '../../../data/snapshots/2026-11-05.json';
 import StackBlock from '../../components/StackBlock.astro';
+
+export const t = snap.trainer;
 
 ## The problem: practise, don't read — and don't trust unchecked text
 
@@ -53,7 +57,7 @@ stopped checking is caught. What a script cannot check (excerpts of code, some r
 
 ## Part 2 — Interview Gym, the daily trainer
 
-- **Pyodide** runs in a **Web Worker**, so a runaway loop never freezes the page. Each run has a **6-second
+- **Pyodide** runs in a **Web Worker**, so a runaway loop never freezes the page. Each run has a **{t.run_timeout_s}-second
   timeout**; on timeout the worker is terminated and rebuilt. Nothing is executed on the server.
 - In the **Docker build**, validators check the schema of behavioral and system-design files and run every
   reference solution, filled-in blank and primer drill against its tests in CPython — at least 4 tests per
@@ -73,5 +77,5 @@ stopped checking is caught. What a script cannot check (excerpts of code, some r
 - Feed weak spots from the trainer's progress into the next bootcamp's plan.
 - A timed mock-interview mode that mixes one coding, one behavioral and one design question.
 
-<p class="note">Private repositories — demo on request. Trainer counts as of 2026-11-02; no company or vacancy
-names are shown.</p>
+<p class="note">Private repositories — demo on request. Trainer counts from snapshot {snap.taken_utc.slice(0, 10)} at commit
+{t.git.sha}; no company or vacancy names are shown.</p>
