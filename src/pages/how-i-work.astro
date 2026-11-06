@@ -4,6 +4,8 @@ import PlatformGraph from '../components/PlatformGraph.tsx';
 import graph from '../data/graph.json';
 import '../styles/graph.css';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const layers = graph.layers.map((l) => ({
   ...l,
   nodes: graph.nodes.filter((n) => n.layer === l.id),
@@ -44,6 +46,41 @@ const layers = graph.layers.map((l) => ({
     <li><strong>Log.</strong> The session is written to a log; if reality differed from the procedure, the executor proposes a wiki diff for review.</li>
   </ol>
 
+  <h2 id="checking-ai-code">How I check AI-written code</h2>
+  <p>
+    Agents write most of the code in my projects. None of it reaches <code>main</code> on the author agent's word.
+    The repositories named below are private, so you won't find links to them. The case studies describe them.
+  </p>
+  <ul class="checks">
+    <li>
+      <strong>An independent verifier before and after each <code>/make</code> step.</strong> A separate agent with its
+      own context returns GO/STOP on the plan. After the change it runs the deterministic checks and returns PASS/FAIL.
+      <span class="where">agent-wiki: <code>agents/agents/verifier.md</code>, <code>checks/</code> ·
+      <a href={`${base}/work/platform/`}>platform case</a></span>
+    </li>
+    <li>
+      <strong>A clean-context review before merge.</strong> The reviewer agent sees only the task, the diff and the
+      check results. It never sees the author's reasoning. On one PR (agent-wiki PR #13) it found 10 defects before merge.
+      <span class="where">agent-wiki: <code>agents/skills/second-opinion</code> · as of 2026-11-06</span>
+    </li>
+    <li>
+      <strong>One <code>verify.sh</code> per project: lint, tests and gitleaks.</strong> Exit code 3 means "not
+      verified": a skipped step blocks the change just like a failure. Nothing turns green without running.
+      <span class="where">babyloop, agent-memory: <code>scripts/verify.sh</code> ·
+      <a href={`${base}/work/babyloop/`}>babyloop case</a></span>
+    </li>
+    <li>
+      <strong>Only two human gates: spec and merge.</strong> Everything in between is automated and logged. At the end
+      of a session a hook writes the Session Log entry from git and GitHub.
+      <span class="where">agent-wiki: <code>hooks/session-end.py</code></span>
+    </li>
+    <li>
+      <strong>Agent evals at Creatio.</strong> A thin router with on-demand guidance cut the agent's persistent context
+      by ~75%.
+      <span class="where">from my CV</span>
+    </li>
+  </ul>
+
   <noscript>
     <h2>Platform, as text</h2>
   </noscript>
@@ -78,6 +115,14 @@ const layers = graph.layers.map((l) => ({
   }
   .loop li {
     margin-bottom: 0.5rem;
+  }
+  .checks li {
+    margin-bottom: 0.6rem;
+  }
+  .checks .where {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
   }
   .as-text {
     margin: 1.5rem 0;

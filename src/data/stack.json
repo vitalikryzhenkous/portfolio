@@ -11,14 +11,14 @@
           "Structured output via JSON Schema",
           "Prompt & context engineering",
           "Agent eval scenarios and A/B runs",
-          "OpenAI API"
+          "OpenAI API integration and an analytics agent in production at Creatio"
         ]
       },
       {
         "name": "Frontend",
         "items": [
           "TypeScript",
-          "Angular (DI, router, lazy modules, change detection)",
+          "Angular — 8+ years (DI, router, lazy modules, change detection)",
           "RxJS",
           "NgRx",
           "React",
