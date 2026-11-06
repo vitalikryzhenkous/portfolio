@@ -6,6 +6,7 @@
       {
         "name": "AI & LLM",
         "items": [
+          "Claude Code (skills, hooks, sub-agents, CLAUDE.md, MCP servers)",
           "Model Context Protocol (tool design, contracts, E2E testing)",
           "LLM coding agents (skills, hooks, sub-agents, parallel sessions)",
           "Structured output via JSON Schema",
