@@ -147,6 +147,11 @@ const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
+    transition: border-color 0.15s;
+  }
+  .hc:hover,
+  .hc:focus-within {
+    border-color: var(--accent);
   }
   .hc summary {
     cursor: pointer;
@@ -159,12 +164,12 @@ const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
   .hc summary strong {
     display: block;
   }
-  .hc summary strong::after {
-    content: ' +';
+  .hc summary strong::before {
+    content: '▸ ';
     color: var(--accent);
   }
-  .hc[open] summary strong::after {
-    content: ' −';
+  .hc[open] summary strong::before {
+    content: '▾ ';
   }
   .hc summary:focus-visible {
     outline: 2px solid var(--accent);
