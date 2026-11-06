@@ -52,7 +52,7 @@
       "layer": "devices",
       "label": "Phone (iPhone)",
       "card": {
-        "what": "A tailnet client: opens the jev console (PWA) and the status board over HTTPS inside the private network.",
+        "what": "A tailnet client: opens the jev console (PWA) and Uptime over HTTPS inside the private network.",
         "why": "Use the router and see waiting agents away from the desk, without exposing anything to the internet.",
         "decision": "No public endpoints: the phone reaches services only through the tailnet. Agent terminals stay on the laptop."
       }
@@ -64,7 +64,7 @@
       "card": {
         "what": "Tailscale network: every device and service talks over it, with HTTPS certificates inside the tailnet.",
         "why": "Nothing on the server is reachable from the internet.",
-        "decision": "Policy S2: no Funnel, no router port-forwarding. A service can get its own tailnet node through a sidecar container (Interview Gym does)."
+        "decision": "Policy S2: no Funnel, no router port-forwarding. A service can get its own tailnet node through a sidecar container (Interview Bootcamp does)."
       }
     },
     {
@@ -74,7 +74,7 @@
       "card": {
         "what": "One long-lived tmux session per project, each running Claude Code in that project's folder.",
         "why": "Agents survive disconnects; any client can reattach.",
-        "decision": "Sessions are named per project so the board and the Stream Deck find the same session."
+        "decision": "Sessions are named per project so Uptime and the Stream Deck find the same session."
       }
     },
     {
@@ -82,9 +82,9 @@
       "layer": "agents",
       "label": "/make executor",
       "card": {
-        "what": "Claude Code skill: intent → matching procedure → plan → verifier → execute → verifier → log.",
+        "what": "Claude Code skill: intent → matching procedure → plan → verifier GO/STOP → execute with a check after every step → full verify.sh → clean-context second opinion (max 2 runs) → report with “what I decided myself” and the verifier’s verdict.",
         "why": "Infrastructure changes follow a written procedure instead of improvisation.",
-        "decision": "No procedure for an intent → do it step by step with the owner, then draft a new procedure. Step 0 is a wiki freshness check.",
+        "decision": "Two human gates only: the spec and the merge. No procedure for an intent → do it step by step with the owner, then draft a new procedure.",
         "link": "work/platform"
       }
     },
@@ -100,12 +100,23 @@
       }
     },
     {
+      "id": "second-opinion",
+      "layer": "agents",
+      "label": "Second-opinion reviewer",
+      "card": {
+        "what": "A separate agent with a clean context: it sees only the task, the diff and the check results, never the author’s reasoning. Read-only.",
+        "why": "The author agent should not review its own reasoning. It returns what is proven, what is not covered, defects with file:line and decisions for the owner.",
+        "decision": "Runs before every merge. On one PR it found 10 defects before merge (agent-wiki #13, 2026-11-06).",
+        "link": "work/platform"
+      }
+    },
+    {
       "id": "hooks",
       "layer": "agents",
       "label": "Claude Code hooks",
       "card": {
-        "what": "6 hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log.",
-        "why": "The status board (its own case study) shows which agent is working, waiting for permission or idle, and writes a daily log.",
+        "what": "Hook events (session start/end, prompt submit, stop, notification, tool use) append one line each to a local event log. A SessionEnd hook also posts a Session Log entry to Notion automatically and skips empty sessions.",
+        "why": "Uptime (its own case study) shows which agent is working, waiting for permission or idle, and writes a daily log.",
         "decision": "Only metadata is logged: event, short session id, project, the tool with a file name or command verb, and the agent’s own task titles. Never prompts, responses or file contents.",
         "link": "work/uptime"
       }
@@ -148,7 +159,7 @@
       "layer": "records",
       "label": "Notion: projects & session log",
       "card": {
-        "what": "Projects and a session log. Every working session leaves a short entry; an evening job collects the day.",
+        "what": "Projects and a session log. Entries are written by the SessionEnd hook, not by hand; an evening job collects the day.",
         "why": "Sessions do not see each other; the log is the bridge.",
         "decision": "What & why lives in Notion, how & by which rules lives in git. One fact in one place."
       }
@@ -263,6 +274,12 @@
       "target": "verifier",
       "kind": "verify",
       "label": "before / after"
+    },
+    {
+      "source": "make",
+      "target": "second-opinion",
+      "kind": "verify",
+      "label": "before merge"
     },
     {
       "source": "make",

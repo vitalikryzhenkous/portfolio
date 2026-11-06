@@ -10,6 +10,9 @@ const layers = graph.layers.map((l) => ({
   ...l,
   nodes: graph.nodes.filter((n) => n.layer === l.id),
 }));
+
+// Collapsed card shows the first sentence of the description; the rest opens on click.
+const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
 ---
 
 <Base
@@ -25,8 +28,8 @@ const layers = graph.layers.map((l) => ({
   <p>
     I run my own projects the way I would want a team's agents to run: on written rules, with an independent check
     before and after every change, and with a record of what happened. Below is the platform as it is today —
-    one home server, a private network and coding agents. The projects that run on it — jev, Interview Gym, the
-    status board — have their own case studies.
+    one home server, a private network and coding agents. The projects that run on it — jev, Interview Bootcamp,
+    Uptime — have their own case studies.
   </p>
 
   <PlatformGraph client:visible />
@@ -81,26 +84,33 @@ const layers = graph.layers.map((l) => ({
     </li>
   </ul>
 
-  <noscript>
-    <h2>Platform, as text</h2>
-  </noscript>
-  <details class="as-text">
-    <summary>The same graph as a list</summary>
-    {
-      layers.map((l) => (
-        <section>
-          <h3>{l.label}</h3>
-          <ul>
-            {l.nodes.map((n) => (
-              <li>
-                <strong>{n.label}</strong> — {n.card.what} <em>Decision:</em> {n.card.decision}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
-  </details>
+  <h2 id="as-list">The same graph as a list</h2>
+  <p class="muted hc-hint">Tap a card to open the full description and the decision behind it.</p>
+  {
+    layers.map((l) => (
+      <section class="hc-group">
+        <h3>{l.label}</h3>
+        <div class="hc-grid">
+          {l.nodes.map((n) => (
+            <details class="hc" open>
+              <summary>
+                <strong>{n.label}</strong>
+                <span class="hc-teaser">{firstSentence(n.card.what)}</span>
+              </summary>
+              <div class="hc-body">
+                <p>{n.card.what} {n.card.why}</p>
+                <p><em>Decision:</em> {n.card.decision}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+  <script is:inline>
+    // Without JS every card stays open; with JS they start collapsed.
+    document.querySelectorAll('details.hc').forEach((d) => d.removeAttribute('open'));
+  </script>
 
   <p class="muted source">
     Generated from the service registry (wiki commit <code>{graph.source.commit}</code>) through a public allowlist:
@@ -124,12 +134,56 @@ const layers = graph.layers.map((l) => ({
     font-size: 0.85rem;
     color: var(--muted);
   }
-  .as-text {
-    margin: 1.5rem 0;
+  .hc-hint {
+    font-size: 0.9rem;
   }
-  .as-text summary {
+  .hc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .hc {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .hc summary {
     cursor: pointer;
+    padding: 0.75rem 1rem;
+    list-style: none;
+  }
+  .hc summary::-webkit-details-marker {
+    display: none;
+  }
+  .hc summary strong {
+    display: block;
+  }
+  .hc summary strong::after {
+    content: ' +';
     color: var(--accent);
+  }
+  .hc[open] summary strong::after {
+    content: ' −';
+  }
+  .hc summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .hc-teaser {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .hc[open] .hc-teaser {
+    display: none;
+  }
+  .hc-body {
+    padding: 0 1rem 0.75rem;
+    font-size: 0.95rem;
+  }
+  .hc-body p {
+    margin: 0 0 0.5rem;
   }
   .source {
     font-size: 0.85rem;
