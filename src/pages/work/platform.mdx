@@ -91,7 +91,7 @@ Each problem ended as a rule or a check, not a sentence in a chat:
 
 | What happened | Fix | What changed in the system |
 |---|---|---|
-| The automated exposure check flagged the status board listening on all interfaces — visible to the whole home network. | The tablet that shows the board cannot join the private network, so: a documented exception with date and owner, and the firewall narrowed from the whole subnet to that one device. | Exceptions live in the policy file and in a machine-readable list the checks honour. |
+| The automated exposure check flagged Uptime listening on all interfaces — visible to the whole home network. | The tablet that shows Uptime cannot join the private network, so: a documented exception with date and owner, and the firewall narrowed from the whole subnet to that one device. | Exceptions live in the policy file and in a machine-readable list the checks honour. |
 | During a migration an API key surfaced in the verifier's output: a config-rendering command expands environment files. | The key was rotated. | The verifier never runs commands that expand secrets; a list of forbidden commands is in its brief. |
 | The first real run started from a local wiki that was 5 commits behind. | Fast-forwarded; the procedure itself had not changed. | Freshness check is step 0 for both executor and verifier — a stale wiki is a STOP. |
 
@@ -111,7 +111,7 @@ Press play — this is the actual sequence of plans, verdicts, human decisions a
 |---|---|---|
 | 0 | Read-only inventory: folders, units, paths in configs, scheduled jobs | STOP → decisions by me, then on |
 | 1 | Database project, volume kept | GO → PASS |
-| 2 | Status board: service stopped by me, venv rebuilt from pinned versions, unit and hooks re-pointed | GO → PASS |
+| 2 | Uptime: service stopped by me, venv rebuilt from pinned versions, unit and hooks re-pointed | GO → PASS |
 | 3 | jev (API, console, agent session) | STOP (a check was called the wrong way) → GO → PASS on all checks except secrets* |
 | 4 | Leftovers: logs archived, stray secret backups removed after asking | GO → PASS |
 | 5 | The wiki itself — moved by me | done |
@@ -120,7 +120,7 @@ Press play — this is the actual sequence of plans, verdicts, human decisions a
 
 </details>
 
-What went wrong, honestly: the status board was down for about **9 minutes** — a scripted edit of its systemd
+What went wrong, honestly: Uptime was down for about **9 minutes** — a scripted edit of its systemd
 unit failed on the first try and the service crash-looped until fixed. Final state: all checks green except secrets
 (the findings already in jev's history), one warning (some containers still run as root, S6), a reboot test
 passed, and the home folder holds only projects.
@@ -140,11 +140,11 @@ The same idea — a reviewer that never saw the author's reasoning — now cover
 
 ## Agents waiting for me are visible
 
-Claude Code hooks feed a small [status board](../uptime/) (its own case study) that shows, per project, whether an agent is working, waiting for me or
+Claude Code hooks feed [Uptime](../uptime/) (its own case study) that shows, per project, whether an agent is working, waiting for me or
 idle — metadata only: never prompts, responses or file contents.
 
 <details class="more">
-<summary>How the board, the tablet and the Stream Deck work</summary>
+<summary>How Uptime, the tablet and the Stream Deck work</summary>
 
 Agents waiting for me are the real bottleneck, so I made it visible:
 
@@ -154,7 +154,7 @@ Agents waiting for me are the real bottleneck, so I made it visible:
   list from Notion and the machine's load. Sensitive projects are scrubbed to ID and status before display.
 - An old **tablet** (iOS 12, ES5-only JavaScript) shows it; one button launches an agent for a project with a
   prompt taken from Notion — never from text typed on the tablet.
-- In the evening the board writes one session-log entry per project from the day's events and commit subjects.
+- In the evening Uptime writes one session-log entry per project from the day's events and commit subjects.
 - A **Stream Deck** on the laptop has one key per project: it reattaches to that project's agent session.
 
 </details>
@@ -169,6 +169,6 @@ Agents waiting for me are the real bottleneck, so I made it visible:
 - **Tighten S6/S7**: move remaining containers off root, then make critical CVEs a hard FAIL.
 
 <p class="note">Numbers: {p.policies} policies, {p.checks} checks and {p.procedures} procedures counted from the wiki;
-{p.wiki_git.commits} wiki commits since {p.wiki_git.first}; status board {p.board_git.commits} commits since
+{p.wiki_git.commits} wiki commits since {p.wiki_git.first}; Uptime {p.board_git.commits} commits since
 {p.board_git.first}. Snapshot {snap.taken_utc.slice(0, 10)}. Migration verdicts and the 9-minute outage are from the
 session log of that run.</p>

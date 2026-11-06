@@ -7,7 +7,7 @@ snapshot: 2026-11-05
 summary: For every interview I want material that fits the vacancy and that I can trust. One tool has agents write a bootcamp for a specific role and lets nothing through that a gate cannot check; the other is where I practise every day. In both, content is code — it is executed and validated before anyone reads it.
 tldr:
   problem: LLM-written study material looks right and is often subtly wrong — a dead doc link, an API that does not exist, a story about me that never happened. Generic practice material, in turn, does not fit a specific vacancy.
-  built: 'A bootcamp generator: a writer agent and an independent fact-reviewer agent, a JSON Schema and seven gates from schema validation to a browser e2e, and a rule that only stories I confirmed may appear. Next to it, Interview Gym: a trainer with Python running in the browser and content gates in its Docker build.'
+  built: 'A bootcamp generator: a writer agent and an independent fact-reviewer agent, a JSON Schema and seven gates from schema validation to a browser e2e, and a rule that only stories I confirmed may appear. Next to it, the Interview Bootcamp trainer, with Python running in the browser and content gates in its Docker build.'
   result: A bootcamp is published only when every gate is green; a self-test proves the gates catch broken data. The trainer covers algorithms, behavioral and system-design practice with a {{trainer.plan_days}}-day plan, served only on my own machine.
 facts:
   - { value: '{{trainer.exercises}}', label: 'trainer: coding exercises with tests, across {{trainer.patterns}} algorithm patterns' }
@@ -55,7 +55,7 @@ A **self-test** mutates a known-good topic and expects exactly the right gate to
 stopped checking is caught. What a script cannot check (excerpts of code, some rubrics) goes into a report as
 “checked by hand” or “open”, never as passed.
 
-## Part 2 — Interview Gym, the daily trainer
+## Part 2 — The Interview Bootcamp trainer, for daily practice
 
 - **Pyodide** runs in a **Web Worker**, so a runaway loop never freezes the page. Each run has a **{t.run_timeout_s}-second
   timeout**; on timeout the worker is terminated and rebuilt. Nothing is executed on the server.

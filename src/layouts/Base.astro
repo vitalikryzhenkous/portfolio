@@ -17,6 +17,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const here = Astro.url.pathname.replace(/\/$/, '');
 const nav = [
   { href: `${base}/work/`, label: 'Case studies', section: `${base}/work` },
+  { href: `${base}/how-i-work/`, label: 'How I work with AI', section: `${base}/how-i-work` },
   { href: `${base}/stack/`, label: 'Stack', section: `${base}/stack` },
   { href: `${base}/cv/`, label: 'CV', section: `${base}/cv` },
 ].map((n) => ({ ...n, current: here === n.section || here.startsWith(`${n.section}/`) }));

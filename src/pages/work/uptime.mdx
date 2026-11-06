@@ -3,14 +3,14 @@ layout: ../../layouts/Case.astro
 title: Uptime — a status board for coding agents
 kicker: Case study · Agent operations
 description: A small dashboard and API that show which coding agent is working, which one waits for me and how full its context is — fed by Claude Code hooks, without logging prompts by default.
-summary: When several coding agents run in parallel, the bottleneck is the one waiting for my approval. The board makes that visible at a glance — on an old tablet, and through an API for a menu-bar app on the laptop — and lets me send a one-line reply to an agent that waits for me, under strict rules.
+summary: When several coding agents run in parallel, the bottleneck is the one waiting for my approval. Uptime makes that visible at a glance — on an old tablet, and through an API for a menu-bar app on the laptop — and lets me send a one-line reply to an agent that waits for me, under strict rules.
 snapshot: 2026-11-04
 tldr:
   problem: Agents that wait for permission sit idle until I notice — and checking every terminal by hand does not scale with several projects.
   built: Claude Code hooks write one metadata line per event; a FastAPI server turns that into working / waiting / idle per session, with context use, subagents and plan limits; an old tablet shows it, and a token-protected API with live push feeds the apps.
   result: '“Needs you” is visible from across the room, and a waiting agent can get a one-line reply without opening a terminal. {{platform.board_git.commits}} commits, {{platform.board_prs_merged}} merged pull requests.'
 facts:
-  - { value: '11', label: 'Claude Code hook events feed the board' }
+  - { value: '11', label: 'Claude Code hook events feed Uptime' }
   - { value: '10 s', label: 'refresh on the tablet (ES5 JavaScript for Safari 12); live push (SSE) for the apps' }
   - { value: '0', label: 'prompts or file contents logged; agent text only by opt-in, only to the token-protected API' }
   - { value: '{{platform.board_git.commits}}', label: 'commits since {{platform.board_git.first}}' }
@@ -23,7 +23,7 @@ Several Claude Code sessions run in tmux, one per project. Any of them can stop 
 agent costs nothing — except the hours until someone looks. I wanted that state on a wall-sized glance, not in a
 terminal I have to open.
 
-## Hooks write metadata, the board derives state
+## Hooks write metadata, Uptime derives state
 
 - **11 hook events** — session start and end, prompt submit, stop, notification, permission request, tool use,
   subagent start and stop, before and after compaction — each append one line to a local log: time, event, a short
@@ -57,19 +57,19 @@ need with a smaller surface.
 
 ## Notion is the source of truth
 
-- Every 5 minutes the board takes a snapshot of the project list from Notion. Projects marked sensitive are
+- Every 5 minutes Uptime takes a snapshot of the project list from Notion. Projects marked sensitive are
   scrubbed to ID and status before anything is displayed.
-- In the evening the board writes one session-log entry per project from the day's hook events and commit subjects.
+- In the evening Uptime writes one session-log entry per project from the day's hook events and commit subjects.
 
 ## Built for an old tablet, extended without code
 
 The display is an iPad mini 2 on iOS 12: ES5-only JavaScript, polling every 10 seconds, separate morning, day,
 evening and night screens, and a no-cache policy so Safari never shows a stale board. The tablet cannot join the
-private network, so it is the one documented LAN exception: an automated exposure check flagged the board
+private network, so it is the one documented LAN exception: an automated exposure check flagged Uptime
 listening on all interfaces, and the firewall was narrowed from the whole subnet to this one device.
 
 The apps reach a versioned API over the private network with HTTPS and a bearer token. Every server text comes as a
-key plus variables, so languages, colour themes (checked for WCAG AA contrast) and the board's cat persona are data
+key plus variables, so languages, colour themes (checked for WCAG AA contrast) and Uptime's cat persona are data
 files a user adds outside the repository, validated by a check script.
 
 <StackBlock project="uptime" />
@@ -77,6 +77,6 @@ files a user adds outside the repository, validated by a check script.
 ## What I'd do next
 
 - Per-project time-in-waiting as a metric, to see which tasks need better permissions up front.
-- A public, scrubbed demo mode with recorded events, so the board can be shown without the private network.
+- A public, scrubbed demo mode with recorded events, so Uptime can be shown without the private network.
 
 <p class="note">Part of my <a href="../platform/">agent platform</a>. Private repository — demo on request.</p>
