@@ -74,10 +74,11 @@ def build(variant_id: str) -> Path:
     out = ROOT / v["file"]
     out.parent.mkdir(parents=True, exist_ok=True)
 
-    linkedin = profile["links"]["linkedin"]
+    linkedin, portfolio = profile["links"]["linkedin"], profile["links"]["portfolio"]
     contact = (
         f'{escape(profile["location"])} · <a href="mailto:{profile["email"]}">{escape(profile["email"])}</a>'
         f' · <a href="{linkedin}">{escape(linkedin.replace("https://www.", ""))}</a>'
+        f' · <a href="{portfolio}">{escape(portfolio.removeprefix("https://").rstrip("/"))}</a>'
     )
     flow = [
         Paragraph(escape(profile["name"]), st["name"]),
