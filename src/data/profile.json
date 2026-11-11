@@ -1,10 +1,7 @@
 {
   "$comment": "Public profile. Work facts are copied from the CV (only what the CV says about employers). Learning plan items approved by the owner on 2026-11-01.",
   "name": "Vitalii Ryzhenko",
-  "roles": [
-    "Applied AI Engineer",
-    "Forward Deployed Engineer (GenAI)"
-  ],
+  "title": "Senior Full-Stack Engineer · Applied AI",
   "location": "Poznań, Poland · Remote · B2B · EU/US time zones",
   "email": "vitaliiryzhenkous@gmail.com",
   "links": {
@@ -15,8 +12,13 @@
   },
   "cv": [
     {
+      "id": "full-stack",
+      "label": "Full-Stack",
+      "file": "cv/vitalii-ryzhenko-cv-full-stack.pdf"
+    },
+    {
       "id": "applied-ai",
-      "label": "Applied AI / FDE",
+      "label": "Applied AI",
       "file": "cv/vitalii-ryzhenko-cv-applied-ai-fde.pdf"
     }
   ],
