@@ -8,8 +8,7 @@
 
 Sources: src/data/cv.json (experience, education, languages), src/data/stack.json (professional skills),
 src/data/profile.json (name, contacts, certifications), src/data/cv-variants.json (headline, summary, order).
-Output: the Applied AI / FDE PDF in public/cv/ (on the site); the Full-Stack PDF in private/cv/ (gitignored,
-sent only with targeted applications). Only email, LinkedIn and city — no phone, no address.
+Output: the Applied AI / FDE PDF in public/cv/ (on the site); the Full-Stack PDF in public/cv/ too. Only email, LinkedIn and city — no phone, no address.
 """
 
 import json

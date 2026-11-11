@@ -16,10 +16,16 @@ const ai = creatio.groups.find((g) => g.name === 'AI & agent tooling')!.items;
 const l4 = creatio.groups.find((g) => g.name === 'Customer escalations (L4)')!.items;
 // Three AI bullets for the home page (full list on /cv); the PR count lives in the open-source block below.
 const aiShort = [0, 2, 3].map((i) => ai[i]!.replace(/; \d+ merged PRs[^.]*\.?$/, '.').replace(/\.\.$/, '.'));
-const byIssuer = profile.certifications.reduce<Record<string, typeof profile.certifications>>((acc, c) => {
-  (acc[c.issuer] ??= []).push(c);
-  return acc;
-}, {});
+// Non-AI bullets for the home page, all from cv.json: code review + tests, bundle split, component migration.
+const perf = creatio.groups.find((g) => g.name === 'Front-end performance & architecture')!.items;
+const quality = creatio.groups.find((g) => g.name === 'Quality')!.items[0]!.split('; ');
+const engineering = [
+  `Reviewed ${quality[2]!.match(/~\d+ pull requests in \d+/)![0]}; ${quality[0]!.replace(/^R/, 'r')}.`,
+  perf[0]!,
+  perf[3]!,
+];
+const dl = profile.certifications.filter((c) => c.issuer === 'DeepLearning.AI');
+const academy = profile.certifications.filter((c) => c.issuer === 'Anthropic Academy');
 
 const work = [
   {
@@ -68,28 +74,38 @@ const work = [
 ---
 
 <Base
-  title="Vitalii Ryzhenko — Applied AI Engineer"
-  description="Applied AI / Forward Deployed Engineer. I build production LLM features and AI-agent tooling, backed by systematic evaluation."
+  title={`Vitalii Ryzhenko — ${profile.title}`}
+  description="Senior Full-Stack Engineer with 9+ years in TypeScript, Angular/React and .NET/Node. Also builds production LLM features and AI-agent tooling."
 >
   <section class="hero">
-    <p class="roles">{profile.roles.join(' · ')}</p>
-    <h1>I build production LLM features and AI-agent tooling, backed by systematic evaluation.</h1>
+    <h1>{profile.title}</h1>
     <p class="lead">
-      9+ years of full-stack engineering (TypeScript, Angular/React, .NET/Node). At Creatio I build MCP tools, structured
-      output features and agent evals; on my own hardware I run a privacy-first LLM router and an agent platform with an
-      independent verifier. Before engineering I worked in B2B sales — large deals and negotiations — so I am at home
+      9+ years building enterprise, healthcare and e-commerce web platforms with TypeScript, Angular/React and .NET/Node.
+      I also ship production LLM features and AI-agent tooling — MCP tools, structured output and agent evals — at Creatio
+      and on my own hardware. Before engineering I worked in B2B sales — large deals and negotiations — so I am at home
       in front of customers.
     </p>
-    <p class="meta">{profile.location}</p>
+    <p class="facts">9+ yrs · TypeScript/Angular/React · .NET/Node · Poznań, Poland · Remote B2B</p>
     <div class="cta">
       <a class="btn btn-primary" href={profile.links.booking} rel="noopener" data-track="book-call:hero">Book a 30-min call</a>
-      <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download data-track="cv-download:applied-ai:home">Download CV (PDF)</a>
+      {
+        profile.cv.map((c) => (
+          <a class="btn" href={`${base}/${c.file}`} download data-track={`cv-download:${c.id}:home`}>
+            CV — {c.label}
+          </a>
+        ))
+      }
       <a class="btn" href={`${base}/cv/`} data-track="cv-page:home">CV page &amp; print</a>
     </div>
   </section>
 
-  <h2>Applied AI at work</h2>
-  <p class="sub">{creatio.company} · {creatio.role} · {creatio.period}</p>
+  <h2>Experience at {creatio.company}</h2>
+  <p class="sub">{creatio.role} · {creatio.period}</p>
+  <h3 class="grp">Engineering: quality &amp; performance</h3>
+  <ul class="bullets">
+    {engineering.map((t) => <li>{t}</li>)}
+  </ul>
+  <h3 class="grp">Applied AI &amp; agent tooling</h3>
   <ul class="bullets">
     {aiShort.map((t) => <li>{t}</li>)}
   </ul>
@@ -142,6 +158,8 @@ const work = [
     {l4.map((t) => <li>{t}</li>)}
   </ul>
 
+  <p class="earlier"><strong>Earlier:</strong> DataArt, Ciklum (2017–2023) · <a href={`${base}/cv/`}>full history in the CV</a></p>
+
   <h2>Selected work</h2>
   <ul class="cards">
     {
@@ -155,28 +173,11 @@ const work = [
     }
   </ul>
 
-  <h2>Certifications</h2>
-  <ul class="certs">
-    {
-      Object.entries(byIssuer).map(([issuer, list]) => (
-        <li>
-          <strong>{issuer}</strong> ({list.length}):{' '}
-          {list.map((c, i) => (
-            <>
-              {i > 0 ? ', ' : ''}
-              {'url' in c && c.url ? (
-                <a href={c.url} rel="noopener">
-                  {c.name}
-                </a>
-              ) : (
-                c.name
-              )}
-            </>
-          ))}
-        </li>
-      ))
-    }
-  </ul>
+  <p class="earlier">
+    <strong>Certifications:</strong>
+    {dl.map((c) => <a href={c.url} rel="noopener">{c.issuer}: {c.name}</a>)} · Anthropic Academy ({academy.length} courses:
+    <a href={academy[0]!.url} rel="noopener">Claude Platform 101</a>, MCP, Claude Code, subagents, agent skills).
+  </p>
 
   <h2>Learning next</h2>
   <ul class="bullets">
@@ -193,13 +194,6 @@ const work = [
 </Base>
 
 <style>
-  .roles {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
   h1 {
     font-size: clamp(1.8rem, 4.5vw, 2.6rem);
     line-height: 1.15;
@@ -208,9 +202,17 @@ const work = [
   .lead {
     font-size: 1.1rem;
   }
-  .meta {
+  .facts {
     color: var(--muted);
     margin: 0.3rem 0 1rem;
+    font-weight: 600;
+  }
+  .grp {
+    margin: 1.2rem 0 0.4rem;
+    font-size: 1.05rem;
+  }
+  .earlier {
+    margin-top: 1.4rem;
   }
   .cta {
     margin-bottom: 1rem;
@@ -319,11 +321,5 @@ const work = [
   .pr-links {
     margin: 0.7rem 0 0;
     font-size: 0.85rem;
-  }
-  .certs {
-    padding-left: 1.2rem;
-  }
-  .certs li {
-    margin-bottom: 0.25rem;
   }
 </style>
