@@ -15,3 +15,6 @@ test-results/
 playwright-report/
 lhci-report/
 .lighthouseci/
+
+# Lighthouse on WSL writes its temp Chrome profile into the cwd under a Windows-style name
+C:*
