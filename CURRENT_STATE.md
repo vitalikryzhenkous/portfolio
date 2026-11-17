@@ -46,4 +46,4 @@ Left for owner / not done:
 - Removed scripts/build-graph.ts, data/graph-allowlist.json, npm script `graph`; interview-gym block removed from scripts/snapshot.sh (key `trainer` no longer in snapshots).
 - stack entry heading -> "Interview bootcamps (private)".
 - Playwright a11y: 21/22 pass; failing "graph is usable from the keyboard" tested the removed graph (our change) -> test deleted. Run via a temp config on port 4399 (4321 is held by another process); repo config unchanged.
-- Orphan left: data/graph-scenarios.json (only consumer was build-graph.ts), not in the owner's list.
+- data/graph-scenarios.json (orphan after build-graph.ts removal) deleted at owner request.
