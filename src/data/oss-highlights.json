@@ -5,7 +5,7 @@
       "title": "Rules that actually reach the agent",
       "problem": "Always-on MCP server instructions had grown to ~2,199 tokens; the client truncated them past ~1,000, so rules silently dropped, and nothing forced the agent to load the right guide.",
       "built": "A thin router: hard invariants on top plus a names-only routing table, and guidance forced through channels the client always delivers — tool descriptions and tool results.",
-      "result": "Instructions 2,199 → 506 tokens (−77%); dashboard and metric rules now reach the agent when it touches those tools.",
+      "result": "Cut persistent agent context by ~75% (2,199 → 506 tokens); dashboard and metric rules now reach the agent when it touches those tools.",
       "prs": [
         {
           "repo": "Advance-Technologies-Foundation/clio",

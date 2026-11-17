@@ -2,8 +2,8 @@
   "$comment": "Public profile. Work facts are copied from the CV (only what the CV says about employers). Learning plan items approved by the owner on 2026-11-01.",
   "name": "Vitalii Ryzhenko",
   "roles": [
-    "Applied AI Engineer",
-    "Forward Deployed Engineer (GenAI)"
+    "Full-Stack Engineer",
+    "Applied AI"
   ],
   "location": "Poznań, Poland · Remote · B2B · EU/US time zones",
   "email": "vitaliiryzhenkous@gmail.com",
@@ -21,6 +21,11 @@
     }
   ],
   "certifications": [
+    {
+      "issuer": "DeepLearning.AI",
+      "name": "Agentic AI",
+      "url": "https://www.deeplearning.ai/certificates/74538a5b-8b05-426a-8823-4dc6eaf47685"
+    },
     {
       "issuer": "DeepLearning.AI",
       "name": "Spec-Driven Development with Coding Agents",
@@ -52,13 +57,13 @@
     },
     {
       "issuer": "Anthropic Academy",
-      "name": "Introduction to subagents",
+      "name": "Introduction to Subagents",
       "date": "2026-05-15",
       "url": "https://academy.claude.com/badges/0a865c2f-246c-41e9-a066-ba2025caf687"
     },
     {
       "issuer": "Anthropic Academy",
-      "name": "Introduction to agent skills",
+      "name": "Introduction to Agent Skills",
       "date": "2026-05-15",
       "url": "https://academy.claude.com/badges/ed3d5a55-037f-4b3a-ba93-5d7694141176"
     },
@@ -77,15 +82,19 @@
   ],
   "learning": [
     {
-      "what": "Claude Certified Architect – Foundations",
-      "by": "2027-01-31"
+      "what": "DeepLearning.AI — Evaluating and Improving Agentic Applications",
+      "by": null
     },
     {
-      "what": "A public Applied AI project with RAG and evals: deployed, README with metrics",
-      "by": "2027-01-31"
+      "what": "master.dev — AI Engineering course",
+      "by": null
     },
     {
-      "what": "Fine-tune a 0.5–1.5B classifier for jev with LoRA and compare it with the 7B on frozen holdouts",
+      "what": "DeepLearning.AI — Machine Learning in Production",
+      "by": null
+    },
+    {
+      "what": "Fine-tuning a 0.5–1.5B classifier for jev (LoRA)",
       "by": null
     }
   ]
