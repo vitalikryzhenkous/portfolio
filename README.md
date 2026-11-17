@@ -2,6 +2,7 @@
 
 **Status:** working — 2026-11-09
 
+Personal portfolio of Vitalii Ryzhenko — Full-Stack Engineer · Applied AI.
 Live: https://vitalikryzhenkous.github.io/portfolio/
 Stack: Astro + React islands, MDX для кейсов, TypeScript strict; точные версии пакетов, Node закреплён в `.node-version`.
 

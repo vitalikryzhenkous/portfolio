@@ -14,13 +14,13 @@ Spec: docs/site-v1-to-v2.md (source of truth). Base: main. Branch: site-v2.
 4. Deliver: PR site-v2, not merged
 
 ## DoD
-- [ ] docs/INVENTORY.md exists
-- [ ] all v2 texts applied, nothing extra
-- [ ] removed items absent in built output
-- [ ] 8 badges by name; Agentic AI cert link present
-- [ ] how-i-work = intro -> pipeline (5) -> five rules -> what runs today -> footer; verifier once in pipeline, once in rules
-- [ ] local build green, git-guard hooks green
-- [ ] PR open on site-v2, not merged
+- [x] docs/INVENTORY.md exists
+- [x] all v2 texts applied, nothing extra
+- [x] removed items absent in built output
+- [x] 8 badges by name; Agentic AI cert link present
+- [x] how-i-work = intro -> pipeline (5) -> five rules -> what runs today -> footer; verifier once in pipeline, once in rules
+- [x] local build green, git-guard hooks green
+- [x] PR open on site-v2, not merged
 
 ## Result (2026-11-17)
 Done: INVENTORY.md; home (hero, Selected work, certs, learning, Creatio metric) and /how-i-work/ per spec; build green; forbidden.sh PASS.
@@ -31,3 +31,12 @@ Open questions (owner):
 4. Graph diagram + list removed (v2 structure); PlatformGraph.tsx, graph.json, graph.css and unused .hc styles are now dead code - not deleted.
 5. Babyloop/Uptime cards replaced by one line; their case pages stay but are not linked from home.
 6. git-guard: no link (spec gives none, repo is public). agent-memory/job-radar private.
+
+## Round 2 (owner-approved minimal replacements)
+Done: "9+ years"->"8+ years", "Applied AI / Forward Deployed Engineer"->"Full-Stack Engineer · Applied AI" (cv/cv-variants/og/cv.astro/README/root-site); donecheck bullet removed; interview-bootcamp page, work card, og entry, redirect, a11y/stale.sh entries removed; dead graph code removed (PlatformGraph.tsx, graph.json, graph.css, .hc styles); babyloop/Uptime linked in the private line; forbidden.sh checks stale v1 strings over all of dist/.
+Left for owner / not done:
+- CV PDF (public/) not touched: owner updates from Desktop/resume.
+- stack.json: project entry kept for its technologies, name shortened to "interview-bootcamp + Interview Bootcamp trainer", case link removed.
+- scripts/build-graph.ts, data/graph-allowlist.json, `npm run graph` now write/read nothing used by the site: left, not asked.
+- scripts/snapshot.sh still mentions interview-gym (data snapshot): untouched.
+- Playwright a11y suite not run.

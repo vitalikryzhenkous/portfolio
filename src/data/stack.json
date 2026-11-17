@@ -202,7 +202,7 @@
     },
     {
       "id": "interview-bootcamp",
-      "name": "Interview prep (interview-bootcamp + Interview Bootcamp trainer)",
+      "name": "interview-bootcamp + Interview Bootcamp trainer",
       "groups": [
         {
           "name": "Frontend",
@@ -239,8 +239,7 @@
             "Claude Code subagents (writer, fact-reviewer)"
           ]
         }
-      ],
-      "link": "work/interview-bootcamp"
+      ]
     },
     {
       "id": "babyloop",

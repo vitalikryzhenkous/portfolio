@@ -61,62 +61,6 @@ import Base from '../layouts/Base.astro';
     font-size: 0.85rem;
     color: var(--muted);
   }
-  .hc-hint {
-    font-size: 0.9rem;
-  }
-  .hc-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-    gap: 0.75rem;
-    align-items: start;
-  }
-  .hc {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--surface);
-    transition: border-color 0.15s;
-  }
-  .hc:hover,
-  .hc:focus-within {
-    border-color: var(--accent);
-  }
-  .hc summary {
-    cursor: pointer;
-    padding: 0.75rem 1rem;
-    list-style: none;
-  }
-  .hc summary::-webkit-details-marker {
-    display: none;
-  }
-  .hc summary strong {
-    display: block;
-  }
-  .hc summary strong::before {
-    content: '▸ ';
-    color: var(--accent);
-  }
-  .hc[open] summary strong::before {
-    content: '▾ ';
-  }
-  .hc summary:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .hc-teaser {
-    display: block;
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-  .hc[open] .hc-teaser {
-    display: none;
-  }
-  .hc-body {
-    padding: 0 1rem 0.75rem;
-    font-size: 0.95rem;
-  }
-  .hc-body p {
-    margin: 0 0 0.5rem;
-  }
   .source {
     font-size: 0.85rem;
   }
