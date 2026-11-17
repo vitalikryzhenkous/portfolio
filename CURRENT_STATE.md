@@ -40,3 +40,10 @@ Left for owner / not done:
 - scripts/build-graph.ts, data/graph-allowlist.json, `npm run graph` now write/read nothing used by the site: left, not asked.
 - scripts/snapshot.sh still mentions interview-gym (data snapshot): untouched.
 - Playwright a11y suite not run.
+
+## Round 3
+- Rebased onto main (README conflict: kept site-v2 line "Full-Stack Engineer · Applied AI"). PR #39 was already MERGED (first commit of this branch), so nothing to close.
+- Removed scripts/build-graph.ts, data/graph-allowlist.json, npm script `graph`; interview-gym block removed from scripts/snapshot.sh (key `trainer` no longer in snapshots).
+- stack entry heading -> "Interview bootcamps (private)".
+- Playwright a11y: 21/22 pass; failing "graph is usable from the keyboard" tested the removed graph (our change) -> test deleted. Run via a temp config on port 4399 (4321 is held by another process); repo config unchanged.
+- Orphan left: data/graph-scenarios.json (only consumer was build-graph.ts), not in the owner's list.
