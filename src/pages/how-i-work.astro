@@ -1,121 +1,48 @@
 ---
 import Base from '../layouts/Base.astro';
-import PlatformGraph from '../components/PlatformGraph.tsx';
-import graph from '../data/graph.json';
-import '../styles/graph.css';
-
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-const layers = graph.layers.map((l) => ({
-  ...l,
-  nodes: graph.nodes.filter((n) => n.layer === l.id),
-}));
-
-// Collapsed card shows the first sentence of the description; the rest opens on click.
-const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
 ---
 
 <Base
   title="How I work — Vitalii Ryzhenko"
-  description="My agent platform: devices, private access, agents with an independent verifier, written rules, services and records."
+  description="I run coding agents on my own home server under written rules. Risky changes pass an independent verifier and a clean-context reviewer; private data never leaves the tailnet."
   wide
 >
   <h1>How I work</h1>
   <p class="lead">
-    <strong>In short:</strong> AI agents do real work on my infrastructure — but only under written rules, with a second,
-    independent agent checking every change, and designed so private data stays on the machine.
-  </p>
-  <p>
-    I run my own projects the way I would want a team's agents to run: on written rules, with an independent check
-    before and after every change, and with a record of what happened. Below is the platform as it is today —
-    one home server, a private network and coding agents. The projects that run on it — jev, Interview Bootcamp,
-    Uptime — have their own case studies.
+    I run coding agents on my own home server under written rules. Risky changes pass an independent verifier and a
+    clean-context reviewer; routine changes skip them. Private data never leaves the tailnet.
   </p>
 
-  <PlatformGraph client:visible />
-
-  <ul class="pg-legend" aria-label="Legend">
-    <li><span class="pg-dot pg-dot-running"></span>running</li>
-    <li><span class="pg-dot pg-dot-code-only"></span>code only, not deployed</li>
-    <li><span class="pg-dot pg-dot-active"></span>in use</li>
-    <li>Teal — inside the private tailnet</li>
-  </ul>
-
-  <h2>The loop behind every change</h2>
+  <h2>The pipeline</h2>
   <ol class="loop">
-    <li><strong>Rules.</strong> Conventions, ten security policies, permissions and procedures live in a git wiki. Agents read them before acting.</li>
-    <li><strong>Executor.</strong> <code>/make &lt;intent&gt;</code> finds the matching procedure, fills its inputs and writes a plan. It asks a human where the permissions say so.</li>
-    <li><strong>Independent verifier.</strong> A separate agent with a fresh context, read-only by its brief, returns GO/STOP on the plan and PASS/FAIL from deterministic checks after the change.</li>
-    <li><strong>Log.</strong> The session is written to a log; if reality differed from the procedure, the executor proposes a wiki diff for review.</li>
+    <li><strong>Task.</strong> Notion Uptime Tasks board; I set priority, the supervisor picks the next task.</li>
+    <li><strong>Rules.</strong> Conventions, permissions (agent alone / asks / human only) and runbooks live in a git wiki; changes via PR.</li>
+    <li><strong>Executor.</strong> <code>/make</code>: intent → procedure → plan → change. Model picked per risk tier.</li>
+    <li><strong>Checks.</strong> Risk-tiered: small changes → verify script + CI → auto-merge; system changes → verifier GO/STOP before, PASS/FAIL after, clean-context review before merge.</li>
+    <li><strong>Memory.</strong> Every session logged (metadata only). A weekly job distills decisions/errors into <code>## Rules</code>; agent-memory RAG answers "why".</li>
   </ol>
 
-  <h2 id="checking-ai-code">How I check AI-written code</h2>
-  <p>
-    Agents write most of the code in my projects. None of it reaches <code>main</code> on the author agent's word.
-    The repositories named below are private, so you won't find links to them. The case studies describe them.
-  </p>
+  <h2>Five rules</h2>
   <ul class="checks">
-    <li>
-      <strong>An independent verifier before and after each <code>/make</code> step.</strong> A separate agent with its
-      own context returns GO/STOP on the plan. After the change it runs the deterministic checks and returns PASS/FAIL.
-      <span class="where">agent-wiki: <code>agents/agents/verifier.md</code>, <code>checks/</code> ·
-      <a href={`${base}/work/platform/`}>platform case</a></span>
-    </li>
-    <li>
-      <strong>A clean-context review before merge.</strong> The reviewer agent sees only the task, the diff and the
-      check results. It never sees the author's reasoning. On one PR (agent-wiki PR #13) it found 10 defects before merge.
-      <span class="where">agent-wiki: <code>agents/skills/second-opinion</code> · as of 2026-11-06</span>
-    </li>
-    <li>
-      <strong>One <code>verify.sh</code> per project: lint, tests and gitleaks.</strong> Exit code 3 means "not
-      verified": a skipped step blocks the change just like a failure. Nothing turns green without running.
-      <span class="where">babyloop, agent-memory: <code>scripts/verify.sh</code> ·
-      <a href={`${base}/work/babyloop/`}>babyloop case</a></span>
-    </li>
-    <li>
-      <strong>Only two human gates: spec and merge.</strong> Everything in between is automated and logged. At the end
-      of a session a hook writes the Session Log entry from git and GitHub.
-      <span class="where">agent-wiki: <code>hooks/session-end.py</code></span>
-    </li>
-    <li>
-      <strong>Agent evals at Creatio.</strong> A thin router with on-demand guidance cut the agent's persistent context
-      by ~75%.
-      <span class="where">from my CV</span>
-    </li>
+    <li>A check that cannot run is a failure.</li>
+    <li>Two human gates: spec and merge (merge is automatic when CI + checks pass; I review ~every 5th PR or anything critical).</li>
+    <li>Agents commit to branches; merge, admin, secrets — human only.</li>
+    <li>Hooks log metadata, never prompts or file contents.</li>
+    <li>Nothing is reachable from the internet; all access via Tailscale.</li>
   </ul>
 
-  <h2 id="as-list">The same graph as a list</h2>
-  <p class="muted hc-hint">Tap a card to open the full description and the decision behind it.</p>
-  {
-    layers.map((l) => (
-      <section class="hc-group">
-        <h3>{l.label}</h3>
-        <div class="hc-grid">
-          {l.nodes.map((n) => (
-            <details class="hc" open>
-              <summary>
-                <strong>{n.label}</strong>
-                <span class="hc-teaser">{firstSentence(n.card.what)}</span>
-              </summary>
-              <div class="hc-body">
-                <p>{n.card.what} {n.card.why}</p>
-                <p><em>Decision:</em> {n.card.decision}</p>
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
-    ))
-  }
-  <script is:inline>
-    // Without JS every card stays open; with JS they start collapsed.
-    document.querySelectorAll('details.hc').forEach((d) => d.removeAttribute('open'));
-  </script>
+  <h2>What runs today</h2>
+  <ul class="checks">
+    <li><strong>Machine:</strong> M920q, WSL2, one tmux session per project (Claude Code). Laptop is a thin client. Phone via SSH + tmux.</li>
+    <li><strong>Control:</strong> Stream Deck+ → own deck-server (session per key).</li>
+    <li><strong>Guard:</strong> git-guard — global git hooks, secret and leak scan on every commit, all repos.</li>
+    <li><strong>Local models:</strong> jev API (OpenAI-compatible router) + Ollama on CPU for sensitive requests.</li>
+    <li><strong>Records:</strong> Notion (what &amp; why), GitHub PRs (how), one JSON line per routed request with a canary test.</li>
+    <li><strong>Backup:</strong> nightly restic to a local disk, restore-tested.</li>
+  </ul>
 
   <p class="muted source">
-    Generated from the service registry (wiki commit <code>{graph.source.commit}</code>) through a public allowlist:
-    only status and whether a service is inside the private network are taken from the registry; hostnames, addresses
-    and ports never reach this page.
+    The repositories named here are private. The case studies describe the projects that run on this platform.
   </p>
 </Base>
 

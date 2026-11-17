@@ -29,28 +29,34 @@ const work = [
     tag: 'Case study',
   },
   {
-    title: 'Agent platform with an independent verifier',
-    text: 'Coding agents change real infrastructure only under written rules; a second agent with a fresh context checks every plan and result.',
+    title: 'Agent platform: risk-tiered pipeline',
+    text: 'Executor, independent verifier, clean-context reviewer, supervisor role; small changes skip heavy review.',
     href: `${base}/work/platform/`,
     tag: 'Case study',
   },
   {
-    title: 'babyloop — a mobile app built with an agent team',
-    text: 'Spec-first pipeline with independent reviewer agents and tests written before code; hooks block shortcuts; every task leaves a metrics row. Private repo, demo on request.',
-    href: `${base}/work/babyloop/`,
-    tag: 'Case study',
+    title: 'prompt-kit',
+    text: 'Cross-platform Starship prompt with an AI-agent context gauge (tokens left before compact), installed via a Claude Code skill. Open source, v0.2.0.',
+    href: 'https://github.com/vitalikryzhenkous/prompt-kit',
+    tag: 'Open source ↗',
   },
   {
-    title: 'Uptime — a status board for coding agents',
-    text: 'Hooks show which agent is working or waiting for me and how full its context is; a waiting agent can get a one-line reply from the apps. Private repo, demo on request.',
-    href: `${base}/work/uptime/`,
-    tag: 'Case study',
+    title: 'git-guard',
+    text: 'Shared leak-protection layer for all repos: global git hooks, secret and company-name scanning before every commit.',
+    href: null,
+    tag: 'Tooling',
   },
   {
-    title: 'Interview prep as code',
-    text: 'Agents write a bootcamp for one vacancy and seven gates check it; a trainer with Python in the browser for daily practice. Private repos, demo on request.',
-    href: `${base}/work/interview-bootcamp/`,
-    tag: 'Case study',
+    title: 'job-radar',
+    text: 'Open job scanner for PL/EU developers (Apache-2.0). Privacy-first: stores only the source link and a structured score; job text is deleted after each scan. Source on request.',
+    href: null,
+    tag: 'Tooling',
+  },
+  {
+    title: 'agent-memory',
+    text: 'RAG over project logs and Notion, a weekly distill into CLAUDE.md "## Rules", and evals.',
+    href: null,
+    tag: 'In progress',
   },
   {
     title: 'connectiq-watchface-kit',
@@ -58,29 +64,25 @@ const work = [
     href: 'https://github.com/vitalikryzhenkous/connectiq-watchface-kit',
     tag: 'Open source ↗',
   },
-  {
-    title: 'donecheck',
-    text: 'An independent checker that verifies whether a coding agent did what it was asked. In progress — the repository goes public with its first release.',
-    href: null,
-    tag: 'In progress',
-  },
 ];
+
 ---
 
 <Base
   title="Vitalii Ryzhenko — Applied AI Engineer"
-  description="Applied AI / Forward Deployed Engineer. I build production LLM features and AI-agent tooling, backed by systematic evaluation."
+  description="Full-Stack Engineer · Applied AI. I build production LLM features and AI-agent tooling, backed by systematic evaluation."
 >
   <section class="hero">
     <p class="roles">{profile.roles.join(' · ')}</p>
     <h1>I build production LLM features and AI-agent tooling, backed by systematic evaluation.</h1>
     <p class="lead">
-      9+ years of full-stack engineering (TypeScript, Angular/React, .NET/Node). At Creatio I build MCP tools, structured
+      8+ years of full-stack engineering (TypeScript, Angular/React, .NET/Node). At Creatio I build MCP tools, structured
       output features and agent evals; on my own hardware I run a privacy-first LLM router and an agent platform with an
       independent verifier. Before engineering I worked in B2B sales — large deals and negotiations — so I am at home
       in front of customers.
     </p>
-    <p class="meta">{profile.location}</p>
+    <p><strong>8+ yrs Angular/React/.NET/Node · LLM features in production · own agent platform</strong></p>
+    <p class="meta">Poznań, Poland · remote, B2B · ex-B2B sales</p>
     <div class="cta">
       <a class="btn btn-primary" href={profile.links.booking} rel="noopener" data-track="book-call:hero">Book a 30-min call</a>
       <a class="btn" href={`${base}/${profile.cv[0]!.file}`} download data-track="cv-download:applied-ai:home">Download CV (PDF)</a>
@@ -154,6 +156,9 @@ const work = [
       ))
     }
   </ul>
+  <p class="muted">
+    <em>Also running privately: babyloop (mobile app built by an agent team) and Uptime (status board for coding agents).</em>
+  </p>
 
   <h2>Certifications</h2>
   <ul class="certs">
