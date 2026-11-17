@@ -3,7 +3,7 @@
   "pages": {
     "home": {
       "title": "I build production LLM features and AI-agent tooling, backed by systematic evaluation.",
-      "kicker": "Applied AI · Forward Deployed Engineer"
+      "kicker": "Full-Stack Engineer · Applied AI"
     },
     "work-jev": {
       "title": "jev — a privacy-first LLM router on a CPU box",
@@ -22,7 +22,7 @@
       "kicker": "Technologies"
     },
     "cv": {
-      "title": "CV — Applied AI / Forward Deployed Engineer",
+      "title": "CV — Full-Stack Engineer · Applied AI",
       "kicker": "Download or print"
     },
     "work": {
@@ -36,10 +36,6 @@
     "work-uptime": {
       "title": "Uptime — a status board for coding agents",
       "kicker": "Case study · Agent operations"
-    },
-    "work-interview-bootcamp": {
-      "title": "Interview prep as code — a bootcamp generator and a trainer",
-      "kicker": "Case study · LLM content with gates"
     }
   }
 }

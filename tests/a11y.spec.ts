@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // WCAG 2.2 AA (and below) on every page, in both themes. A violation fails the build.
-const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'work/babyloop/', 'work/uptime/', 'work/interview-bootcamp/', 'stack/', 'cv/'];
+const PAGES = ['', 'work/', 'how-i-work/', 'work/jev/', 'work/platform/', 'work/babyloop/', 'work/uptime/', 'stack/', 'cv/'];
 const THEMES = ['light', 'dark'] as const;
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -19,31 +19,6 @@ for (const theme of THEMES) {
     });
   }
 }
-
-test('graph is usable from the keyboard', async ({ page }) => {
-  await page.goto('how-i-work/');
-  // The graph is an Astro island: its HTML exists before React hydrates. Wait for hydration.
-  await page.waitForSelector('astro-island:not([ssr])', { state: 'attached' });
-  const node = page.locator('.react-flow__node-platform').first();
-  const card = page.locator('.pg-card');
-  // React Flow keeps nodes hidden until measured, and hydration may replace the node element once:
-  // retry focus + Enter until the card opens.
-  const openWithKeyboard = () =>
-    expect(async () => {
-      await node.focus();
-      await expect(node).toBeFocused({ timeout: 500 });
-      await page.keyboard.press('Enter');
-      await expect(card).toBeVisible({ timeout: 500 });
-    }).toPass({ timeout: 10_000 });
-
-  await openWithKeyboard();
-  await page.keyboard.press('Escape');
-  await expect(card).toHaveCount(0);
-
-  await openWithKeyboard();
-  await page.getByRole('button', { name: 'Close details' }).click();
-  await expect(card).toHaveCount(0);
-});
 
 test('skip link moves focus to main content', async ({ page }) => {
   await page.goto('');

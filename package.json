@@ -7,7 +7,6 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "forbidden": "bash scripts/forbidden.sh",
-    "graph": "node scripts/build-graph.ts",
     "test:a11y": "playwright test",
     "cv": "uv run scripts/build-cv.py",
     "og": "uv run scripts/build-og.py"

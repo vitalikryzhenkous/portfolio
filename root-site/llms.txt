@@ -1,6 +1,6 @@
-# Vitalii Ryzhenko — Applied AI / Forward Deployed Engineer
+# Vitalii Ryzhenko — Full-Stack Engineer · Applied AI
 
-> Applied AI engineer in Poznań, Poland (B2B). 9+ years of full-stack engineering (TypeScript, Angular/React,
+> Applied AI engineer in Poznań, Poland (B2B). 8+ years of full-stack engineering (TypeScript, Angular/React,
 > .NET/Node, Python). Ships LLM features and AI-agent tooling to production — MCP tools, structured outputs,
 > context engineering, agent evals — and works directly with customers.
 

@@ -39,6 +39,19 @@ for name in "${!rules[@]}"; do
   report "$name" < <(grep -rnIE "${exclude[@]}" -e "${rules[$name]}" "${existing[@]}" 2>/dev/null)
 done
 
+# v1 wording removed in v2: must not appear anywhere in the built site (every page, not only / and /how-i-work/)
+if [[ -d dist ]]; then
+  declare -A stale=(
+    [v1-donecheck]='donecheck'
+    [v1-interview-prep]='Interview prep'
+    [v1-years]='9\+ years'
+    [v1-title]='Forward Deployed'
+  )
+  for name in "${!stale[@]}"; do
+    report "$name" < <(grep -rnIiE --include='*.html' --include='*.xml' --include='*.txt' --include='*.json' -e "${stale[$name]}" dist 2>/dev/null)
+  done
+fi
+
 extra=()
 [[ -f private/denylist.txt ]] && mapfile -t -O "${#extra[@]}" extra < <(grep -v '^\s*\(#\|$\)' private/denylist.txt)
 [[ -n ${FORBIDDEN_EXTRA:-} ]] && mapfile -t -O "${#extra[@]}" extra < <(grep -v '^\s*$' <<<"$FORBIDDEN_EXTRA")
